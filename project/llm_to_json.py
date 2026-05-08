@@ -7,71 +7,76 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field, ValidationError
 from google import genai
 from google.genai import types
+from pydantic import field_validator
 
 
+
+# Pydantic을 사용하여 LLM 결과값 한정시키고 검증하기
 class PickPlaceAction(BaseModel):
-    action: Literal["pick_place"] = Field(
-        description="Only supported robot action."
-    )
-    pick_object: str = Field(
-        description="Object to pick, e.g. 'blue block'."
-    )
-    target_object: str = Field(
-        description="Reference target object, e.g. 'green bowl'."
-    )
+    action: Literal["pick_place"]
+    pick_object: str
+    target_object: str
     relation: Literal[
         "on",
+        "instide",
         "left_of",
         "right_of",
         "front_of",
         "behind",
         "near"
-    ] = Field(
-        description="Spatial relation between picked object and target object."
-    )
-    offset_m: Optional[list[float]] = Field(
-        default=None,
-        description="Optional xyz offset from target object in meters."
-    )
-    confidence: float = Field(
-        default=1.0,
-        ge=0.0,
-        le=1.0,
-        description="Confidence score from 0 to 1."
-    )
+    ]
+    
+    offset_m: Optional[list[float]] = None
+    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
+
+    @field_validator("offset_m")
+    @classmethod
+    def validate_offset(cls, value):
+        if value is None:
+            return value
+
+        if len(value) != 3:
+            raise ValueError("offset_m must contain exactly 3 values: [x, y, z].")
+
+        if any(abs(v) > 0.5 for v in value):
+            raise ValueError("offset_m value is too large for safe execution.")
+
+        return value
 
 MIN_CONFIDENCE = 0.7
 
 
-def validate_action_for_execution(action: PickPlaceAction) -> None:
-    """
-    Validate whether the parsed action is safe enough to execute.
-
-    Raises:
-        ValueError: If the action should not be executed.
-    """
+def validate_action_for_execution(
+    action: PickPlaceAction,
+    scene_objects: list[dict],
+) -> None:
     if action.confidence < MIN_CONFIDENCE:
         raise ValueError(
             f"Action confidence is too low: {action.confidence}. "
             f"Minimum required confidence is {MIN_CONFIDENCE}."
         )
 
-    if not action.pick_object:
-        raise ValueError("pick_object is missing.")
+    # 실제 물체 목록 확인 
+    object_names = {obj["name"] for obj in scene_objects}
 
-    if not action.target_object:
-        raise ValueError("target_object is missing.")
+    if action.pick_object not in object_names:
+        raise ValueError(f"Unknown pick_object: {action.pick_object}")
 
-    if not action.relation:
-        raise ValueError("relation is missing.")
+    if action.target_object not in object_names:
+        raise ValueError(f"Unknown target_object: {action.target_object}")
+
+    if action.pick_object == action.target_object:
+        raise ValueError("pick_object and target_object cannot be the same.")
     
-    
+# llm 작업규칙 설명 
+
 def build_prompt(user_command: str, scene_objects: list[dict]) -> str:
     return f"""
 You are a robot task parser.
 
 Convert the user's natural language command into a JSON action.
 
+# 현재 카메라가 인식한 물체 목록 보내기. 
 Available objects:
 {json.dumps(scene_objects, ensure_ascii=False, indent=2)}
 
@@ -84,7 +89,7 @@ Rules:
 - If the command is ambiguous, set confidence below 0.7.
 - If the pick object or target object cannot be clearly resolved, set confidence below 0.7.
 - If you are confident the command is executable, set confidence between 0.7 and 1.0.
-- If the user says "put A in B", use relation "on".
+- If the user says "put A in B", use relation "inside".
 - If the user says "put A on B", use relation "on".
 - If the user says "to the left of B", use relation "left_of".
 - If the user says "to the right of B", use relation "right_of".
@@ -121,6 +126,7 @@ class LLMJsonParser:
             ),
         )
 
+        # Validation 
         try:
             data = json.loads(response.text)
             return PickPlaceAction(**data)
@@ -156,6 +162,6 @@ if __name__ == "__main__":
     scene_objects,
     )
 
-    validate_action_for_execution(action)
+    validate_action_for_execution(action, scene_objects)
 
     print(action.model_dump_json(indent=2))
