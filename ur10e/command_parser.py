@@ -54,11 +54,8 @@ def parse_user_command(user_text: str) -> dict:
     user_text = user_text.strip().lower()
 
     # 1. 집을 물체 인식
-    if "red" in user_text or "빨간" in user_text:
-        pick_object = "red_block"
-    elif "blue" in user_text or "파란" in user_text:
-        pick_object = "blue_block"
-    elif "cube" in user_text or "큐브" in user_text or "블럭" in user_text:
+
+    if "cube" in user_text or "큐브" in user_text or "블럭" in user_text:
         pick_object = "cube"
     else:
         raise ValueError(f"집을 물체를 이해하지 못했습니다: {user_text}")

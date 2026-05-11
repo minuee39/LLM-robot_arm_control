@@ -6,6 +6,7 @@ from controller.pick_place import PickPlaceController
 from isaacsim.core.api import World
 from tasks.pick_place import PickPlace
 from isaacsim.core.api.objects import VisualCuboid
+from isaacsim.core.api.objects import DynamicCuboid
 
 from command_parser import (
     parse_user_command,
@@ -13,21 +14,21 @@ from command_parser import (
     command_to_target_position,
 )
 
+blue_block_pos = np.array([0.3, 0.6, 0.02575])
+red_block_pos = np.array([-0.3, 0.6, 0.02575])
+
 scene_objects = {
     "cube": {
-        "position": np.array([0.5, 0.5, 0.02575])
+        "position": np.array([0.5, 0.3, 0.02575])
     },
     "target": {
-        "position": np.array([-0.5, 0.5, 0.02575])
+        "position": np.array([0.1, 0.8, 0.02575])
     },
     "blue_block": {
-        "position": np.array([-0.3, 0.6, 0.02575])
+        "position": blue_block_pos
     },
     "red_block": {
-        "position": np.array([0.3, 0.3, 0.02575])
-    },
-    "bowl": {
-        "position": np.array([-0.3, 0.6, 0.02575])
+        "position": red_block_pos
     },
 }
 
@@ -75,15 +76,24 @@ target_marker_position = target_position.copy()
 target_marker_position[2] = 0.02
 
 my_world.scene.add(
-    VisualCuboid(
+    DynamicCuboid(
         prim_path="/World/target_red_cube",
-        name="target_red_cube",
-        position=target_marker_position,
+        name="red_block",
+        position=red_block_pos,
         scale=np.array([0.05, 0.05, 0.05]),
         color=np.array([1.0, 0.0, 0.0]),
     )
 )
 
+my_world.scene.add(
+    DynamicCuboid(
+        prim_path="/World/blue_block",
+        name="blue_block",
+        position=blue_block_pos,
+        scale=np.array([0.08, 0.08, 0.08]),
+        color=np.array([0.0, 0.0, 1.0]),
+    )
+)
 
 my_world.reset()
 task_params = my_world.get_task("ur10e_pick_place").get_params()
