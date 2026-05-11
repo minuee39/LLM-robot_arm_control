@@ -25,7 +25,7 @@ class PickPlaceController(manipulators_controllers.PickPlaceController):
         self, name: str, gripper: ParallelGripper, robot_articulation: SingleArticulation, events_dt=None
     ) -> None:
         if events_dt is None:
-            events_dt = [0.005, 0.002, 1, 0.05, 0.0008, 0.005, 0.0008, 0.1, 0.0008, 0.008]
+             events_dt = [0.005, 0.002, 1, 0.05, 0.0008, 0.005, 0.0008, 0.1, 0.0008, 0.008]
         manipulators_controllers.PickPlaceController.__init__(
             self,
             name=name,
