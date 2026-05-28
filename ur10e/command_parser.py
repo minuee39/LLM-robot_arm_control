@@ -2,16 +2,16 @@ import numpy as np
 
 
 RELATION_OFFSETS = {
-    "on": np.array([0.0, 0.0, 0.12]),
-    "left_of": np.array([0.0, 0.15, 0.0]),
-    "right_of": np.array([0.0, -0.15, 0.0]),
-    "front_of": np.array([0.15, 0.0, 0.0]),
-    "behind": np.array([-0.15, 0.0, 0.0]),
+    "on": np.array([0.0, 0.0, 0.06]),
+    "left_of": np.array([0.15, -0.15, 0.0]),
+    "right_of": np.array([-0.15, 0.15, 0.0]),
+    "front_of": np.array([+0.15, +0.15, 0.0]),
+    "behind": np.array([-0.15, -0.15, 0.0]),
     "near": np.array([0.12, 0.12, 0.0]),
 }
 
 SUPPORTED_ACTIONS = {"pick_place"}
-SUPPORTED_OBJECTS = {"cube", "target", "red_block", "blue_block", "bowl"}
+SUPPORTED_OBJECTS = {"red_block", "blue_block", "green_block"}
 SUPPORTED_RELATIONS = {"on", "left_of", "right_of", "front_of", "behind", "near"}
 
 MIN_CONFIDENCE = 0.7
@@ -51,43 +51,81 @@ def validate_command(command: dict, scene_objects: dict) -> None:
     
     
 def parse_user_command(user_text: str) -> dict:
-    user_text = user_text.strip().lower()
+    text = user_text.strip().lower()
 
-    # 1. 집을 물체 인식
+    object_aliases = {
+        
+        "파란 블럭": "blue_block",
+        "파란 블록": "blue_block",
+        "파란색 블럭": "blue_block",
+        "파란색 블록": "blue_block",
+        "blue block": "blue_block",
+        "blue_block": "blue_block",
+        "blue": "blue_block",
 
-    if "cube" in user_text or "큐브" in user_text or "블럭" in user_text:
-        pick_object = "cube"
-    else:
-        raise ValueError(f"집을 물체를 이해하지 못했습니다: {user_text}")
+        "빨간 블럭": "red_block",
+        "빨간 블록": "red_block",
+        "빨간색 블럭": "red_block",
+        "빨간색 블록": "red_block",
+        "red block": "red_block",
+        "red_block": "red_block",
+        "red": "red_block",
 
-    # 2. 기준 물체 인식
-    if "target" in user_text or "목표" in user_text:
-        target_object = "target"
-    elif "blue" in user_text or "파란" in user_text:
-        target_object = "blue_block"
-    elif "red" in user_text or "빨간" in user_text:
-        target_object = "red_block"
-    elif "bowl" in user_text or "그릇" in user_text:
-        target_object = "bowl"
-    else:
-        raise ValueError(f"기준 물체를 이해하지 못했습니다: {user_text}")
+        "초록 블럭": "green_block",
+        "초록 블록": "green_block",
+        "초록색 블럭": "green_block",
+        "초록색 블록": "green_block",
+        "green block": "green_block",
+        "green_block": "green_block",
+        "green": "green_block",
 
-    # 같은 물체를 집고 같은 물체 기준으로 놓는 명령 방지
+        "큐브": "cube",
+        "cube": "cube",
+
+        "목표": "target",
+        "target": "target",
+
+        "그릇": "bowl",
+        "보울": "bowl",
+        "bowl": "bowl",
+    }
+
+    found_objects = []
+
+    for alias, object_name in object_aliases.items():
+        idx = text.find(alias)
+        if idx != -1:
+            found_objects.append((idx, alias, object_name))
+
+    # 문장에 등장한 순서대로 정렬
+    found_objects.sort(key=lambda x: x[0])
+
+    # 같은 object가 여러 alias로 중복 잡히는 것 제거
+    unique_objects = []
+    for _, _, object_name in found_objects:
+        if not unique_objects or unique_objects[-1] != object_name:
+            unique_objects.append(object_name)
+
+    if len(unique_objects) < 2:
+        raise ValueError(f"pick_object와 target_object를 모두 이해하지 못했습니다: {user_text}")
+
+    pick_object = unique_objects[0]
+    target_object = unique_objects[1]
+
     if pick_object == target_object:
         raise ValueError(f"pick_object와 target_object가 같습니다: {pick_object}")
 
-    # 3. 공간 관계 인식
-    if "위" in user_text or "올려" in user_text or "on" in user_text:
+    if "위" in text or "올려" in text or "on" in text:
         relation = "on"
-    elif "왼쪽" in user_text or "left" in user_text:
+    elif "왼쪽" in text or "left" in text:
         relation = "left_of"
-    elif "오른쪽" in user_text or "right" in user_text:
+    elif "오른쪽" in text or "right" in text:
         relation = "right_of"
-    elif "앞" in user_text or "front" in user_text or "forward" in user_text:
+    elif "앞" in text or "front" in text or "forward" in text:
         relation = "front_of"
-    elif "뒤" in user_text or "back" in user_text or "behind" in user_text:
+    elif "뒤" in text or "back" in text or "behind" in text:
         relation = "behind"
-    elif "근처" in user_text or "near" in user_text or "옆" in user_text:
+    elif "근처" in text or "near" in text or "옆" in text:
         relation = "near"
     else:
         raise ValueError(f"공간 관계를 이해하지 못했습니다: {user_text}")
@@ -99,9 +137,10 @@ def parse_user_command(user_text: str) -> dict:
         "relation": relation,
         "confidence": 1.0,
     }
-
-
+    
+    
 def command_to_target_position(command: dict, scene_objects: dict) -> np.ndarray:
+    
     if command.get("action") != "pick_place":
         raise ValueError(f"지원하지 않는 action입니다: {command.get('action')}")
 

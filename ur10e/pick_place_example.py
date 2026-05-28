@@ -8,13 +8,22 @@ from controller.pick_place import PickPlaceController
 from isaacsim.core.api import World
 from isaacsim.core.api.objects import DynamicCuboid
 from tasks.pick_place import PickPlace
+from llm_to_json import parse_user_command_with_llm
+
 
 from command_parser import (
     parse_user_command,
     validate_command,
     command_to_target_position,
+    RELATION_OFFSETS,
 )
 
+from scene_config import (
+    BLOCK_SIZE,
+    OBJECT_POSITIONS,
+    OBJECT_COLORS,
+    build_scene_objects,
+)
 
 # =========================
 # 1. 기본 설정
@@ -23,24 +32,10 @@ from command_parser import (
 TASK_NAME = "ur10e_pick_place"
 
 blue_block_pos = np.array([0.3, 0.6, 0.02575])
-red_block_pos = np.array([-0.3, 0.6, 0.02575])
-cube_initial_position = np.array([0.5, 0.0, 0.02575])
+red_block_pos = np.array([-0.3, -0.4, 0.02575])
+green_block_pos = np.array([-0.3, 0.4, 0.02575])
 
-scene_objects = {
-    "cube": {
-        "position": cube_initial_position
-    },
-    "target": {
-        "position": np.array([0.1, 0.8, 0.02575])
-    },
-    "blue_block": {
-        "position": blue_block_pos
-    },
-    "red_block": {
-        "position": red_block_pos
-    },
-}
-
+scene_objects = build_scene_objects()
 
 # =========================
 # 2. 사용자 명령 입력 및 검증
@@ -49,18 +44,44 @@ scene_objects = {
 max_retry = 3
 command = None
 target_position = None
+picking_position = None
+use_LLM = True
+
+
+def parse_command(user_text: str) -> dict:
+    if not use_LLM:
+        return parse_user_command(user_text)
+
+    try:
+        return parse_user_command_with_llm(user_text, scene_objects)
+    except ValueError as error:
+        message = str(error)
+        llm_unavailable = (
+            "Gemini API" in message
+            or "GEMINI_API_KEY" in message
+        )
+        if not llm_unavailable:
+            raise
+
+        print("[LLM 경고] Gemini를 사용할 수 없어 로컬 명령 파서로 전환합니다.")
+        return parse_user_command(user_text)
+
 
 for attempt in range(max_retry):
     try:
         user_text = input("로봇 명령을 입력하세요: ")
 
-        command = parse_user_command(user_text)
+        command = parse_command(user_text)
+        
         validate_command(command, scene_objects)
+        picking_position = scene_objects[command["pick_object"]]["position"]
         target_position = command_to_target_position(command, scene_objects)
 
         print("Parsed command:", command)
+        print("Picking position:", picking_position)
         print("Target position:", target_position)
         break
+        
 
     except ValueError as e:
         print("[명령 오류]", e)
@@ -88,10 +109,9 @@ my_world = World(
 
 my_task = PickPlace(
     name=TASK_NAME,
-    cube_initial_position=cube_initial_position,
-    target_position=target_position,
-    cube_size=np.array([0.1, 0.0515, 0.1]),
 )
+
+
 
 # 중요: task를 반드시 World에 등록해야 함
 my_world.add_task(my_task)
@@ -103,27 +123,16 @@ my_world.add_task(my_task)
 # 현재는 red_block / blue_block을 기준 물체로 사용
 # 나중에 실제로 집을 물체로 쓰려면 picking_position도 command 기반으로 바꿔야 함
 
-my_world.scene.add(
-    DynamicCuboid(
-        prim_path="/World/red_block",
-        name="red_block",
-        position=red_block_pos,
-        scale=np.array([0.1, 0.0515, 0.1]),
-        color=np.array([1.0, 0.0, 0.0]),
+for object_name, object_pos in OBJECT_POSITIONS.items():
+    my_world.scene.add(
+        DynamicCuboid(
+            prim_path=f"/World/{object_name}",
+            name=object_name,
+            position=object_pos,
+            scale=BLOCK_SIZE,
+            color=OBJECT_COLORS[object_name],
+        )
     )
-)
-
-my_world.scene.add(
-    DynamicCuboid(
-        prim_path="/World/blue_block",
-        name="blue_block",
-        position=blue_block_pos,
-        scale=np.array([0.1, 0.0515, 0.1]),
-        color=np.array([0.0, 0.0, 1.0]),
-    )
-)
-
-
 # =========================
 # 5. World 초기화 및 로봇/컨트롤러 가져오기
 # =========================
@@ -167,13 +176,22 @@ while simulation_app.is_running():
 
         observations = my_world.get_observations()
 
+        pick_object = my_world.scene.get_object(command["pick_object"])
+        target_object = my_world.scene.get_object(command["target_object"])
+
+        pick_position, _ = pick_object.get_world_pose()
+        target_object_position, _ = target_object.get_world_pose()
+
+        placing_position = target_object_position + RELATION_OFFSETS[command["relation"]]
+
+
         actions = my_controller.forward(
-            picking_position=observations[task_params["cube_name"]["value"]]["position"],
-            placing_position=target_position,
-            current_joint_positions=observations[task_params["robot_name"]["value"]]["joint_positions"],
+            picking_position=pick_position,
+            placing_position=placing_position,
+            current_joint_positions=my_ur10e.get_joint_positions(),
             end_effector_offset=np.array([0, 0, 0.20]),
         )
-
+        
         if my_controller.is_done():
             if not done_printed:
                 print("done picking and placing")

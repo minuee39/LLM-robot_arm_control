@@ -4,28 +4,21 @@ import json
 import os
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field, ValidationError
-from google import genai
-from google.genai import types
-from pydantic import field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 
-
-# Pydantic을 사용하여 LLM 결과값 한정시키고 검증하기
 class PickPlaceAction(BaseModel):
     action: Literal["pick_place"]
     pick_object: str
     target_object: str
     relation: Literal[
         "on",
-        "instide",
         "left_of",
         "right_of",
         "front_of",
         "behind",
-        "near"
+        "near",
     ]
-    
     offset_m: Optional[list[float]] = None
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
@@ -36,132 +29,80 @@ class PickPlaceAction(BaseModel):
             return value
 
         if len(value) != 3:
-            raise ValueError("offset_m must contain exactly 3 values: [x, y, z].")
+            raise ValueError("offset_m must contain exactly 3 values")
 
         if any(abs(v) > 0.5 for v in value):
-            raise ValueError("offset_m value is too large for safe execution.")
+            raise ValueError("offset_m values must be within ±0.5m")
 
         return value
 
-MIN_CONFIDENCE = 0.7
 
-
-def validate_action_for_execution(
-    action: PickPlaceAction,
-    scene_objects: list[dict],
-) -> None:
-    if action.confidence < MIN_CONFIDENCE:
+def parse_user_command_with_llm(user_text: str) -> dict:
+    try:
+        from google import genai
+        from google.genai import types
+    except ModuleNotFoundError as e:
         raise ValueError(
-            f"Action confidence is too low: {action.confidence}. "
-            f"Minimum required confidence is {MIN_CONFIDENCE}."
-        )
+            "google-genai 패키지가 Isaac Sim Python 환경에 설치되어 있지 않습니다. "
+            "설치 명령: /home/minwoo/isaacsim/python.sh -m pip install google-genai"
+        ) from e
 
-    # 실제 물체 목록 확인 
-    object_names = {obj["name"] for obj in scene_objects}
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
 
-    if action.pick_object not in object_names:
-        raise ValueError(f"Unknown pick_object: {action.pick_object}")
+    client = genai.Client(api_key=api_key)
 
-    if action.target_object not in object_names:
-        raise ValueError(f"Unknown target_object: {action.target_object}")
+    prompt = f"""
+You are a robot command parser.
 
-    if action.pick_object == action.target_object:
-        raise ValueError("pick_object and target_object cannot be the same.")
-    
-# llm 작업규칙 설명 
+Convert the user's Korean or English robot command into JSON.
 
-def build_prompt(user_command: str, scene_objects: list[dict]) -> str:
-    return f"""
-You are a robot task parser.
-
-Convert the user's natural language command into a JSON action.
-
-# 현재 카메라가 인식한 물체 목록 보내기. 
 Available objects:
-{json.dumps(scene_objects, ensure_ascii=False, indent=2)}
+- red_block
+- blue_block
+- green_block
+
+Available action:
+- pick_place
+
+Available relations:
+- on
+- left_of
+- right_of
+- front_of
+- behind
+- near
 
 Rules:
-- Return only valid JSON.
+- Output JSON only.
 - Do not include markdown.
-- Do not include explanations.
-- Use only object names from Available objects.
-- The only supported action is "pick_place".
-- If the command is ambiguous, set confidence below 0.7.
-- If the pick object or target object cannot be clearly resolved, set confidence below 0.7.
-- If you are confident the command is executable, set confidence between 0.7 and 1.0.
-- If the user says "put A in B", use relation "inside".
-- If the user says "put A on B", use relation "on".
-- If the user says "to the left of B", use relation "left_of".
-- If the user says "to the right of B", use relation "right_of".
-- If the user says "in front of B", use relation "front_of".
-- If the user says "behind B", use relation "behind".
-- If the user says "near B", use relation "near".
-- Resolve phrases such as "leftmost bowl" using object positions.
-- Smaller x means more left.
-- Larger x means more right.
+- pick_object is the object to move.
+- target_object is the reference object.
+- If the user says "옆", use relation "near".
+- Use exact object names from the available object list.
 
 User command:
-{user_command}
-""".strip()
+{user_text}
+"""
 
-
-class LLMJsonParser:
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash"):
-        if not api_key:
-            raise ValueError("Gemini API key is required.")
-
-        self.client = genai.Client(api_key=api_key)
-        self.model = model
-
-    def parse(self, user_command: str, scene_objects: list[dict]) -> PickPlaceAction:
-        prompt = build_prompt(user_command, scene_objects)
-
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0,
-                response_mime_type="application/json",
-                response_schema=PickPlaceAction,
-            ),
-        )
-
-        # Validation 
-        try:
-            data = json.loads(response.text)
-            return PickPlaceAction(**data)
-        except (json.JSONDecodeError, ValidationError) as error:
-            raise ValueError(f"Invalid LLM JSON output: {response.text}") from error
-
-
-if __name__ == "__main__":
-    scene_objects = [
-        {
-            "name": "blue block",
-            "type": "block",
-            "position": {"x": -0.10, "y": -0.45, "z": 0.03},
-        },
-        {
-            "name": "green bowl",
-            "type": "bowl",
-            "position": {"x": 0.12, "y": -0.50, "z": 0.00},
-        },
-        {
-            "name": "red bowl",
-            "type": "bowl",
-            "position": {"x": -0.20, "y": -0.55, "z": 0.00},
-        },
-    ]
-
-    parser = LLMJsonParser(
-        api_key=os.environ.get("GEMINI_API_KEY")
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            temperature=0.0,
+            response_mime_type="application/json",
+        ),
     )
 
-    action = parser.parse(
-    "Put the blue block to the left of the leftmost bowl",
-    scene_objects,
-    )
+    try:
+        raw_json = json.loads(response.text)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"LLM 응답을 JSON으로 파싱하지 못했습니다: {response.text}") from e
 
-    validate_action_for_execution(action, scene_objects)
+    try:
+        parsed = PickPlaceAction.model_validate(raw_json)
+    except ValidationError as e:
+        raise ValueError(f"LLM JSON schema 검증 실패: {e}") from e
 
-    print(action.model_dump_json(indent=2))
+    return parsed.model_dump(exclude_none=True)
