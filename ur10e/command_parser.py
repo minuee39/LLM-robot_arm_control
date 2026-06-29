@@ -1,6 +1,7 @@
 import numpy as np
 
 
+# isaac sim 기준
 RELATION_OFFSETS = {
     "on": np.array([0.0, 0.0, 0.06]),
     "left_of": np.array([0.15, -0.15, 0.0]),

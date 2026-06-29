@@ -4,9 +4,9 @@ import numpy as np
 BLOCK_SIZE = np.array([0.1, 0.0515, 0.1])
 
 OBJECT_POSITIONS = {
-    "red_block": np.array([-0.45, 0.55, 0.02575]),
-    "blue_block": np.array([0.45, 0.55, 0.02575]),
-    "green_block": np.array([0.0, 0.75, 0.02575]),
+    "red_block": np.array([-0.30, 0.30, 0.02575]),
+    "blue_block": np.array([0.30, 0.30, 0.02575]),
+    "green_block": np.array([0.0, 0.45, 0.02575]),
 }
 
 OBJECT_COLORS = {

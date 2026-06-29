@@ -41,6 +41,27 @@ class PickPlaceAction(BaseModel):
         return value
 
 
+LLMProvider = Literal["gemini", "chatgpt"]
+
+
+def select_llm_provider(
+    use_gemini_api: bool,
+    use_chatgpt_api: bool,
+) -> Optional[LLMProvider]:
+    if use_gemini_api and use_chatgpt_api:
+        raise ValueError(
+            "USE_GEMINI_API와 USE_CHATGPT_API를 동시에 True로 설정할 수 없습니다."
+        )
+
+    if use_gemini_api:
+        return "gemini"
+
+    if use_chatgpt_api:
+        return "chatgpt"
+
+    return None
+
+
 def scene_objects_to_llm_list(scene_objects: dict) -> list[dict]:
     llm_objects = []
 
@@ -165,15 +186,61 @@ def _call_gemini_rest(prompt: str, api_key: str, model: str) -> str:
     return _extract_text_from_gemini_response(response_json)
 
 
-def parse_user_command_with_llm(user_text: str, scene_objects: dict) -> dict:
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
+def _extract_text_from_chatgpt_response(response_json: dict) -> str:
+    try:
+        return response_json["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as error:
+        raise ValueError(f"ChatGPT 응답 형식이 예상과 다릅니다: {response_json}") from error
 
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
+def _call_chatgpt_rest(prompt: str, api_key: str, model: str) -> str:
+    payload = {
+        "model": model,
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        "temperature": 0,
+        "response_format": {"type": "json_object"},
+    }
+
+    request = urllib.request.Request(
+        url="https://api.openai.com/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            response_json = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        body = error.read().decode("utf-8", errors="replace")
+        raise ValueError(f"ChatGPT API HTTP 오류: {error.code}, {body}") from error
+    except urllib.error.URLError as error:
+        raise ValueError(f"ChatGPT API 연결 오류: {error}") from error
+
+    return _extract_text_from_chatgpt_response(response_json)
+
+
+def parse_user_command_with_llm(
+    user_text: str,
+    scene_objects: dict,
+    provider: LLMProvider = "gemini",
+) -> dict:
     prompt = build_prompt(user_text, scene_objects)
-    response_text = _call_gemini_rest(prompt, api_key, model)
+
+    if provider == "gemini":
+        response_text = _parse_with_gemini(prompt)
+    elif provider == "chatgpt":
+        response_text = _parse_with_chatgpt(prompt)
+    else:
+        raise ValueError(f"지원하지 않는 LLM 제공자입니다: {provider}")
 
     try:
         raw_json = json.loads(response_text)
@@ -186,3 +253,23 @@ def parse_user_command_with_llm(user_text: str, scene_objects: dict) -> dict:
         raise ValueError(f"LLM JSON schema 검증 실패: {raw_json}") from error
 
     return parsed.model_dump(exclude_none=True)
+
+
+def _parse_with_gemini(prompt: str) -> str:
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
+
+    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    return _call_gemini_rest(prompt, api_key, model)
+
+
+def _parse_with_chatgpt(prompt: str) -> str:
+    api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("CHATGPT_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "OPENAI_API_KEY 또는 CHATGPT_API_KEY 환경변수가 설정되지 않았습니다."
+        )
+
+    model = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
+    return _call_chatgpt_rest(prompt, api_key, model)
