@@ -9,3 +9,4 @@ logs/
 *.pt
 .env
 *.env
+.md
