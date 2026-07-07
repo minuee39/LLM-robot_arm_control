@@ -5,7 +5,7 @@ from isaacsim import SimulationApp
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--command",
-    default="red block on blue block",
+    default="red block on green block",
     help="Natural-language command understood by command_parser.py",
 )
 parser.add_argument("--keep-running", action="store_true", help="Keep Isaac Sim open after pick-place completes")
@@ -49,7 +49,7 @@ def create_camera():
     camera_prim.GetClippingRangeAttr().Set(Gf.Vec2f(0.01, 10.0))
 
     set_camera_view(
-        eye=[0.0, 0.95, 1.15],
+        eye=[0.0, 0.95, 2.9],
         target=[0.0, 0.32, 0.08],
         camera_prim_path=CAMERA_PRIM_PATH,
     )

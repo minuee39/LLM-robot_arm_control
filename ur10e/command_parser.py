@@ -3,7 +3,7 @@ import numpy as np
 
 # isaac sim 기준
 RELATION_OFFSETS = {
-    "on": np.array([0.0, 0.0, 0.06]),
+    "on": np.array([0.0, 0.0, 0.17]),
     "left_of": np.array([0.15, -0.15, 0.0]),
     "right_of": np.array([-0.15, 0.15, 0.0]),
     "front_of": np.array([+0.15, +0.15, 0.0]),

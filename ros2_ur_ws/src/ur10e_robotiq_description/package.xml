@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>ur10e_robotiq_description</name>
+  <version>0.0.0</version>
+  <description>UR10e with Robotiq 2F-140 description</description>
+  <maintainer email="minwoo@example.com">minwoo</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>pal_robotiq_description</exec_depend>
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,6 +1,4 @@
-.vscode/browse.vc.db
-.vscode/browse.vc.db-shm
-.vscode/browse.vc.db-wal
+.vscode/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -9,4 +7,30 @@ logs/
 *.pt
 .env
 *.env
-*.md
+
+# Local secrets
+ur10e/notion.env
+
+# ROS 2 / colcon generated artifacts
+**/build/
+**/install/
+**/log/
+*.deb
+
+# Training and generated datasets
+runs/
+ur10e/datasets/
+ur10e/models/
+
+# Local notes / superseded generated robot files
+ur10e/SeoSoon.txt
+ur10e/moveit2/
+
+# Generated files copied from installed ROS package overlays
+ros2_ur_ws/src/pal_robotiq_description/local_setup.*
+ros2_ur_ws/src/pal_robotiq_description/package.dsv
+ros2_ur_ws/src/pal_robotiq_description/environment/
+ros2_ur_ws/src/pal_robotiq_description/cmake/*Config*.cmake
+
+# Nested checkout metadata from vendored ROS packages
+**/.git/

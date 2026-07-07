@@ -1,5 +1,10 @@
 import argparse
 from pathlib import Path
+import sys
+
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+if str(PROJECT_DIR) not in sys.path:
+    sys.path.insert(0, str(PROJECT_DIR))
 
 import rclpy
 from rclpy.node import Node
@@ -11,14 +16,16 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 
+from vision.color_detector import detect_block_name
+
 
 class YoloCameraNode(Node):
-    def __init__(self, show_window=False):
+    def __init__(self, model_path, conf_threshold=0.4, show_window=False):
         super().__init__("yolo_camera_node")
 
         self.bridge = CvBridge()
-        model_path = Path(__file__).resolve().parents[1] / "models" / "yolov8n.pt"
         self.model = YOLO(str(model_path))
+        self.conf_threshold = conf_threshold
         self.show_window = show_window
 
         self.camera_info = None
@@ -57,6 +64,7 @@ class YoloCameraNode(Node):
             "YOLO camera node started. Waiting for /sim_camera/rgb, "
             "/sim_camera/depth, and /sim_camera/camera_info"
         )
+        self.get_logger().info(f"Using YOLO model: {model_path}")
 
     def status_callback(self):
         missing = []
@@ -120,7 +128,7 @@ class YoloCameraNode(Node):
             self.get_logger().error(f"RGB conversion failed: {e}")
             return
 
-        results = self.model(rgb, verbose=False)
+        results = self.model(rgb, conf=self.conf_threshold, verbose=False)
         self.last_detection_count = sum(len(result.boxes) for result in results)
         self.last_valid_depth_count = 0
         annotated = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
@@ -129,14 +137,22 @@ class YoloCameraNode(Node):
             boxes = result.boxes
 
             for box in boxes:
-                cls_id = int(box.cls[0])
                 conf = float(box.conf[0])
-                name = self.model.names[cls_id]
 
                 x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
                 u = int((x1 + x2) / 2)
                 v = int((y1 + y2) / 2)
                 x1_i, y1_i, x2_i, y2_i = map(int, (x1, y1, x2, y2))
+
+                image_height, image_width = rgb.shape[:2]
+                crop_x1 = int(np.clip(x1_i, 0, image_width - 1))
+                crop_x2 = int(np.clip(x2_i, 0, image_width))
+                crop_y1 = int(np.clip(y1_i, 0, image_height - 1))
+                crop_y2 = int(np.clip(y2_i, 0, image_height))
+                name = detect_block_name(
+                    rgb[crop_y1:crop_y2, crop_x1:crop_x2],
+                    color_space="RGB",
+                )
 
                 if v < 0 or v >= self.depth_image.shape[0]:
                     continue
@@ -204,6 +220,20 @@ class YoloCameraNode(Node):
 
 def main():
     parser = argparse.ArgumentParser()
+    default_model_path = Path(__file__).resolve().parents[2] / "runs" / "detect" / "train" / "weights" / "best.pt"
+    if not default_model_path.exists():
+        default_model_path = Path(__file__).resolve().parents[1] / "models" / "yolov8n.pt"
+    parser.add_argument(
+        "--model",
+        default=str(default_model_path),
+        help="Path to the trained YOLO model.",
+    )
+    parser.add_argument(
+        "--conf",
+        type=float,
+        default=0.4,
+        help="YOLO confidence threshold.",
+    )
     parser.add_argument(
         "--show",
         action="store_true",
@@ -212,7 +242,11 @@ def main():
     args, ros_args = parser.parse_known_args()
 
     rclpy.init(args=ros_args)
-    node = YoloCameraNode(show_window=args.show)
+    node = YoloCameraNode(
+        model_path=Path(args.model).expanduser().resolve(),
+        conf_threshold=args.conf,
+        show_window=args.show,
+    )
     try:
         rclpy.spin(node)
     finally:
