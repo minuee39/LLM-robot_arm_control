@@ -1,3 +1,4 @@
+import math
 import time
 from typing import Dict, Iterable, List
 
@@ -28,10 +29,31 @@ MOVEIT_TO_ISAAC = {
 }
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
 COMMAND_PERIOD_SEC = 0.01
+REVOLUTE_JOINTS = set(ARM_JOINTS)
 
 
 def duration_to_sec(duration) -> float:
     return float(duration.sec) + float(duration.nanosec) * 1e-9
+
+
+def nearest_equivalent_angle(current: float, target: float) -> float:
+    delta = target - current
+    shortest_delta = math.atan2(math.sin(delta), math.cos(delta))
+    return current + shortest_delta
+
+
+def unwrap_revolute_targets(
+    joint_names: Iterable[str],
+    current_positions: Iterable[float],
+    target_positions: Iterable[float],
+) -> List[float]:
+    unwrapped = []
+    for joint_name, current, target in zip(joint_names, current_positions, target_positions):
+        if joint_name in REVOLUTE_JOINTS:
+            unwrapped.append(nearest_equivalent_angle(float(current), float(target)))
+        else:
+            unwrapped.append(float(target))
+    return unwrapped
 
 
 class IsaacMoveItActionBridge(Node):
@@ -123,7 +145,11 @@ class IsaacMoveItActionBridge(Node):
 
         for point in trajectory.points:
             target_time = duration_to_sec(point.time_from_start)
-            target_positions = list(point.positions)
+            target_positions = unwrap_revolute_targets(
+                trajectory.joint_names,
+                previous_positions,
+                point.positions,
+            )
 
             if target_time <= previous_time:
                 self.publish_command(trajectory.joint_names, target_positions)

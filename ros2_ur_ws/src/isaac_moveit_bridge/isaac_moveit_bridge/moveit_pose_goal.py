@@ -5,6 +5,8 @@ import rclpy
 from geometry_msgs.msg import Pose
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import (
+    AllowedCollisionEntry,
+    AttachedCollisionObject,
     Constraints,
     CollisionObject,
     JointConstraint,
@@ -126,6 +128,9 @@ def build_goal(args: argparse.Namespace, tool0_target: Pose) -> MoveGroup.Goal:
         request.path_constraints.joint_constraints.append(
             make_shoulder_lift_guard(args)
         )
+    request.path_constraints.joint_constraints.extend(
+        getattr(args, "path_joint_constraints", [])
+    )
 
     goal.planning_options.plan_only = not args.execute
     goal.planning_options.look_around = False
@@ -138,6 +143,16 @@ def build_goal(args: argparse.Namespace, tool0_target: Pose) -> MoveGroup.Goal:
         goal.planning_options.planning_scene_diff.world.collision_objects.append(
             make_floor_collision_object(args)
         )
+    goal.planning_options.planning_scene_diff.world.collision_objects.extend(
+        getattr(args, "collision_objects", [])
+    )
+    goal.planning_options.planning_scene_diff.robot_state.attached_collision_objects.extend(
+        getattr(args, "attached_collision_objects", [])
+    )
+    apply_allowed_collision_pairs(
+        goal,
+        getattr(args, "allowed_collision_pairs", []),
+    )
     return goal
 
 
@@ -202,6 +217,73 @@ def make_floor_collision_object(args: argparse.Namespace) -> CollisionObject:
     floor.primitives.append(box)
     floor.primitive_poses.append(pose)
     return floor
+
+
+def apply_allowed_collision_pairs(
+    goal: MoveGroup.Goal,
+    allowed_collision_pairs: list[tuple[str, str]],
+) -> None:
+    if not allowed_collision_pairs:
+        return
+
+    matrix = goal.planning_options.planning_scene_diff.allowed_collision_matrix
+    names: list[str] = []
+    for first, second in allowed_collision_pairs:
+        if first not in names:
+            names.append(first)
+        if second not in names:
+            names.append(second)
+
+    matrix.entry_names = names
+    matrix.entry_values = []
+    for _ in names:
+        entry = AllowedCollisionEntry()
+        entry.enabled = [False] * len(names)
+        matrix.entry_values.append(entry)
+
+    name_to_index = {name: index for index, name in enumerate(names)}
+    for first, second in allowed_collision_pairs:
+        first_index = name_to_index[first]
+        second_index = name_to_index[second]
+        matrix.entry_values[first_index].enabled[second_index] = True
+        matrix.entry_values[second_index].enabled[first_index] = True
+
+
+def make_box_collision_object(
+    frame_id: str,
+    object_id: str,
+    pose: Pose,
+    dimensions: tuple[float, float, float],
+    operation: int = CollisionObject.ADD,
+) -> CollisionObject:
+    collision_object = CollisionObject()
+    collision_object.header.frame_id = frame_id
+    collision_object.id = object_id
+    collision_object.operation = operation
+
+    if operation == CollisionObject.ADD:
+        box = SolidPrimitive()
+        box.type = SolidPrimitive.BOX
+        box.dimensions = list(dimensions)
+        collision_object.primitives.append(box)
+        collision_object.primitive_poses.append(pose)
+
+    return collision_object
+
+
+def make_attached_box_collision_object(
+    frame_id: str,
+    object_id: str,
+    link_name: str,
+    pose: Pose,
+    dimensions: tuple[float, float, float],
+    touch_links: list[str],
+) -> AttachedCollisionObject:
+    attached = AttachedCollisionObject()
+    attached.link_name = link_name
+    attached.touch_links = touch_links
+    attached.object = make_box_collision_object(frame_id, object_id, pose, dimensions)
+    return attached
 
 
 def parse_args(args: Optional[list[str]] = None) -> argparse.Namespace:

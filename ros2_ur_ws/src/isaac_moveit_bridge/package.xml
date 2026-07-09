@@ -13,6 +13,7 @@
   <depend>rclpy</depend>
   <depend>shape_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>tf2_msgs</depend>
   <depend>trajectory_msgs</depend>
 
   <buildtool_depend>ament_python</buildtool_depend>

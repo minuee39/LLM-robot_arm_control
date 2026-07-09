@@ -23,6 +23,7 @@ setup(
             "joint_state_logger = isaac_moveit_bridge.joint_state_logger:main",
             "moveit_pick_place_demo = isaac_moveit_bridge.moveit_pick_place_demo:main",
             "moveit_pose_goal = isaac_moveit_bridge.moveit_pose_goal:main",
+            "moveit_target_follow = isaac_moveit_bridge.moveit_target_follow:main",
             "tcp_pose_test = isaac_moveit_bridge.tcp_pose_test:main",
         ],
     },
