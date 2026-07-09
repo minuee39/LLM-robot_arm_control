@@ -27,6 +27,7 @@ MOVEIT_TO_ISAAC = {
     MOVEIT_GRIPPER_JOINT: ISAAC_GRIPPER_JOINT,
 }
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
+COMMAND_PERIOD_SEC = 0.01
 
 
 def duration_to_sec(duration) -> float:
@@ -117,11 +118,43 @@ class IsaacMoveItActionBridge(Node):
             return result
 
         start_time = time.monotonic()
+        previous_time = 0.0
+        previous_positions = [self.latest_positions[name] for name in trajectory.joint_names]
+
         for point in trajectory.points:
-            wait_until = start_time + duration_to_sec(point.time_from_start)
-            while time.monotonic() < wait_until:
-                time.sleep(0.002)
-            self.publish_command(trajectory.joint_names, point.positions)
+            target_time = duration_to_sec(point.time_from_start)
+            target_positions = list(point.positions)
+
+            if target_time <= previous_time:
+                self.publish_command(trajectory.joint_names, target_positions)
+                previous_time = target_time
+                previous_positions = target_positions
+                continue
+
+            while True:
+                if goal_handle.is_cancel_requested:
+                    goal_handle.canceled()
+                    result = FollowJointTrajectory.Result()
+                    result.error_code = FollowJointTrajectory.Result.SUCCESSFUL
+                    result.error_string = "Trajectory canceled"
+                    return result
+
+                elapsed = time.monotonic() - start_time
+                if elapsed >= target_time:
+                    break
+
+                ratio = (elapsed - previous_time) / (target_time - previous_time)
+                ratio = max(0.0, min(1.0, ratio))
+                interpolated_positions = [
+                    start + (target - start) * ratio
+                    for start, target in zip(previous_positions, target_positions)
+                ]
+                self.publish_command(trajectory.joint_names, interpolated_positions)
+                time.sleep(COMMAND_PERIOD_SEC)
+
+            self.publish_command(trajectory.joint_names, target_positions)
+            previous_time = target_time
+            previous_positions = target_positions
 
         goal_handle.succeed()
         result = FollowJointTrajectory.Result()

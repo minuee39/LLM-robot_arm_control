@@ -1,15 +1,6 @@
-from isaacsim import SimulationApp
-
-simulation_app = SimulationApp({"headless": False})
-
 import numpy as np
 
-from controller.pick_place import PickPlaceController
-from isaacsim.core.api import World
-from isaacsim.core.api.objects import DynamicCuboid
-from tasks.pick_place import PickPlace
 from llm_to_json import parse_user_command_with_llm, select_llm_provider
-
 
 from command_parser import (
     parse_user_command,
@@ -25,6 +16,8 @@ from scene_config import (
 from vision.mock_vision import MockVision
 from vision.scene_objects import detections_to_scene_objects
 
+simulation_app = None
+
 # =========================
 # 1. 기본 설정
 # =========================
@@ -38,7 +31,8 @@ try:
     llm_provider = select_llm_provider(USE_GEMINI_API, USE_CHATGPT_API)
 except ValueError as error:
     print("[설정 오류]", error)
-    simulation_app.close()
+    if simulation_app is not None:
+        simulation_app.close()
     raise SystemExit from error
 
 vision = MockVision()
@@ -96,10 +90,12 @@ def wait_for_valid_command() -> dict:
 
     for attempt in range(max_retry):
         try:
-            user_text = input("로봇 명령을 입력하세요: ")
+            print("로봇 명령을 입력하세요: ", end="", flush=True)
+            user_text = input()
 
             if user_text.strip().lower() in ["종료", "exit", "quit"]:
-                simulation_app.close()
+                if simulation_app is not None:
+                    simulation_app.close()
                 raise SystemExit
 
             new_command = parse_command(user_text)
@@ -125,6 +121,15 @@ def wait_for_valid_command() -> dict:
 
 
 command = wait_for_valid_command()
+
+from isaacsim import SimulationApp
+
+simulation_app = SimulationApp({"headless": False})
+
+from controller.pick_place import PickPlaceController
+from isaacsim.core.api import World
+from isaacsim.core.api.objects import DynamicCuboid
+from tasks.pick_place import PickPlace
 
 # =========================
 # 3. World 및 PickPlace Task 생성
