@@ -2,25 +2,27 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, TimerAction
+from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
-    # planning_context
-    moveit_config = MoveItConfigsBuilder(
-        "ur10e_robotiq_2f140",
-        package_name="ur10e_robotiq_2f140_moveit_config",
-    ).robot_description(
-        file_path="config/ur10e_robotiq_2f140.urdf.xacro",
-    ).robot_description_semantic(
-        file_path="config/ur10e_robotiq_2f140.srdf",
-    ).to_moveit_configs()
+    moveit_config = (
+        MoveItConfigsBuilder(
+            "ur10e_robotiq_2f140",
+            package_name="ur10e_robotiq_2f140_moveit_config",
+        )
+        .robot_description(file_path="config/ur10e_robotiq_2f140.urdf.xacro")
+        .robot_description_semantic(file_path="config/ur10e_robotiq_2f140.srdf")
+        .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .to_moveit_configs()
+    )
 
-    moveit_config_pkg = get_package_share_directory("ur10e_robotiq_2f140_moveit_config")
+    moveit_config_pkg = get_package_share_directory(
+        "ur10e_robotiq_2f140_moveit_config"
+    )
 
-    # Load ExecuteTaskSolutionCapability so we can execute found solutions in simulation.
     move_group_capabilities = {
         "capabilities": "move_group/ExecuteTaskSolutionCapability",
     }
@@ -38,9 +40,9 @@ def generate_launch_description():
 
     # RViz
     rviz_config_file = os.path.join(
-        get_package_share_directory("mtc_tutorial"),
-        "launch",
-        "mtc.rviz",
+        moveit_config_pkg,
+        "config",
+        "moveit.rviz",
     )
     rviz_node = Node(
         package="rviz2",
@@ -51,6 +53,9 @@ def generate_launch_description():
         parameters=[
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            moveit_config.planning_pipelines,
+            moveit_config.joint_limits,
         ],
     )
 
@@ -69,9 +74,7 @@ def generate_launch_description():
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="both",
-        parameters=[
-            moveit_config.robot_description,
-        ],
+        parameters=[moveit_config.robot_description],
     )
 
     # ros2_control using mock hardware from the generated URDF.
@@ -102,16 +105,6 @@ def generate_launch_description():
             )
         ]
 
-    # MTC Demo node
-    pick_place_demo = Node(
-        package="mtc_tutorial",
-        executable="mtc_tutorial",
-        output="screen",
-        parameters=[
-            moveit_config.to_dict(),
-        ],
-    )
-
     return LaunchDescription(
         [
             rviz_node,
@@ -121,7 +114,4 @@ def generate_launch_description():
             ros2_control_node,
         ]
         + load_controllers
-        + [
-            TimerAction(period=3.0, actions=[pick_place_demo]),
-        ]
     )
