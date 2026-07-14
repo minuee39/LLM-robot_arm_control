@@ -1,0 +1,58 @@
+# Terminal 1: Isaac Sim bridge with robot, blocks, command subscribe, joint feedback publish
+/home/minwoo/Desktop/LLM/ur10e/scripts/run_isaac_moveit_bridge.sh
+
+# Terminal 2: MoveIt controller action bridge
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 run isaac_moveit_bridge action_bridge
+
+# Terminal 3: MoveIt / RViz / move_group
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 launch ur10e_robotiq_2f140_moveit_config isaac_demo.launch.py
+
+# Terminal 4: pick-place demo, plan-only first
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 run isaac_moveit_bridge moveit_pick_place_demo
+
+# Execute after plan-only succeeds
+ros2 run isaac_moveit_bridge moveit_pick_place_demo --execute
+
+
+
+# Watch Isaac Sim pick-and-place in RViz
+# This uses the same /sim_camera topics from pick_place_with_camera.py.
+# Start YOLO only if you also want the /yolo/annotated panel in RViz.
+
+# Terminal A: run Isaac Sim pick-and-place and keep the scene open
+cd /home/minwoo/Desktop/LLM
+./ur10e/scripts/run_pick_place_with_camera.sh \
+  --command "red block on green block" \
+  --keep-running
+
+# Terminal B optional: publish YOLO/OpenCV annotated image for RViz
+cd /home/minwoo/Desktop/LLM
+python3 ur10e/tests/test_yolo_camera_node.py --conf 0.4
+
+# Terminal C: open RViz camera dashboard
+cd /home/minwoo/Desktop/LLM
+./ur10e/scripts/run_sim_camera_rviz.sh
+
+# RViz observation flow
+# 1. pick_place_with_camera.py publishes /sim_camera/rgb, /sim_camera/depth,
+#    /sim_camera/camera_info, and /sim_camera/points while the robot moves.
+# 2. Optional test_yolo_camera_node.py subscribes to /sim_camera topics and publishes
+#    /yolo/annotated after YOLO bbox + OpenCV HSV color labeling.
+# 3. run_sim_camera_rviz.sh publishes a static world -> sim_camera TF and opens
+#    ur10e/config/rviz/sim_camera.rviz.
+# 4. RViz panels show RGB Image, Depth Image, Sim Camera Points, Camera View,
+#    and YOLO Annotated if the YOLO node is running.
+# 5. Use RGB Image to watch raw pick-place, Depth Image/Points to check geometry,
+#    and YOLO Annotated to verify bbox, center point, block label, and camera XYZ.

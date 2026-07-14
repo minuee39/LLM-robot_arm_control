@@ -22,8 +22,7 @@ runs/
 ur10e/datasets/
 ur10e/models/
 
-# Local notes / superseded generated robot files
-ur10e/SeoSoon.txt
+# Superseded generated robot files
 ur10e/moveit2/
 
 # Generated files copied from installed ROS package overlays
