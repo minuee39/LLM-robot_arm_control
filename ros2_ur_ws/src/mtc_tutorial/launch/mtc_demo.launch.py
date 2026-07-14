@@ -1,31 +1,32 @@
 import os
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def generate_launch_description():
     # planning_context
-    moveit_config = MoveItConfigsBuilder(
-        "ur10e_robotiq_2f140",
-        package_name="ur10e_robotiq_2f140_moveit_config",
-    ).robot_description(
-        file_path="config/ur10e_robotiq_2f140.urdf.xacro",
-    ).robot_description_semantic(
-        file_path="config/ur10e_robotiq_2f140.srdf",
-    ).to_moveit_configs()
+    moveit_config = (
+        MoveItConfigsBuilder(
+            "ur10e_robotiq_2f140",
+            package_name="ur10e_robotiq_2f140_moveit_config",
+        )
+        .robot_description(file_path="config/ur10e_robotiq_2f140.urdf.xacro")
+        .robot_description_semantic(file_path="config/ur10e_robotiq_2f140.srdf")
+        .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .to_moveit_configs()
+    )
 
     moveit_config_pkg = get_package_share_directory("ur10e_robotiq_2f140_moveit_config")
 
-    # Load ExecuteTaskSolutionCapability so we can execute found solutions in simulation.
+    # Load  ExecuteTaskSolutionCapability so we can execute found solutions in simulation
     move_group_capabilities = {
-        "capabilities": "move_group/ExecuteTaskSolutionCapability",
+        "capabilities": "move_group/ExecuteTaskSolutionCapability"
     }
 
-    # Start the actual move_group node/action server.
+    # Start the actual move_group node/action server
     run_move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
@@ -74,7 +75,7 @@ def generate_launch_description():
         ],
     )
 
-    # ros2_control using mock hardware from the generated URDF.
+    # ros2_control using FakeSystem as hardware
     ros2_controllers_path = os.path.join(
         moveit_config_pkg,
         "config",

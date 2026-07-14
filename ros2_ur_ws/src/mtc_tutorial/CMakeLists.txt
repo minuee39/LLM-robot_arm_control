@@ -36,7 +36,9 @@ target_include_directories(mtc_tutorial PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(mtc_tutorial PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(mtc_tutorial ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+ament_target_dependencies(
+  mtc_tutorial ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 install(TARGETS mtc_tutorial
   DESTINATION lib/${PROJECT_NAME})
@@ -45,6 +47,7 @@ install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  find_package(moveit_visual_tools REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)

@@ -19,15 +19,15 @@
         <joint name="robotiq_finger_joint" value="0.001"/>
     </group_state>
     <group_state name="close" group="gripper">
-        <joint name="robotiq_finger_joint" value="0.699"/>
+        <joint name="robotiq_finger_joint" value="0.450"/>
     </group_state>
     <group_state name="ready" group="ur_manipulator">
         <joint name="shoulder_pan_joint" value="0"/>
-        <joint name="shoulder_lift_joint" value="0"/>
-        <joint name="elbow_joint" value="0"/>
-        <joint name="wrist_1_joint" value="0"/>
-        <joint name="wrist_2_joint" value="0"/>
-        <joint name="wrist_3_joint" value="0"/>
+        <joint name="shoulder_lift_joint" value="-1.57"/>
+        <joint name="elbow_joint" value="2.0"/>
+        <joint name="wrist_1_joint" value="-1.57"/>
+        <joint name="wrist_2_joint" value="1.57"/>
+        <joint name="wrist_3_joint" value="3.14"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="robotiq_2f140" parent_link="tool0" group="gripper" parent_group="ur_manipulator"/>
