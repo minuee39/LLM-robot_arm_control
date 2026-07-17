@@ -18,7 +18,6 @@ simulation_app = SimulationApp(
     }
 )
 
-import numpy as np
 import omni.graph.core as og
 import omni.timeline
 import omni.usd
@@ -29,10 +28,12 @@ from isaacsim.core.api.objects import DynamicCuboid
 from isaacsim.core.utils.extensions import enable_extension
 from isaacsim.core.utils.viewports import set_camera_view
 from pxr import Gf, UsdGeom
-from scene_config import BLOCK_SIZE, OBJECT_COLORS, OBJECT_POSITIONS, build_scene_objects
+from scene_config import BLOCK_SIZE, OBJECT_COLORS, OBJECT_POSITIONS
 from tasks.pick_place import PickPlace
 
-from command_parser import command_to_target_position, parse_user_command, validate_command
+from command_parser import parse_user_command_with_memory, validate_command
+from grasp_policy import FixedGraspPolicy, GraspRequest
+from scene_manager import SceneManager
 
 
 TASK_NAME = "ur10e_pick_place_camera"
@@ -115,10 +116,12 @@ def main():
     enable_extension("isaacsim.ros2.bridge")
     simulation_app.update()
 
-    command = parse_user_command(args.command)
-    scene_objects = build_scene_objects()
+    scene_manager = SceneManager.from_defaults()
+    command = parse_user_command_with_memory(args.command, scene_manager.memory)
+    scene_objects = scene_manager.as_command_scene()
     validate_command(command, scene_objects)
-    target_position = command_to_target_position(command, scene_objects)
+    target_position = scene_manager.resolve_target_position(command)
+    grasp_policy = FixedGraspPolicy()
 
     print("[INFO] Pick-place command:", command)
     print("[INFO] Target position:", target_position)
@@ -168,16 +171,28 @@ def main():
 
             pick_object = world.scene.get_object(command["pick_object"])
             pick_position, _ = pick_object.get_world_pose()
+            scene_manager.update_object(command["pick_object"], pick_position)
+            grasp_action = grasp_policy.predict(
+                GraspRequest(
+                    object_name=command["pick_object"],
+                    object_pose=pick_position,
+                    target_position=target_position,
+                    object_size=scene_manager.get_object(command["pick_object"]).size,
+                    object_type=command["pick_object"],
+                    robot_state={"joint_positions": robot.get_joint_positions()},
+                )
+            )
 
             actions = controller.forward(
                 picking_position=pick_position,
                 placing_position=target_position,
                 current_joint_positions=robot.get_joint_positions(),
-                end_effector_offset=np.array([0.0, 0.0, 0.20]),
+                end_effector_offset=grasp_action.end_effector_offset,
             )
 
             if controller.is_done():
                 if not done_printed:
+                    scene_manager.apply_pick_place_result(command, target_position)
                     print("[DONE] Pick-place completed")
                     done_printed = True
                     if not args.keep_running:

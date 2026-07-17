@@ -1,12 +1,13 @@
-import numpy as np
-
 from llm_to_json import parse_user_command_with_llm, select_llm_provider
 
+from command_server import RobotCommandServer
 from command_parser import (
-    parse_user_command,
+    MEMORY_OBJECT_ALIASES,
+    parse_user_command_with_memory,
     validate_command,
-    command_to_target_position,
 )
+from grasp_policy import FixedGraspPolicy, GraspRequest
+from scene_manager import SceneManager
 
 from scene_config import (
     BLOCK_SIZE,
@@ -14,7 +15,6 @@ from scene_config import (
     OBJECT_COLORS,
 )
 from vision.mock_vision import MockVision
-from vision.scene_objects import detections_to_scene_objects
 
 simulation_app = None
 
@@ -36,11 +36,8 @@ except ValueError as error:
     raise SystemExit from error
 
 vision = MockVision()
-
-
-def get_scene_objects_from_vision() -> dict:
-    detections = vision.detect_objects()
-    return detections_to_scene_objects(detections)
+scene_manager = SceneManager.from_defaults()
+grasp_policy = FixedGraspPolicy()
 
 
 def update_object_positions_from_sim(world, object_names) -> dict:
@@ -52,22 +49,25 @@ def update_object_positions_from_sim(world, object_names) -> dict:
     return positions
 
 
-scene_objects = get_scene_objects_from_vision()
+scene_manager.update_from_detections(vision.detect_objects())
+scene_objects = scene_manager.as_command_scene()
 
 # =========================
 # 2. 사용자 명령 입력 및 검증
 # =========================
 
-max_retry = 3
 command = None
 target_position = None
-picking_position = None
 
 
 def parse_command(user_text: str) -> dict:
+    if any(alias in user_text for alias in MEMORY_OBJECT_ALIASES):
+        print("[Parser] memory-aware 로컬 명령 파서 사용")
+        return parse_user_command_with_memory(user_text, scene_manager.memory)
+
     if llm_provider is None:
         print("[Parser] 로컬 명령 파서 사용")
-        return parse_user_command(user_text)
+        return parse_user_command_with_memory(user_text, scene_manager.memory)
 
     try:
         command = parse_user_command_with_llm(
@@ -82,45 +82,22 @@ def parse_command(user_text: str) -> dict:
         print(f"[LLM 경고] {llm_provider}를 사용할 수 없어 로컬 명령 파서로 전환합니다.")
         print("[LLM 오류 내용]", error)
         print("[Parser] 로컬 명령 파서 사용")
-        return parse_user_command(user_text)
+        return parse_user_command_with_memory(user_text, scene_manager.memory)
 
 
-def wait_for_valid_command() -> dict:
+def build_valid_command(user_text: str) -> dict:
     global scene_objects, target_position
 
-    for attempt in range(max_retry):
-        try:
-            print("로봇 명령을 입력하세요: ", end="", flush=True)
-            user_text = input()
+    new_command = parse_command(user_text)
+    scene_manager.update_from_detections(vision.detect_objects())
+    current_scene_objects = scene_manager.as_command_scene()
+    validate_command(new_command, current_scene_objects)
 
-            if user_text.strip().lower() in ["종료", "exit", "quit"]:
-                if simulation_app is not None:
-                    simulation_app.close()
-                raise SystemExit
+    scene_objects = current_scene_objects
+    target_position = scene_manager.resolve_target_position(new_command)
 
-            new_command = parse_command(user_text)
-            current_scene_objects = get_scene_objects_from_vision()
-            validate_command(new_command, current_scene_objects)
-
-            scene_objects = current_scene_objects
-            target_position = command_to_target_position(command=new_command, scene_objects=scene_objects)
-
-            print("Parsed command:", new_command)
-            return new_command
-
-        except ValueError as e:
-            print("[명령 오류]", e)
-
-            remaining = max_retry - attempt - 1
-            if remaining > 0:
-                print(f"다시 입력해주세요. 남은 시도 횟수: {remaining}")
-            else:
-                raise
-
-    raise ValueError("명령 입력 실패")
-
-
-command = wait_for_valid_command()
+    print("Parsed command:", new_command)
+    return new_command
 
 from isaacsim import SimulationApp
 
@@ -156,9 +133,6 @@ my_world.add_task(my_task)
 # =========================
 # 4. 기준 object 추가
 # =========================
-# 현재는 red_block / blue_block을 기준 물체로 사용
-# 나중에 실제로 집을 물체로 쓰려면 picking_position도 command 기반으로 바꿔야 함
-
 for object_name, object_pos in OBJECT_POSITIONS.items():
     my_world.scene.add(
         DynamicCuboid(
@@ -188,6 +162,16 @@ my_controller = PickPlaceController(
 
 articulation_controller = my_ur10e.get_articulation_controller()
 
+command_server = RobotCommandServer()
+command_server.start()
+command_host, command_port = command_server.address
+
+print("[READY] Isaac scene loaded. Waiting for commands from another terminal.")
+print(f"[READY] Command server: {command_host}:{command_port}")
+print("[READY] Example:")
+print(f'  python3 scripts/send_robot_command.py "빨간 블럭을 파란 블럭 옆에 둬"')
+print("  python3 scripts/send_robot_command.py")
+
 reset_needed = False
 done_printed = False
 
@@ -210,16 +194,46 @@ while simulation_app.is_running():
             my_controller.reset()
             done_printed = False
 
+        if command is None:
+            incoming_command = command_server.get_next_command()
+            if incoming_command is None:
+                continue
+
+            if incoming_command.strip().lower() in {"종료", "exit", "quit"}:
+                print("[INFO] 종료 명령을 받았습니다.")
+                break
+
+            try:
+                command = build_valid_command(incoming_command)
+                my_controller.reset()
+                done_printed = False
+            except ValueError as error:
+                print("[명령 오류]", error)
+                command = None
+                target_position = None
+                continue
+
         pick_object = my_world.scene.get_object(command["pick_object"])
 
         pick_position, _ = pick_object.get_world_pose()
+        scene_manager.update_object(command["pick_object"], pick_position)
         placing_position = target_position
+        grasp_action = grasp_policy.predict(
+            GraspRequest(
+                object_name=command["pick_object"],
+                object_pose=pick_position,
+                target_position=placing_position,
+                object_size=scene_manager.get_object(command["pick_object"]).size,
+                object_type=command["pick_object"],
+                robot_state={"joint_positions": my_ur10e.get_joint_positions()},
+            )
+        )
 
         actions = my_controller.forward(
             picking_position=pick_position,
             placing_position=placing_position,
             current_joint_positions=my_ur10e.get_joint_positions(),
-            end_effector_offset=np.array([0, 0, 0.20]),
+            end_effector_offset=grasp_action.end_effector_offset,
         )
 
         if my_controller.is_done():
@@ -233,13 +247,16 @@ while simulation_app.is_running():
                         OBJECT_POSITIONS.keys(),
                     )
                     vision.update_object_positions(runtime_object_positions)
-                    scene_objects = get_scene_objects_from_vision()
+                    scene_manager.update_from_detections(vision.detect_objects())
+                    scene_manager.apply_pick_place_result(command, target_position)
+                    scene_objects = scene_manager.as_command_scene()
 
-                    command = wait_for_valid_command()
+                    command = None
+                    target_position = None
                     my_controller.reset()
                     done_printed = False
                 except ValueError:
-                    print("새 명령을 받지 못해 종료합니다.")
+                    print("작업 완료 후 scene 상태를 갱신하지 못해 종료합니다.")
                     simulation_app.close()
                     raise SystemExit
 
@@ -250,4 +267,5 @@ while simulation_app.is_running():
     if my_world.is_stopped():
         reset_needed = True
 
+command_server.shutdown()
 simulation_app.close()

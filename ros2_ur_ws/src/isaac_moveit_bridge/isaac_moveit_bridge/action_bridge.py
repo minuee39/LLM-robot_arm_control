@@ -30,6 +30,15 @@ MOVEIT_TO_ISAAC = {
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
 COMMAND_PERIOD_SEC = 0.01
 REVOLUTE_JOINTS = set(ARM_JOINTS)
+INITIAL_MOVEIT_POSITIONS = {
+    "shoulder_pan_joint": 0.0,
+    "shoulder_lift_joint": -1.57,
+    "elbow_joint": 2.0,
+    "wrist_1_joint": -1.57,
+    "wrist_2_joint": 1.57,
+    "wrist_3_joint": 3.14,
+    "robotiq_finger_joint": 0.01,
+}
 
 
 def duration_to_sec(duration) -> float:
@@ -69,7 +78,10 @@ class IsaacMoveItActionBridge(Node):
         )
         self.joint_state_timer = self.create_timer(0.02, self.publish_moveit_joint_states)
 
-        self.latest_positions: Dict[str, float] = {joint_name: 0.0 for joint_name in MOVEIT_JOINTS}
+        self.latest_positions: Dict[str, float] = {
+            joint_name: INITIAL_MOVEIT_POSITIONS[joint_name]
+            for joint_name in MOVEIT_JOINTS
+        }
         self.latest_velocities: Dict[str, float] = {joint_name: 0.0 for joint_name in MOVEIT_JOINTS}
 
         self.arm_server = ActionServer(

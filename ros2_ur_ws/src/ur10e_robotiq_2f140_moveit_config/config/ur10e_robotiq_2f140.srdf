@@ -15,6 +15,10 @@
     <group name="gripper">
         <joint name="robotiq_finger_joint"/>
     </group>
+    <group name="ur_manipulator_with_gripper">
+        <group name="ur_manipulator"/>
+        <group name="gripper"/>
+    </group>
     <group_state name="open" group="gripper">
         <joint name="robotiq_finger_joint" value="0.001"/>
     </group_state>

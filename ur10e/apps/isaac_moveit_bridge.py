@@ -3,6 +3,7 @@ import os
 import sys
 import rclpy
 
+import numpy as np
 from sensor_msgs.msg import JointState
 from isaacsim import SimulationApp
 
@@ -37,7 +38,16 @@ from isaacsim.core.api import World
 from isaacsim.core.api.objects import DynamicCuboid
 from isaacsim.core.utils.extensions import enable_extension
 from pxr import UsdPhysics
-from scene_config import BLOCK_SIZE, OBJECT_COLORS, OBJECT_POSITIONS
+from scene_config import (
+    BLOCK_SIZE,
+    MTC_OBJECT_COLOR,
+    MTC_OBJECT_NAME,
+    MTC_OBJECT_POSITION,
+    MTC_OBJECT_SIZE,
+    OBJECT_COLORS,
+    OBJECT_POSITIONS,
+    UR10E_INITIAL_JOINT_POSITIONS,
+)
 from tasks.pick_place import PickPlace
 
 
@@ -93,7 +103,37 @@ def get_robot_joint_names(robot):
     raise RuntimeError("Could not read joint names from Isaac articulation")
 
 
+def set_named_joint_positions(robot, target_positions: dict[str, float]) -> None:
+    joint_names = get_robot_joint_names(robot)
+    joint_indices = []
+    positions = []
+
+    for joint_name, position in target_positions.items():
+        if joint_name not in joint_names:
+            print(f"[WARN] Initial joint '{joint_name}' was not found in Isaac joints", flush=True)
+            continue
+
+        joint_indices.append(joint_names.index(joint_name))
+        positions.append(float(position))
+
+    if not positions:
+        raise RuntimeError("None of the configured initial joints exist on the Isaac robot")
+
+    robot.set_joint_positions(np.array(positions, dtype=float), joint_indices=np.array(joint_indices, dtype=np.int32))
+    print("[INFO] Applied initial joints:", target_positions, flush=True)
+
+
 def add_blocks(world: World) -> None:
+    world.scene.add(
+        DynamicCuboid(
+            prim_path=f"/World/{MTC_OBJECT_NAME}",
+            name=MTC_OBJECT_NAME,
+            position=MTC_OBJECT_POSITION,
+            scale=MTC_OBJECT_SIZE,
+            color=MTC_OBJECT_COLOR,
+        )
+    )
+
     for object_name, object_position in OBJECT_POSITIONS.items():
         world.scene.add(
             DynamicCuboid(
@@ -118,6 +158,7 @@ def main() -> None:
     task_params = world.get_task(TASK_NAME).get_params()
     robot_name = task_params["robot_name"]["value"]
     robot = world.scene.get_object(robot_name)
+    set_named_joint_positions(robot, UR10E_INITIAL_JOINT_POSITIONS)
     
     rclpy.init(args=None)
     state_node =rclpy.create_node("isaac_joint_state_feedback")
@@ -134,6 +175,7 @@ def main() -> None:
 
     print("[INFO] Isaac MoveIt bridge graph is running", flush=True)
     print(f"[INFO] Robot prim:   {robot_prim_path}", flush=True)
+    print("[INFO] MTC object:", MTC_OBJECT_NAME, MTC_OBJECT_POSITION, flush=True)
     print("[INFO] Blocks:", ", ".join(OBJECT_POSITIONS.keys()), flush=True)
     
 

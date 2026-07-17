@@ -12,10 +12,78 @@ RELATION_OFFSETS = {
 }
 
 SUPPORTED_ACTIONS = {"pick_place"}
-SUPPORTED_OBJECTS = {"red_block", "blue_block", "green_block"}
+SUPPORTED_OBJECTS = {"object", "red_block", "blue_block", "green_block"}
 SUPPORTED_RELATIONS = {"on", "left_of", "right_of", "front_of", "behind", "near"}
 
 MIN_CONFIDENCE = 0.7
+
+OBJECT_ALIASES = {
+    "파란 블럭": "blue_block",
+    "파란 블록": "blue_block",
+    "파란색 블럭": "blue_block",
+    "파란색 블록": "blue_block",
+    "blue block": "blue_block",
+    "blue_block": "blue_block",
+    "blue": "blue_block",
+
+    "빨간 블럭": "red_block",
+    "빨간 블록": "red_block",
+    "빨간색 블럭": "red_block",
+    "빨간색 블록": "red_block",
+    "red block": "red_block",
+    "red_block": "red_block",
+    "red": "red_block",
+
+    "초록 블럭": "green_block",
+    "초록 블록": "green_block",
+    "초록색 블럭": "green_block",
+    "초록색 블록": "green_block",
+    "green block": "green_block",
+    "green_block": "green_block",
+    "green": "green_block",
+
+    "큐브": "cube",
+    "cube": "cube",
+
+    "목표": "target",
+    "target": "target",
+
+    "그릇": "bowl",
+    "보울": "bowl",
+    "bowl": "bowl",
+
+    "물체": "object",
+    "오브젝트": "object",
+    "노란 물체": "object",
+    "노란 오브젝트": "object",
+    "노란 블럭": "object",
+    "노란 블록": "object",
+    "노란색 블럭": "object",
+    "노란색 블록": "object",
+    "yellow object": "object",
+    "yellow block": "object",
+    "object": "object",
+}
+
+MEMORY_OBJECT_ALIASES = {
+    "방금 옮긴 블럭": "last_moved_object",
+    "방금 옮긴 블록": "last_moved_object",
+    "마지막으로 옮긴 블럭": "last_moved_object",
+    "마지막으로 옮긴 블록": "last_moved_object",
+    "방금 옮긴 것": "last_moved_object",
+    "마지막으로 옮긴 것": "last_moved_object",
+
+    "방금 집은 블럭": "last_picked_object",
+    "방금 집은 블록": "last_picked_object",
+    "마지막으로 집은 블럭": "last_picked_object",
+    "마지막으로 집은 블록": "last_picked_object",
+    "방금 집은 것": "last_picked_object",
+
+    "마지막 대상": "last_target_object",
+    "마지막 타겟": "last_target_object",
+    "방금 대상": "last_target_object",
+    "방금 목표": "last_target_object",
+}
 
 
 def validate_command(command: dict, scene_objects: dict) -> None:
@@ -49,63 +117,44 @@ def validate_command(command: dict, scene_objects: dict) -> None:
     if confidence < MIN_CONFIDENCE:
         raise ValueError(f"명령 신뢰도가 낮습니다: {confidence}")
     
-    
-    
 def parse_user_command(user_text: str) -> dict:
+    return _parse_user_command(user_text, memory=None)
+
+
+def parse_user_command_with_memory(user_text: str, memory) -> dict:
+    return _parse_user_command(user_text, memory=memory)
+
+
+def _parse_user_command(user_text: str, memory=None) -> dict:
     text = user_text.strip().lower()
-
-    object_aliases = {
-        
-        "파란 블럭": "blue_block",
-        "파란 블록": "blue_block",
-        "파란색 블럭": "blue_block",
-        "파란색 블록": "blue_block",
-        "blue block": "blue_block",
-        "blue_block": "blue_block",
-        "blue": "blue_block",
-
-        "빨간 블럭": "red_block",
-        "빨간 블록": "red_block",
-        "빨간색 블럭": "red_block",
-        "빨간색 블록": "red_block",
-        "red block": "red_block",
-        "red_block": "red_block",
-        "red": "red_block",
-
-        "초록 블럭": "green_block",
-        "초록 블록": "green_block",
-        "초록색 블럭": "green_block",
-        "초록색 블록": "green_block",
-        "green block": "green_block",
-        "green_block": "green_block",
-        "green": "green_block",
-
-        "큐브": "cube",
-        "cube": "cube",
-
-        "목표": "target",
-        "target": "target",
-
-        "그릇": "bowl",
-        "보울": "bowl",
-        "bowl": "bowl",
-    }
-
     found_objects = []
 
-    for alias, object_name in object_aliases.items():
+    for alias, object_name in OBJECT_ALIASES.items():
         idx = text.find(alias)
         if idx != -1:
             found_objects.append((idx, alias, object_name))
 
+    if memory is not None:
+        for alias, memory_field in MEMORY_OBJECT_ALIASES.items():
+            idx = text.find(alias)
+            if idx != -1:
+                object_name = getattr(memory, memory_field, None)
+                if not object_name:
+                    raise ValueError(f"참조할 이전 작업 기억이 없습니다: {alias}")
+                found_objects.append((idx, alias, object_name))
+
     # 문장에 등장한 순서대로 정렬
     found_objects.sort(key=lambda x: x[0])
 
-    # 같은 object가 여러 alias로 중복 잡히는 것 제거
+    # 같은 위치에서 긴/짧은 alias가 함께 잡히는 중복만 제거한다.
+    # 서로 다른 위치의 같은 object는 pick_object == target_object 오류로 처리한다.
     unique_objects = []
-    for _, _, object_name in found_objects:
-        if not unique_objects or unique_objects[-1] != object_name:
+    seen_mentions = set()
+    for idx, _, object_name in found_objects:
+        mention_key = (idx, object_name)
+        if mention_key not in seen_mentions:
             unique_objects.append(object_name)
+            seen_mentions.add(mention_key)
 
     if len(unique_objects) < 2:
         raise ValueError(f"pick_object와 target_object를 모두 이해하지 못했습니다: {user_text}")
@@ -158,4 +207,3 @@ def command_to_target_position(command: dict, scene_objects: dict) -> np.ndarray
     target_position = target_object_position + RELATION_OFFSETS[relation]
 
     return target_position
-

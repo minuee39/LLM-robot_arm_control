@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <rclcpp/rclcpp.hpp>
 #include <moveit_msgs/msg/object_color.hpp>
 #include <moveit_msgs/msg/planning_scene.hpp>
@@ -34,6 +36,10 @@ public:
 private:
   // Compose an MTC task from a series of stages.
   mtc::Task createTask();
+  void declareParameters();
+
+  double param(const std::string& name) const;
+
   mtc::Task task_;
   rclcpp::Node::SharedPtr node_;
 };
@@ -46,6 +52,32 @@ rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseIn
 MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions& options)
   : node_{ std::make_shared<rclcpp::Node>("mtc_node", options) }
 {
+  declareParameters();
+}
+
+void MTCTaskNode::declareParameters()
+{
+  const auto declare_if_missing = [this](const std::string& name, double default_value) {
+    if (!node_->has_parameter(name))
+    {
+      node_->declare_parameter(name, default_value);
+    }
+  };
+
+  declare_if_missing("object_x", 0.7);
+  declare_if_missing("object_y", 0.4);
+  declare_if_missing("object_z", 0.05);
+  declare_if_missing("object_height", 0.10);
+  declare_if_missing("object_radius", 0.02);
+
+  declare_if_missing("place_x", 0.3);
+  declare_if_missing("place_y", -0.3);
+  declare_if_missing("place_z", 0.05);
+}
+
+double MTCTaskNode::param(const std::string& name) const
+{
+  return node_->get_parameter(name).as_double();
 }
 
 void MTCTaskNode::setupPlanningScene()
@@ -55,41 +87,90 @@ void MTCTaskNode::setupPlanningScene()
   object.header.frame_id = "world";
   object.primitives.resize(1);
   object.primitives[0].type = shape_msgs::msg::SolidPrimitive::CYLINDER;
-  object.primitives[0].dimensions = { 0.1, 0.02 };
+  object.primitives[0].dimensions = { param("object_height"), param("object_radius") };
 
   geometry_msgs::msg::Pose pose;
-  pose.position.x = 0.5;
-  pose.position.y = 0.4;
+  pose.position.x = param("object_x");
+  pose.position.y = param("object_y");
+  pose.position.z = param("object_z");
   pose.orientation.w = 1.0;
   object.pose = pose;
 
+  /*
   moveit_msgs::msg::CollisionObject wall;
   wall.id = "box1";
   wall.header.frame_id = "world";
   wall.primitives.resize(1);
   wall.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-  wall.primitives[0].dimensions = { 0.05, 10, 0.4 };
+  wall.primitives[0].dimensions = { 0.01, 1, 0.2 };
 
   geometry_msgs::msg::Pose wall_pose;
   wall_pose.orientation.w = 1.0;
-  wall_pose.position.x = 0.3;
+  wall_pose.position.x = 0.5;
   wall_pose.position.y = 0.0;
   wall_pose.position.z = 0.0;
   wall.primitive_poses.push_back(wall_pose);
   wall.operation = wall.ADD;
+
+  moveit_msgs::msg::CollisionObject wall1;
+  wall1.id = "box2";
+  wall1.header.frame_id = "world";
+  wall1.primitives.resize(1);
+  wall1.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
+  wall1.primitives[0].dimensions = { 0.01, 1, 0.2 };
+
+  geometry_msgs::msg::Pose wall_pose1;
+  wall_pose1.orientation.w = 1.0;
+  wall_pose1.position.x = -0.5;
+  wall_pose1.position.y = 0.0;
+  wall_pose1.position.z = 0.0;
+  wall1.primitive_poses.push_back(wall_pose1);
+  wall1.operation = wall1.ADD;
+
+  moveit_msgs::msg::CollisionObject wall2;
+  wall2.id = "box3";
+  wall2.header.frame_id = "world";
+  wall2.primitives.resize(1);
+  wall2.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
+  wall2.primitives[0].dimensions = { 1, 0.01, 0.2 };
+
+  geometry_msgs::msg::Pose wall_pose2;
+  wall_pose2.orientation.w = 1.0;
+  wall_pose2.position.x = 0.0;
+  wall_pose2.position.y = 0.5;
+  wall_pose2.position.z = 0.0;
+  wall2.primitive_poses.push_back(wall_pose2);
+  wall2.operation = wall2.ADD;
+
+  moveit_msgs::msg::CollisionObject wall3;
+  wall3.id = "box4";
+  wall3.header.frame_id = "world";
+  wall3.primitives.resize(1);
+  wall3.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
+  wall3.primitives[0].dimensions = { 1, 0.01, 0.2 };
+
+  geometry_msgs::msg::Pose wall_pose3;
+  wall_pose3.orientation.w = 1.0;
+  wall_pose3.position.x = 0.0;
+  wall_pose3.position.y = -0.5;
+  wall_pose3.position.z = 0.0;
+  wall3.primitive_poses.push_back(wall_pose3);
+  wall3.operation = wall3.ADD;
+
+  */
 
   moveit_msgs::msg::CollisionObject floor;
   floor.id = "floor_z_guard";
   floor.header.frame_id = "world";
   floor.primitives.resize(1);
   floor.primitives[0].type = shape_msgs::msg::SolidPrimitive::BOX;
-  floor.primitives[0].dimensions = { 4.0, 4.0, 0.06 };
+  floor.primitives[0].dimensions = { 4.0, 4.0, 0.02 };
 
   geometry_msgs::msg::Pose floor_pose;
   floor_pose.orientation.w = 1.0;
   floor_pose.position.x = 0.0;
   floor_pose.position.y = 0.0;
-  floor_pose.position.z = -0.1;
+  floor_pose.position.z = -0.03;
   floor.primitive_poses.push_back(floor_pose);
   floor.operation = floor.ADD;
 
@@ -102,7 +183,7 @@ void MTCTaskNode::setupPlanningScene()
 
   moveit_msgs::msg::PlanningScene planning_scene;
   planning_scene.is_diff = true;
-  planning_scene.world.collision_objects = { object, wall, floor };
+  planning_scene.world.collision_objects = { object, floor };
   planning_scene.object_colors.push_back(floor_color);
 
   moveit::planning_interface::PlanningSceneInterface psi;
@@ -128,12 +209,27 @@ void MTCTaskNode::doTask()
     RCLCPP_ERROR_STREAM(LOGGER, "Task planning failed");
     return;
   }
-  task_.introspection().publishSolution(*task_.solutions().front());
 
-  auto result = task_.execute(*task_.solutions().front());
+  const auto& solutions = task_.solutions();
+  if (solutions.empty())
+  {
+    RCLCPP_ERROR_STREAM(LOGGER, "Task planning produced no solutions");
+    return;
+  }
+
+  const auto best_solution_it = std::min_element(
+      solutions.begin(), solutions.end(),
+      [](const auto& lhs, const auto& rhs) { return lhs->cost() < rhs->cost(); });
+  const auto& best_solution = **best_solution_it;
+
+  RCLCPP_INFO_STREAM(LOGGER, "Executing lowest-cost solution out of "
+                                << solutions.size() << " solution(s), cost: " << best_solution.cost());
+  task_.introspection().publishSolution(best_solution);
+
+  auto result = task_.execute(best_solution);
   if (result.val != moveit_msgs::msg::MoveItErrorCodes::SUCCESS)
   {
-    RCLCPP_ERROR_STREAM(LOGGER, "Task execution failed");
+    RCLCPP_ERROR_STREAM(LOGGER, "Task execution failed with MoveIt error code: " << result.val);
     return;
   }
 
@@ -316,9 +412,10 @@ mtc::Task MTCTaskNode::createTask()
   stage->setObject("object");
 
   geometry_msgs::msg::PoseStamped target_pose_msg;
-  target_pose_msg.header.frame_id = "object";
-  target_pose_msg.pose.position.x = -0.7;
-  target_pose_msg.pose.position.y = -0.5;
+  target_pose_msg.header.frame_id = "world";
+  target_pose_msg.pose.position.x = param("place_x");
+  target_pose_msg.pose.position.y = param("place_y");
+  target_pose_msg.pose.position.z = param("place_z");
   target_pose_msg.pose.orientation.w = 1.0;
   stage->setPose(target_pose_msg);
   stage->setMonitoredStage(attach_object_stage);  // Hook into attach_object_stage

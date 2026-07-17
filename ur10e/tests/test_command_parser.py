@@ -1,7 +1,9 @@
 import pytest
+from types import SimpleNamespace
 
 from command_parser import (
     parse_user_command,
+    parse_user_command_with_memory,
     validate_command,
     command_to_target_position,
 )
@@ -101,3 +103,57 @@ def test_command_to_target_position():
     target_position = command_to_target_position(command, scene_objects)
 
     assert target_position.shape == (3,)
+
+
+def test_parse_memory_reference_for_last_moved_object():
+    memory = SimpleNamespace(
+        last_moved_object="red_block",
+        last_picked_object=None,
+        last_target_object=None,
+        last_relation=None,
+    )
+
+    command = parse_user_command_with_memory("방금 옮긴 블럭을 초록 블럭 위에 올려", memory)
+
+    assert command["pick_object"] == "red_block"
+    assert command["target_object"] == "green_block"
+    assert command["relation"] == "on"
+
+
+def test_parse_memory_reference_for_last_target_object():
+    memory = SimpleNamespace(
+        last_moved_object=None,
+        last_picked_object=None,
+        last_target_object="blue_block",
+        last_relation=None,
+    )
+
+    command = parse_user_command_with_memory("빨간 블럭을 마지막 대상 옆에 둬", memory)
+
+    assert command["pick_object"] == "red_block"
+    assert command["target_object"] == "blue_block"
+    assert command["relation"] == "near"
+
+
+def test_parse_memory_reference_without_memory_error():
+    memory = SimpleNamespace(
+        last_moved_object=None,
+        last_picked_object=None,
+        last_target_object=None,
+        last_relation=None,
+    )
+
+    with pytest.raises(ValueError, match="참조할 이전 작업 기억이 없습니다"):
+        parse_user_command_with_memory("방금 옮긴 블럭을 초록 블럭 위에 올려", memory)
+
+
+def test_parse_memory_reference_same_object_error():
+    memory = SimpleNamespace(
+        last_moved_object="green_block",
+        last_picked_object=None,
+        last_target_object=None,
+        last_relation=None,
+    )
+
+    with pytest.raises(ValueError, match="pick_object와 target_object가 같습니다"):
+        parse_user_command_with_memory("방금 옮긴 블럭을 초록 블럭 옆에 둬", memory)
