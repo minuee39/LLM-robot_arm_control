@@ -4,7 +4,7 @@ from typing import Mapping
 import numpy as np
 
 from command_parser import RELATION_OFFSETS
-from scene_config import BLOCK_SIZE, MTC_OBJECT_POSITION, MTC_OBJECT_SIZE, OBJECT_POSITIONS
+from scene_config import BLOCK_SIZE, OBJECT_POSITIONS
 
 
 @dataclass
@@ -55,11 +55,6 @@ class SceneManager:
             )
             for name, position in OBJECT_POSITIONS.items()
         }
-        objects["object"] = SceneObject(
-            name="object",
-            position=np.array(MTC_OBJECT_POSITION, dtype=float).copy(),
-            size=np.array(MTC_OBJECT_SIZE, dtype=float).copy(),
-        )
         return cls(objects)
 
     @classmethod

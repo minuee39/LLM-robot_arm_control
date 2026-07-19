@@ -20,9 +20,13 @@ has_arg() {
 
 if [ "$#" -eq 0 ]; then
   set -- \
-    object_x:=0.70 \
-    object_y:=0.40 \
+    object_id:=red_block \
+    object_x:=-0.30 \
+    object_y:=0.30 \
     object_z:=0.05 \
+    object_size_x:=0.10 \
+    object_size_y:=0.0515 \
+    object_size_z:=0.10 \
     place_x:=0.30 \
     place_y:=-0.30 \
     place_z:=0.05
@@ -47,4 +51,17 @@ if ! has_arg "--show-args" "$@"; then
   fi
 fi
 
-ros2 launch mtc_tutorial pick_place_demo.launch.py "$@"
+launch_log="$(mktemp /tmp/mtc_pick_place_launch.XXXXXX.log)"
+set +e
+ros2 launch mtc_tutorial pick_place_demo.launch.py "$@" 2>&1 | tee "${launch_log}"
+launch_status=${PIPESTATUS[0]}
+set -e
+
+if [ "${launch_status}" -ne 0 ]; then
+  exit "${launch_status}"
+fi
+
+if grep -Eq "process has died|Task planning failed|Task execution failed" "${launch_log}"; then
+  echo "ERROR: MTC pick-place failed. See launch log: ${launch_log}" >&2
+  exit 1
+fi

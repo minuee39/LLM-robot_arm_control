@@ -3,7 +3,7 @@ import numpy as np
 
 # isaac sim 기준
 RELATION_OFFSETS = {
-    "on": np.array([0.0, 0.0, 0.17]),
+    "on": np.array([0.0, 0.0, 0.105]),
     "left_of": np.array([0.15, -0.15, 0.0]),
     "right_of": np.array([-0.15, 0.15, 0.0]),
     "front_of": np.array([+0.15, +0.15, 0.0]),
@@ -12,7 +12,7 @@ RELATION_OFFSETS = {
 }
 
 SUPPORTED_ACTIONS = {"pick_place"}
-SUPPORTED_OBJECTS = {"object", "red_block", "blue_block", "green_block"}
+SUPPORTED_OBJECTS = {"red_block", "blue_block", "green_block"}
 SUPPORTED_RELATIONS = {"on", "left_of", "right_of", "front_of", "behind", "near"}
 
 MIN_CONFIDENCE = 0.7
@@ -51,18 +51,6 @@ OBJECT_ALIASES = {
     "그릇": "bowl",
     "보울": "bowl",
     "bowl": "bowl",
-
-    "물체": "object",
-    "오브젝트": "object",
-    "노란 물체": "object",
-    "노란 오브젝트": "object",
-    "노란 블럭": "object",
-    "노란 블록": "object",
-    "노란색 블럭": "object",
-    "노란색 블록": "object",
-    "yellow object": "object",
-    "yellow block": "object",
-    "object": "object",
 }
 
 MEMORY_OBJECT_ALIASES = {
@@ -146,15 +134,11 @@ def _parse_user_command(user_text: str, memory=None) -> dict:
     # 문장에 등장한 순서대로 정렬
     found_objects.sort(key=lambda x: x[0])
 
-    # 같은 위치에서 긴/짧은 alias가 함께 잡히는 중복만 제거한다.
-    # 서로 다른 위치의 같은 object는 pick_object == target_object 오류로 처리한다.
+    # 같은 object가 여러 alias로 중복 잡히는 것 제거
     unique_objects = []
-    seen_mentions = set()
-    for idx, _, object_name in found_objects:
-        mention_key = (idx, object_name)
-        if mention_key not in seen_mentions:
+    for _, _, object_name in found_objects:
+        if not unique_objects or unique_objects[-1] != object_name:
             unique_objects.append(object_name)
-            seen_mentions.add(mention_key)
 
     if len(unique_objects) < 2:
         raise ValueError(f"pick_object와 target_object를 모두 이해하지 못했습니다: {user_text}")

@@ -7,7 +7,7 @@ from vision.base import Detection
 def test_scene_manager_defaults_include_blocks():
     manager = SceneManager.from_defaults()
 
-    assert manager.names() == {"object", "red_block", "blue_block", "green_block"}
+    assert manager.names() == {"red_block", "blue_block", "green_block"}
     scene = manager.as_command_scene()
     assert scene["red_block"]["position"].shape == (3,)
     assert scene["red_block"]["size"].shape == (3,)

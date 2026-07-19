@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import sys
 import rclpy
@@ -15,6 +16,17 @@ parser.add_argument(
     type=float,
     default=0.0,
     help="Exit after this many seconds once the bridge graph has started. Zero runs forever.",
+)
+parser.add_argument(
+    "--scene-state-file",
+    default="/tmp/ur10e_isaac_scene_objects.json",
+    help="JSON file used by the ROS 2 scene collision publisher.",
+)
+parser.add_argument(
+    "--scene-state-period",
+    type=float,
+    default=0.2,
+    help="Seconds between scene object pose exports.",
 )
 args, _ = parser.parse_known_args()
 
@@ -40,10 +52,6 @@ from isaacsim.core.utils.extensions import enable_extension
 from pxr import UsdPhysics
 from scene_config import (
     BLOCK_SIZE,
-    MTC_OBJECT_COLOR,
-    MTC_OBJECT_NAME,
-    MTC_OBJECT_POSITION,
-    MTC_OBJECT_SIZE,
     OBJECT_COLORS,
     OBJECT_POSITIONS,
     UR10E_INITIAL_JOINT_POSITIONS,
@@ -124,16 +132,6 @@ def set_named_joint_positions(robot, target_positions: dict[str, float]) -> None
 
 
 def add_blocks(world: World) -> None:
-    world.scene.add(
-        DynamicCuboid(
-            prim_path=f"/World/{MTC_OBJECT_NAME}",
-            name=MTC_OBJECT_NAME,
-            position=MTC_OBJECT_POSITION,
-            scale=MTC_OBJECT_SIZE,
-            color=MTC_OBJECT_COLOR,
-        )
-    )
-
     for object_name, object_position in OBJECT_POSITIONS.items():
         world.scene.add(
             DynamicCuboid(
@@ -144,6 +142,30 @@ def add_blocks(world: World) -> None:
                 color=OBJECT_COLORS[object_name],
             )
         )
+
+
+def write_scene_state(world: World, path: str) -> None:
+    object_specs = {
+        object_name: (BLOCK_SIZE, OBJECT_COLORS[object_name])
+        for object_name in OBJECT_POSITIONS
+    }
+    objects = []
+    for object_name, (object_size, object_color) in object_specs.items():
+        scene_object = world.scene.get_object(object_name)
+        position, _ = scene_object.get_world_pose()
+        objects.append(
+            {
+                "name": object_name,
+                "position": [float(value) for value in position],
+                "size": [float(value) for value in object_size],
+                "color": [float(value) for value in object_color] + [1.0],
+            }
+        )
+
+    tmp_path = f"{path}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as file:
+        json.dump({"frame": "world", "objects": objects}, file)
+    os.replace(tmp_path, path)
 
 
 def main() -> None:
@@ -163,7 +185,6 @@ def main() -> None:
     rclpy.init(args=None)
     state_node =rclpy.create_node("isaac_joint_state_feedback")
     state_pub = state_node.create_publisher(JointState,"/isaac_joint_states", 10)
-
     joint_names = get_robot_joint_names(robot)
     print("[INFO] Isaac joint names:", joint_names,flush=True)
     print("[INFO] Publishing: /isaac_joint_states",flush=True)
@@ -175,13 +196,15 @@ def main() -> None:
 
     print("[INFO] Isaac MoveIt bridge graph is running", flush=True)
     print(f"[INFO] Robot prim:   {robot_prim_path}", flush=True)
-    print("[INFO] MTC object:", MTC_OBJECT_NAME, MTC_OBJECT_POSITION, flush=True)
     print("[INFO] Blocks:", ", ".join(OBJECT_POSITIONS.keys()), flush=True)
+    print("[INFO] Scene state file:", args.scene_state_file, flush=True)
     
 
     started_at = time.monotonic()
+    last_scene_state_write = 0.0
     while simulation_app.is_running():
         world.step(render=not args.headless)
+        rclpy.spin_once(state_node, timeout_sec=0.0)
         
         msg = JointState()
         msg.header.stamp = state_node.get_clock().now().to_msg()
@@ -189,9 +212,14 @@ def main() -> None:
         msg.position = [float(v) for v in robot.get_joint_positions()]
         msg.velocity = [float(v) for v in robot.get_joint_velocities()]
         state_pub.publish(msg)
+
+        now = time.monotonic()
+        if now - last_scene_state_write >= args.scene_state_period:
+            write_scene_state(world, args.scene_state_file)
+            last_scene_state_write = now
         
         
-        if args.smoke_test_seconds > 0.0 and time.monotonic() - started_at >= args.smoke_test_seconds:
+        if args.smoke_test_seconds > 0.0 and now - started_at >= args.smoke_test_seconds:
             print("[INFO] Smoke test completed", flush=True)
             break
         

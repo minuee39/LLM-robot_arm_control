@@ -1,5 +1,7 @@
+import fcntl
 import math
 import time
+from pathlib import Path
 from typing import Dict, Iterable, List
 
 import rclpy
@@ -29,16 +31,20 @@ MOVEIT_TO_ISAAC = {
 }
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
 COMMAND_PERIOD_SEC = 0.01
+GRIPPER_CLOSE_SETTLE_SEC = 0.4
+GRIPPER_OPEN_SETTLE_SEC = 0.4
+GRIPPER_OPEN_POSITION_MAX = 0.05
 REVOLUTE_JOINTS = set(ARM_JOINTS)
 INITIAL_MOVEIT_POSITIONS = {
-    "shoulder_pan_joint": 0.0,
-    "shoulder_lift_joint": -1.57,
-    "elbow_joint": 2.0,
-    "wrist_1_joint": -1.57,
+    "shoulder_pan_joint": 0.56,
+    "shoulder_lift_joint": -1.78,
+    "elbow_joint": 1.41,
+    "wrist_1_joint": 1.94,
     "wrist_2_joint": 1.57,
-    "wrist_3_joint": 3.14,
+    "wrist_3_joint": -2.58,
     "robotiq_finger_joint": 0.01,
 }
+LOCK_FILE = Path("/tmp/isaac_moveit_action_bridge.lock")
 
 
 def duration_to_sec(duration) -> float:
@@ -203,7 +209,12 @@ class IsaacMoveItActionBridge(Node):
     def execute_gripper(self, goal_handle):
         target_position = float(goal_handle.request.command.position)
         self.publish_command([MOVEIT_GRIPPER_JOINT], [target_position])
-        time.sleep(0.7)
+        settle_sec = (
+            GRIPPER_OPEN_SETTLE_SEC
+            if target_position <= GRIPPER_OPEN_POSITION_MAX
+            else GRIPPER_CLOSE_SETTLE_SEC
+        )
+        time.sleep(settle_sec)
 
         goal_handle.succeed()
         result = GripperCommand.Result()
@@ -232,6 +243,17 @@ class IsaacMoveItActionBridge(Node):
 
 
 def main() -> None:
+    lock_file = LOCK_FILE.open("w", encoding="utf-8")
+    try:
+        fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print(
+            f"[ERROR] Another Isaac MoveIt action bridge is already running ({LOCK_FILE}).",
+            flush=True,
+        )
+        lock_file.close()
+        return
+
     rclpy.init()
     node = IsaacMoveItActionBridge()
     executor = MultiThreadedExecutor(num_threads=4)
@@ -241,4 +263,5 @@ def main() -> None:
     finally:
         executor.shutdown()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()

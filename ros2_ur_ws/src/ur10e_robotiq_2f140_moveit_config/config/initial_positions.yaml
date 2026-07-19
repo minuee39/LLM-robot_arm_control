@@ -1,11 +1,10 @@
 # Default initial positions for ur10e_robotiq_2f140's ros2_control fake system
 
 initial_positions:
-  #elbow_joint: 2.61799
-  elbow_joint: 2.0
+  elbow_joint: 1.41
   robotiq_finger_joint: 0.01
-  shoulder_lift_joint: -1.57
-  shoulder_pan_joint: 0
-  wrist_1_joint: -1.57
+  shoulder_lift_joint: -1.78
+  shoulder_pan_joint: 0.56
+  wrist_1_joint: 1.94
   wrist_2_joint: 1.57
-  wrist_3_joint: 3.14
+  wrist_3_joint: -2.58
