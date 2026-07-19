@@ -20,6 +20,10 @@ def generate_launch_description():
         .robot_description_semantic(file_path="config/ur10e_robotiq_2f140.srdf")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .planning_pipelines(
+            default_planning_pipeline="ompl",
+            pipelines=["ompl"],
+        )
         .to_dict()
     )
 
@@ -31,6 +35,7 @@ def generate_launch_description():
             moveit_config,
             {
                 "object_id": LaunchConfiguration("object_id"),
+                "planner_id": LaunchConfiguration("planner_id"),
                 "object_x": float_launch_param("object_x"),
                 "object_y": float_launch_param("object_y"),
                 "object_z": float_launch_param("object_z"),
@@ -41,7 +46,6 @@ def generate_launch_description():
                 "place_y": float_launch_param("place_y"),
                 "place_z": float_launch_param("place_z"),
                 "max_solutions": float_launch_param("max_solutions"),
-                "early_execute_cost_threshold": float_launch_param("early_execute_cost_threshold"),
                 "move_to_pick_timeout": float_launch_param("move_to_pick_timeout"),
                 "move_to_pick_max_path_length": float_launch_param("move_to_pick_max_path_length"),
                 "move_to_place_timeout": float_launch_param("move_to_place_timeout"),
@@ -56,6 +60,11 @@ def generate_launch_description():
     return LaunchDescription(
         [
             DeclareLaunchArgument("object_id", default_value="red_block"),
+            DeclareLaunchArgument(
+                "planner_id",
+                default_value="RRTConnectkConfigDefault",
+                description="OMPL planner configuration used for sampled arm motions.",
+            ),
             DeclareLaunchArgument("object_x", default_value="-0.30"),
             DeclareLaunchArgument("object_y", default_value="0.30"),
             DeclareLaunchArgument("object_z", default_value="0.05"),
@@ -65,8 +74,11 @@ def generate_launch_description():
             DeclareLaunchArgument("place_x", default_value="0.30"),
             DeclareLaunchArgument("place_y", default_value="-0.30"),
             DeclareLaunchArgument("place_z", default_value="0.05"),
-            DeclareLaunchArgument("max_solutions", default_value="5"),
-            DeclareLaunchArgument("early_execute_cost_threshold", default_value="40.0"),
+            DeclareLaunchArgument(
+                "max_solutions",
+                default_value="3",
+                description="Number of task solutions required before execution.",
+            ),
             DeclareLaunchArgument("move_to_pick_timeout", default_value="5.0"),
             DeclareLaunchArgument("move_to_pick_max_path_length", default_value="8.0"),
             DeclareLaunchArgument("move_to_place_timeout", default_value="6.0"),

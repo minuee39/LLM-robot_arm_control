@@ -4,6 +4,7 @@ from mtc_command_runner import (
     DEFAULT_TOUCH_COLLISION_COMMAND,
     build_mtc_invocation,
     command_to_mtc_args,
+    execution_tuning_args,
     execute_user_command,
     sync_scene_manager_from_isaac,
     run_interactive,
@@ -42,6 +43,22 @@ def test_command_to_mtc_args_clamps_z_to_object_center_height():
     assert "object_size_z:=0.100000" in mtc_args
     assert "object_z:=0.050000" in mtc_args
     assert "place_z:=0.050000" in mtc_args
+
+
+def test_execution_tuning_args_selects_requested_rrt_variant():
+    args = execution_tuning_args(
+        "RRTstarkConfigDefault",
+        5,
+        5.0,
+        8.0,
+        6.0,
+        1.0,
+        0.02,
+        0.45,
+        0.08,
+    )
+
+    assert args[0] == "planner_id:=RRTstarkConfigDefault"
 
 
 def test_scene_manager_defaults_exclude_legacy_object():
@@ -115,9 +132,8 @@ def test_execute_user_command_updates_scene_after_success(monkeypatch):
     assert result == 0
     assert calls[0] == DEFAULT_TOUCH_COLLISION_COMMAND
     assert calls[1][0] == "/run_mtc"
-    assert "max_solutions:=5" in calls[1]
-    assert "early_execute_cost_threshold:=40.000" in calls[1]
-    assert not any(arg.startswith("early_execute_min_solutions:=") for arg in calls[1])
+    assert "planner_id:=RRTConnectkConfigDefault" in calls[1]
+    assert "max_solutions:=3" in calls[1]
     assert "move_to_pick_timeout:=5.000" in calls[1]
     assert "move_to_pick_max_path_length:=8.000" in calls[1]
     assert "move_to_place_timeout:=6.000" in calls[1]

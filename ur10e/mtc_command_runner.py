@@ -22,6 +22,11 @@ DEFAULT_TOUCH_COLLISION_COMMAND = [
     "isaac_moveit_bridge",
     "allow_touch_collisions",
 ]
+SUPPORTED_PLANNER_IDS = (
+    "RRTkConfigDefault",
+    "RRTConnectkConfigDefault",
+    "RRTstarkConfigDefault",
+)
 
 
 def select_provider(provider: str) -> str | None:
@@ -138,8 +143,8 @@ def command_to_mtc_args(command: dict, scene_manager: SceneManager) -> list[str]
 
 
 def execution_tuning_args(
+    planner_id: str,
     max_solutions: int,
-    early_execute_cost_threshold: float,
     move_to_pick_timeout: float,
     move_to_pick_max_path_length: float,
     move_to_place_timeout: float,
@@ -149,8 +154,8 @@ def execution_tuning_args(
     gripper_close_step: float,
 ) -> list[str]:
     return [
+        f"planner_id:={planner_id}",
         f"max_solutions:={max_solutions}",
-        f"early_execute_cost_threshold:={early_execute_cost_threshold:.3f}",
         f"move_to_pick_timeout:={move_to_pick_timeout:.3f}",
         f"move_to_pick_max_path_length:={move_to_pick_max_path_length:.3f}",
         f"move_to_place_timeout:={move_to_place_timeout:.3f}",
@@ -191,8 +196,8 @@ def execute_user_command(
     provider: str,
     run_script: str,
     dry_run: bool = False,
-    max_solutions: int = 5,
-    early_execute_cost_threshold: float = 40.0,
+    planner_id: str = "RRTConnectkConfigDefault",
+    max_solutions: int = 3,
     move_to_pick_timeout: float = 5.0,
     move_to_pick_max_path_length: float = 8.0,
     move_to_place_timeout: float = 6.0,
@@ -208,8 +213,8 @@ def execute_user_command(
     mtc_args = [
         *mtc_args,
         *execution_tuning_args(
+            planner_id,
             max_solutions,
-            early_execute_cost_threshold,
             move_to_pick_timeout,
             move_to_pick_max_path_length,
             move_to_place_timeout,
@@ -252,8 +257,8 @@ def run_interactive(
     run_script: str,
     dry_run: bool = False,
     initial_command: str | None = None,
-    max_solutions: int = 5,
-    early_execute_cost_threshold: float = 40.0,
+    planner_id: str = "RRTConnectkConfigDefault",
+    max_solutions: int = 3,
     move_to_pick_timeout: float = 5.0,
     move_to_pick_max_path_length: float = 8.0,
     move_to_place_timeout: float = 6.0,
@@ -273,8 +278,8 @@ def run_interactive(
                 provider=provider,
                 run_script=run_script,
                 dry_run=dry_run,
+                planner_id=planner_id,
                 max_solutions=max_solutions,
-                early_execute_cost_threshold=early_execute_cost_threshold,
                 move_to_pick_timeout=move_to_pick_timeout,
                 move_to_pick_max_path_length=move_to_pick_max_path_length,
                 move_to_place_timeout=move_to_place_timeout,
@@ -308,8 +313,8 @@ def run_interactive(
                 provider=provider,
                 run_script=run_script,
                 dry_run=dry_run,
+                planner_id=planner_id,
                 max_solutions=max_solutions,
-                early_execute_cost_threshold=early_execute_cost_threshold,
                 move_to_pick_timeout=move_to_pick_timeout,
                 move_to_pick_max_path_length=move_to_pick_max_path_length,
                 move_to_place_timeout=move_to_place_timeout,
@@ -335,8 +340,18 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="Print parsed command and launch args only.")
     parser.add_argument("--run-script", default=str(DEFAULT_RUN_SCRIPT), help="MTC coordinate launch wrapper.")
     parser.add_argument("--once", action="store_true", help="Run the provided command once and exit.")
-    parser.add_argument("--max-solutions", type=int, default=5)
-    parser.add_argument("--early-execute-cost-threshold", type=float, default=40.0)
+    parser.add_argument(
+        "--planner-id",
+        choices=SUPPORTED_PLANNER_IDS,
+        default="RRTConnectkConfigDefault",
+        help="OMPL planner used for sampled arm motions.",
+    )
+    parser.add_argument(
+        "--max-solutions",
+        type=int,
+        default=3,
+        help="Number of MTC task solutions required before execution.",
+    )
     parser.add_argument("--move-to-pick-timeout", type=float, default=5.0)
     parser.add_argument("--move-to-pick-max-path-length", type=float, default=8.0)
     parser.add_argument("--move-to-place-timeout", type=float, default=6.0)
@@ -361,8 +376,8 @@ def main() -> int:
             args.provider,
             args.run_script,
             dry_run=args.dry_run,
+            planner_id=args.planner_id,
             max_solutions=args.max_solutions,
-            early_execute_cost_threshold=args.early_execute_cost_threshold,
             move_to_pick_timeout=args.move_to_pick_timeout,
             move_to_pick_max_path_length=args.move_to_pick_max_path_length,
             move_to_place_timeout=args.move_to_place_timeout,
@@ -381,8 +396,8 @@ def main() -> int:
             provider=args.provider,
             run_script=args.run_script,
             dry_run=args.dry_run,
+            planner_id=args.planner_id,
             max_solutions=args.max_solutions,
-            early_execute_cost_threshold=args.early_execute_cost_threshold,
             move_to_pick_timeout=args.move_to_pick_timeout,
             move_to_pick_max_path_length=args.move_to_pick_max_path_length,
             move_to_place_timeout=args.move_to_place_timeout,
@@ -397,8 +412,8 @@ def main() -> int:
         args.run_script,
         dry_run=args.dry_run,
         initial_command=user_text,
+        planner_id=args.planner_id,
         max_solutions=args.max_solutions,
-        early_execute_cost_threshold=args.early_execute_cost_threshold,
         move_to_pick_timeout=args.move_to_pick_timeout,
         move_to_pick_max_path_length=args.move_to_pick_max_path_length,
         move_to_place_timeout=args.move_to_place_timeout,

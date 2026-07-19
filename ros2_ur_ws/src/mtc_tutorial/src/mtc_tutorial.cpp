@@ -6,7 +6,6 @@
 #include <sstream>
 #include <string>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -21,7 +20,6 @@
 #include <moveit/task_constructor/task.h>
 #include <moveit/task_constructor/solvers.h>
 #include <moveit/task_constructor/stages.h>
-#include <moveit_task_constructor_msgs/msg/solution.hpp>
 #if __has_include(<tf2_geometry_msgs/tf2_geometry_msgs.hpp>)
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #else
@@ -36,80 +34,6 @@
 
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("mtc_tutorial");
 namespace mtc = moveit::task_constructor;
-
-namespace
-{
-constexpr double MAX_JOINT_TRAVEL = 3.14159265358979323846;
-
-struct JointTravelViolation
-{
-  std::string joint_name;
-  double travel;
-};
-
-std::vector<JointTravelViolation> jointTravelViolations(const mtc::SolutionBase& solution)
-{
-  moveit_task_constructor_msgs::msg::Solution solution_msg;
-  solution.toMsg(solution_msg);
-
-  std::unordered_map<std::string, double> previous_positions;
-  std::unordered_map<std::string, double> accumulated_travel;
-
-  const auto& start_joint_state = solution_msg.start_scene.robot_state.joint_state;
-  const auto start_count = std::min(start_joint_state.name.size(), start_joint_state.position.size());
-  for (std::size_t index = 0; index < start_count; ++index)
-  {
-    previous_positions[start_joint_state.name[index]] = start_joint_state.position[index];
-  }
-
-  for (const auto& sub_trajectory : solution_msg.sub_trajectory)
-  {
-    const auto& joint_trajectory = sub_trajectory.trajectory.joint_trajectory;
-    for (const auto& point : joint_trajectory.points)
-    {
-      const auto point_count = std::min(joint_trajectory.joint_names.size(), point.positions.size());
-      for (std::size_t index = 0; index < point_count; ++index)
-      {
-        const auto& joint_name = joint_trajectory.joint_names[index];
-        const double position = point.positions[index];
-        const auto previous = previous_positions.find(joint_name);
-        if (previous != previous_positions.end())
-        {
-          accumulated_travel[joint_name] += std::abs(position - previous->second);
-        }
-        previous_positions[joint_name] = position;
-      }
-    }
-  }
-
-  std::vector<JointTravelViolation> violations;
-  for (const auto& [joint_name, travel] : accumulated_travel)
-  {
-    if (travel > MAX_JOINT_TRAVEL)
-    {
-      violations.push_back({ joint_name, travel });
-    }
-  }
-  std::sort(violations.begin(), violations.end(), [](const auto& lhs, const auto& rhs) {
-    return lhs.joint_name < rhs.joint_name;
-  });
-  return violations;
-}
-
-std::string describeJointTravelViolations(const std::vector<JointTravelViolation>& violations)
-{
-  std::ostringstream stream;
-  for (std::size_t index = 0; index < violations.size(); ++index)
-  {
-    if (index > 0)
-    {
-      stream << ", ";
-    }
-    stream << violations[index].joint_name << '=' << violations[index].travel * 180.0 / MAX_JOINT_TRAVEL << " deg";
-  }
-  return stream.str();
-}
-}  // namespace
 
 class MTCTaskNode
 {
@@ -132,6 +56,7 @@ private:
   bool applyTouchCollisionAcm();
 
   std::string objectId() const;
+  std::string plannerId() const;
   double param(const std::string& name) const;
   static std::vector<std::string> robotiqTouchLinks();
 
@@ -163,6 +88,10 @@ void MTCTaskNode::declareParameters()
   {
     node_->declare_parameter<std::string>("object_id", "red_block");
   }
+  if (!node_->has_parameter("planner_id"))
+  {
+    node_->declare_parameter<std::string>("planner_id", "RRTConnectkConfigDefault");
+  }
 
   declare_if_missing("object_x", -0.3);
   declare_if_missing("object_y", 0.3);
@@ -175,8 +104,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("place_y", -0.3);
   declare_if_missing("place_z", 0.05);
 
-  declare_if_missing("max_solutions", 5.0);
-  declare_if_missing("early_execute_cost_threshold", 40.0);
+  declare_if_missing("max_solutions", 3.0);
   declare_if_missing("move_to_pick_timeout", 5.0);
   declare_if_missing("move_to_pick_max_path_length", 8.0);
   declare_if_missing("move_to_place_timeout", 6.0);
@@ -194,6 +122,11 @@ double MTCTaskNode::param(const std::string& name) const
 std::string MTCTaskNode::objectId() const
 {
   return node_->get_parameter("object_id").as_string();
+}
+
+std::string MTCTaskNode::plannerId() const
+{
+  return node_->get_parameter("planner_id").as_string();
 }
 
 std::vector<std::string> MTCTaskNode::robotiqTouchLinks()
@@ -560,30 +493,7 @@ bool MTCTaskNode::doTask()
   }
 
   const auto max_solutions = static_cast<unsigned int>(param("max_solutions"));
-  const double early_execute_cost_threshold = param("early_execute_cost_threshold");
-  task_.addSolutionCallback(
-      [this, early_execute_cost_threshold,
-       threshold_reached = false](const mtc::SolutionBase& solution) mutable {
-        if (solution.isFailure() || !jointTravelViolations(solution).empty())
-        {
-          return;
-        }
-        if (threshold_reached || early_execute_cost_threshold < 0.0 ||
-            solution.cost() >= early_execute_cost_threshold)
-        {
-          return;
-        }
-
-        threshold_reached = true;
-        RCLCPP_INFO_STREAM(LOGGER, "Cost threshold reached (" << solution.cost() << " < "
-                                                               << early_execute_cost_threshold
-                                                               << "); stopping solution search early");
-        task_.preempt();
-      });
-
-  RCLCPP_INFO_STREAM(LOGGER, "Planning up to " << max_solutions
-                                                << " task solution(s), early-execute cost threshold: "
-                                                << early_execute_cost_threshold);
+  RCLCPP_INFO_STREAM(LOGGER, "Planning until " << max_solutions << " task solution(s) are available");
   if (!task_.plan(max_solutions))
   {
     RCLCPP_ERROR_STREAM(LOGGER, "Task planning failed");
@@ -596,42 +506,21 @@ bool MTCTaskNode::doTask()
     RCLCPP_ERROR_STREAM(LOGGER, "Task planning produced no solutions");
     return false;
   }
-
-  std::vector<mtc::SolutionBaseConstPtr> execution_candidates;
-  execution_candidates.reserve(solutions.size());
-  for (const auto& solution : solutions)
+  if (solutions.size() < max_solutions)
   {
-    const auto violations = jointTravelViolations(*solution);
-    if (!violations.empty())
-    {
-      RCLCPP_WARN_STREAM(LOGGER, "Rejecting solution with joint travel over 180 deg: "
-                                     << describeJointTravelViolations(violations));
-      continue;
-    }
-
-    if (early_execute_cost_threshold >= 0.0 && solution->cost() >= early_execute_cost_threshold)
-    {
-      RCLCPP_WARN_STREAM(LOGGER, "Rejecting solution whose cost does not meet the execution threshold: "
-                                     << solution->cost() << " >= " << early_execute_cost_threshold);
-      continue;
-    }
-
-    execution_candidates.push_back(solution);
-  }
-
-  if (execution_candidates.empty())
-  {
-    RCLCPP_ERROR_STREAM(LOGGER, "No solution satisfied both the joint-travel and cost execution limits");
+    RCLCPP_ERROR_STREAM(LOGGER, "Task planning produced only " << solutions.size() << " of "
+                                                                << max_solutions
+                                                                << " required solutions; execution skipped");
     return false;
   }
 
   const auto best_solution_it = std::min_element(
-      execution_candidates.begin(), execution_candidates.end(),
+      solutions.begin(), solutions.end(),
       [](const auto& lhs, const auto& rhs) { return lhs->cost() < rhs->cost(); });
   const auto& best_solution = **best_solution_it;
 
   RCLCPP_INFO_STREAM(LOGGER, "Executing lowest-cost solution out of "
-                                << execution_candidates.size() << " eligible solution(s), cost: "
+                                << solutions.size() << " planned solution(s), cost: "
                                 << best_solution.cost());
 
   auto result = task_.execute(best_solution);
@@ -683,7 +572,10 @@ mtc::Task MTCTaskNode::createTask()
   current_state_ptr = stage_state_current.get();
   sequence->insert(std::move(stage_state_current));
 
-  auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_);
+  auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_, "ompl");
+  sampling_planner->setPlannerId(plannerId());
+  sampling_planner->setProperty("goal_joint_tolerance", 1e-5);
+  RCLCPP_INFO_STREAM(LOGGER, "Using OMPL planner: " << plannerId());
   auto gripper_interpolation_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
 
   auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
@@ -942,30 +834,7 @@ mtc::Task MTCTaskNode::createTask()
   sequence->insert(std::move(stage));
 }
 
-  auto joint_travel_filter = std::make_unique<mtc::stages::PredicateFilter>(
-      "reject joint travel over 180 deg", std::move(sequence));
-  const double execution_cost_threshold = param("early_execute_cost_threshold");
-  joint_travel_filter->setPredicate(
-      [execution_cost_threshold](const mtc::SolutionBase& solution, std::string& comment) {
-    const auto violations = jointTravelViolations(solution);
-    if (!violations.empty())
-    {
-      comment = "joint travel over 180 deg: " + describeJointTravelViolations(violations);
-      return false;
-    }
-
-    if (execution_cost_threshold >= 0.0 && solution.cost() >= execution_cost_threshold)
-    {
-      std::ostringstream stream;
-      stream << "solution cost does not meet execution threshold: " << solution.cost()
-             << " >= " << execution_cost_threshold;
-      comment = stream.str();
-      return false;
-    }
-
-    return true;
-  });
-  task.add(std::move(joint_travel_filter));
+  task.add(std::move(sequence));
 
   return task;
 }

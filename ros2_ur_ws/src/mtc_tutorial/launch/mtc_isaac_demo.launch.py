@@ -34,6 +34,10 @@ def generate_launch_description():
         .robot_description_semantic(file_path="config/ur10e_robotiq_2f140.srdf")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .planning_pipelines(
+            default_planning_pipeline="ompl",
+            pipelines=["ompl"],
+        )
         .to_moveit_configs()
     )
 
