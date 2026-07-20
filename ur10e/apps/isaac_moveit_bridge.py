@@ -28,6 +28,13 @@ parser.add_argument(
     default=0.2,
     help="Seconds between scene object pose exports.",
 )
+parser.add_argument(
+    "--disable-camera",
+    action="store_true",
+    help="Disable the RGB-D camera and ROS 2 camera topics.",
+)
+parser.add_argument("--camera-width", type=int, default=640, help="RGB-D image width in pixels.")
+parser.add_argument("--camera-height", type=int, default=480, help="RGB-D image height in pixels.")
 args, _ = parser.parse_known_args()
 
 simulation_app = SimulationApp(
@@ -45,21 +52,33 @@ if PROJECT_ROOT not in sys.path:
 import omni.graph.core as og
 import omni.timeline
 import omni.usd
+import usdrt.Sdf
 import time
 from isaacsim.core.api import World
 from isaacsim.core.api.objects import DynamicCuboid
 from isaacsim.core.utils.extensions import enable_extension
-from pxr import UsdPhysics
+from isaacsim.core.utils.viewports import set_camera_view
+from pxr import Gf, Usd, UsdGeom, UsdPhysics
 from scene_config import (
     BLOCK_SIZE,
     OBJECT_COLORS,
     OBJECT_POSITIONS,
+    SIM_CAMERA_EYE,
+    SIM_CAMERA_TARGET,
     UR10E_INITIAL_JOINT_POSITIONS,
 )
 from tasks.pick_place import PickPlace
 
 
 TASK_NAME = "ur10e_moveit_bridge"
+CAMERA_PRIM_PATH = "/World/RGBD_Camera"
+CAMERA_FRAME_ID = "sim_camera"
+CAMERA_TOPICS = (
+    "/sim_camera/rgb",
+    "/sim_camera/depth",
+    "/sim_camera/points",
+    "/sim_camera/camera_info",
+)
 
 
 def find_articulation_root_path() -> str:
@@ -97,6 +116,65 @@ def create_moveit_bridge_graph(robot_prim_path: str) -> None:
                 ("SubscribeJointCommand.outputs:positionCommand", "ArticulationController.inputs:positionCommand"),
                 ("SubscribeJointCommand.outputs:velocityCommand", "ArticulationController.inputs:velocityCommand"),
                 ("SubscribeJointCommand.outputs:effortCommand", "ArticulationController.inputs:effortCommand"),
+            ],
+        },
+    )
+
+
+def create_camera() -> None:
+    stage = omni.usd.get_context().get_stage()
+    camera_prim = UsdGeom.Camera.Define(stage, CAMERA_PRIM_PATH)
+    camera_prim.GetFocalLengthAttr().Set(24.0)
+    camera_prim.GetClippingRangeAttr().Set(Gf.Vec2f(0.01, 10.0))
+
+    set_camera_view(
+        eye=SIM_CAMERA_EYE.tolist(),
+        target=SIM_CAMERA_TARGET.tolist(),
+        camera_prim_path=CAMERA_PRIM_PATH,
+    )
+
+
+def create_camera_graph(width: int, height: int) -> None:
+    if width <= 0 or height <= 0:
+        raise ValueError(f"Camera dimensions must be positive, got {width}x{height}")
+
+    og.Controller.edit(
+        {"graph_path": "/CameraGraph", "evaluator_name": "execution"},
+        {
+            og.Controller.Keys.CREATE_NODES: [
+                ("OnPlaybackTick", "omni.graph.action.OnPlaybackTick"),
+                ("CreateRenderProduct", "isaacsim.core.nodes.IsaacCreateRenderProduct"),
+                ("RgbPublisher", "isaacsim.ros2.bridge.ROS2CameraHelper"),
+                ("DepthPublisher", "isaacsim.ros2.bridge.ROS2CameraHelper"),
+                ("PointCloudPublisher", "isaacsim.ros2.bridge.ROS2CameraHelper"),
+                ("CameraInfoPublisher", "isaacsim.ros2.bridge.ROS2CameraInfoHelper"),
+            ],
+            og.Controller.Keys.SET_VALUES: [
+                ("CreateRenderProduct.inputs:cameraPrim", [usdrt.Sdf.Path(CAMERA_PRIM_PATH)]),
+                ("CreateRenderProduct.inputs:width", width),
+                ("CreateRenderProduct.inputs:height", height),
+                ("RgbPublisher.inputs:type", "rgb"),
+                ("RgbPublisher.inputs:topicName", CAMERA_TOPICS[0]),
+                ("RgbPublisher.inputs:frameId", CAMERA_FRAME_ID),
+                ("DepthPublisher.inputs:type", "depth"),
+                ("DepthPublisher.inputs:topicName", CAMERA_TOPICS[1]),
+                ("DepthPublisher.inputs:frameId", CAMERA_FRAME_ID),
+                ("PointCloudPublisher.inputs:type", "depth_pcl"),
+                ("PointCloudPublisher.inputs:topicName", CAMERA_TOPICS[2]),
+                ("PointCloudPublisher.inputs:frameId", CAMERA_FRAME_ID),
+                ("CameraInfoPublisher.inputs:topicName", CAMERA_TOPICS[3]),
+                ("CameraInfoPublisher.inputs:frameId", CAMERA_FRAME_ID),
+            ],
+            og.Controller.Keys.CONNECT: [
+                ("OnPlaybackTick.outputs:tick", "CreateRenderProduct.inputs:execIn"),
+                ("CreateRenderProduct.outputs:execOut", "RgbPublisher.inputs:execIn"),
+                ("CreateRenderProduct.outputs:execOut", "DepthPublisher.inputs:execIn"),
+                ("CreateRenderProduct.outputs:execOut", "PointCloudPublisher.inputs:execIn"),
+                ("CreateRenderProduct.outputs:execOut", "CameraInfoPublisher.inputs:execIn"),
+                ("CreateRenderProduct.outputs:renderProductPath", "RgbPublisher.inputs:renderProductPath"),
+                ("CreateRenderProduct.outputs:renderProductPath", "DepthPublisher.inputs:renderProductPath"),
+                ("CreateRenderProduct.outputs:renderProductPath", "PointCloudPublisher.inputs:renderProductPath"),
+                ("CreateRenderProduct.outputs:renderProductPath", "CameraInfoPublisher.inputs:renderProductPath"),
             ],
         },
     )
@@ -144,7 +222,29 @@ def add_blocks(world: World) -> None:
         )
 
 
-def write_scene_state(world: World, path: str) -> None:
+def camera_optical_to_world_transform(camera_prim_path: str) -> np.ndarray:
+    stage = omni.usd.get_context().get_stage()
+    camera_prim = stage.GetPrimAtPath(camera_prim_path)
+    if not camera_prim.IsValid():
+        raise RuntimeError(f"Camera prim does not exist: {camera_prim_path}")
+
+    camera_to_world = UsdGeom.Xformable(camera_prim).ComputeLocalToWorldTransform(
+        Usd.TimeCode.Default()
+    )
+    origin = np.asarray(camera_to_world.Transform(Gf.Vec3d(0.0, 0.0, 0.0)), dtype=float)
+    optical_x = np.asarray(camera_to_world.TransformDir(Gf.Vec3d(1.0, 0.0, 0.0)), dtype=float)
+    optical_y = np.asarray(camera_to_world.TransformDir(Gf.Vec3d(0.0, -1.0, 0.0)), dtype=float)
+    optical_z = np.asarray(camera_to_world.TransformDir(Gf.Vec3d(0.0, 0.0, -1.0)), dtype=float)
+
+    transform = np.eye(4, dtype=float)
+    transform[:3, 0] = optical_x / np.linalg.norm(optical_x)
+    transform[:3, 1] = optical_y / np.linalg.norm(optical_y)
+    transform[:3, 2] = optical_z / np.linalg.norm(optical_z)
+    transform[:3, 3] = origin
+    return transform
+
+
+def write_scene_state(world: World, path: str, include_camera: bool = True) -> None:
     object_specs = {
         object_name: (BLOCK_SIZE, OBJECT_COLORS[object_name])
         for object_name in OBJECT_POSITIONS
@@ -163,8 +263,16 @@ def write_scene_state(world: World, path: str) -> None:
         )
 
     tmp_path = f"{path}.tmp"
+    state = {"frame": "world", "objects": objects}
+    if include_camera:
+        state["camera"] = {
+            "frame_id": CAMERA_FRAME_ID,
+            "prim_path": CAMERA_PRIM_PATH,
+            "optical_to_world": camera_optical_to_world_transform(CAMERA_PRIM_PATH).tolist(),
+        }
+
     with open(tmp_path, "w", encoding="utf-8") as file:
-        json.dump({"frame": "world", "objects": objects}, file)
+        json.dump(state, file)
     os.replace(tmp_path, path)
 
 
@@ -175,6 +283,8 @@ def main() -> None:
     world = World(stage_units_in_meters=1.0, physics_dt=1 / 200, rendering_dt=1 / 60)
     world.add_task(PickPlace(name=TASK_NAME))
     add_blocks(world)
+    if not args.disable_camera:
+        create_camera()
     world.reset()
 
     task_params = world.get_task(TASK_NAME).get_params()
@@ -191,6 +301,8 @@ def main() -> None:
   
     robot_prim_path = find_articulation_root_path()
     create_moveit_bridge_graph(robot_prim_path)
+    if not args.disable_camera:
+        create_camera_graph(args.camera_width, args.camera_height)
     omni.timeline.get_timeline_interface().play()
     
 
@@ -198,12 +310,21 @@ def main() -> None:
     print(f"[INFO] Robot prim:   {robot_prim_path}", flush=True)
     print("[INFO] Blocks:", ", ".join(OBJECT_POSITIONS.keys()), flush=True)
     print("[INFO] Scene state file:", args.scene_state_file, flush=True)
+    if args.disable_camera:
+        print("[INFO] RGB-D camera disabled", flush=True)
+    else:
+        print(
+            f"[INFO] RGB-D camera: {CAMERA_PRIM_PATH} "
+            f"({args.camera_width}x{args.camera_height}, frame={CAMERA_FRAME_ID})",
+            flush=True,
+        )
+        print("[INFO] Publishing camera topics:", ", ".join(CAMERA_TOPICS), flush=True)
     
 
     started_at = time.monotonic()
     last_scene_state_write = 0.0
     while simulation_app.is_running():
-        world.step(render=not args.headless)
+        world.step(render=not args.headless or not args.disable_camera)
         rclpy.spin_once(state_node, timeout_sec=0.0)
         
         msg = JointState()
@@ -215,7 +336,7 @@ def main() -> None:
 
         now = time.monotonic()
         if now - last_scene_state_write >= args.scene_state_period:
-            write_scene_state(world, args.scene_state_file)
+            write_scene_state(world, args.scene_state_file, include_camera=not args.disable_camera)
             last_scene_state_write = now
         
         

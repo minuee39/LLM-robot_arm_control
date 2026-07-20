@@ -15,6 +15,10 @@ OBJECT_COLORS = {
     "green_block": np.array([0.0, 1.0, 0.0]),
 }
 
+SIM_CAMERA_EYE = np.array([0.0, 0.95, 2.9])
+SIM_CAMERA_TARGET = np.array([0.0, 0.32, 0.08])
+SIM_CAMERA_UP = np.array([0.0, 0.0, 1.0])
+
 def build_scene_objects() -> dict:
     return {
         object_name: {

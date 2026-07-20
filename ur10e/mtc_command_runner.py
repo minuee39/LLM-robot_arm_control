@@ -11,11 +11,15 @@ from command_parser import parse_user_command_with_memory, validate_command
 from llm_to_json import parse_user_command_with_llm
 from scene_config import BLOCK_SIZE
 from scene_manager import SceneManager
+from vision.scene_objects import EXPECTED_BLOCK_NAMES
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
 DEFAULT_RUN_SCRIPT = PROJECT_DIR / "scripts" / "run_mtc_isaac_pick_place.sh"
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
+DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
+DEFAULT_VISION_MAX_AGE = 2.0
+DEFAULT_VISION_MIN_CONFIDENCE = 0.6
 DEFAULT_TOUCH_COLLISION_COMMAND = [
     "ros2",
     "run",
@@ -96,6 +100,95 @@ def sync_scene_manager_from_isaac(scene_manager: SceneManager, path: Path = DEFA
     return True
 
 
+def read_vision_scene_objects(
+    path: Path = DEFAULT_VISION_SCENE_FILE,
+    *,
+    max_age: float = DEFAULT_VISION_MAX_AGE,
+    min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
+    now: float | None = None,
+) -> dict[str, dict]:
+    path = Path(path).expanduser()
+    if max_age <= 0.0:
+        raise ValueError("vision max age must be positive")
+    if not 0.0 <= min_confidence <= 1.0:
+        raise ValueError("vision minimum confidence must be between 0 and 1")
+    if not path.exists():
+        raise ValueError(f"vision scene file not found: {path}. Start the YOLO camera node first")
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"failed to read vision scene: {error}") from error
+
+    if data.get("frame") != "world":
+        raise ValueError("vision scene frame must be 'world'")
+
+    updated_at = data.get("updated_at")
+    if not isinstance(updated_at, (int, float)) or not np.isfinite(updated_at):
+        raise ValueError("vision scene updated_at must be a finite timestamp")
+    if now is None:
+        now = time.time()
+    age = float(now) - float(updated_at)
+    if age < -1.0:
+        raise ValueError(f"vision scene timestamp is {abs(age):.2f}s in the future")
+    if age > max_age:
+        raise ValueError(f"vision scene is stale: age={age:.2f}s, limit={max_age:.2f}s")
+
+    objects = data.get("objects")
+    if not isinstance(objects, dict):
+        raise ValueError("vision scene objects must be an object keyed by block name")
+    if not objects:
+        raise ValueError("vision scene does not contain any detected blocks")
+
+    unknown_names = sorted(set(objects) - set(EXPECTED_BLOCK_NAMES))
+    if unknown_names:
+        raise ValueError(f"vision scene contains unknown blocks: {', '.join(unknown_names)}")
+
+    validated = {}
+    for name, item in objects.items():
+        if not isinstance(item, dict):
+            raise ValueError(f"invalid vision detection for {name}")
+        position = np.asarray(item.get("position"), dtype=float)
+        if position.shape != (3,) or not np.all(np.isfinite(position)):
+            raise ValueError(f"invalid world position for {name}: {item.get('position')}")
+        confidence = item.get("confidence")
+        if not isinstance(confidence, (int, float)) or not np.isfinite(confidence):
+            raise ValueError(f"invalid confidence for {name}: {confidence}")
+        if confidence < min_confidence:
+            raise ValueError(
+                f"vision confidence too low for {name}: {confidence:.3f} < {min_confidence:.3f}"
+            )
+        validated[name] = {
+            "position": position,
+            "confidence": float(confidence),
+        }
+    return validated
+
+
+def sync_scene_manager_from_vision(
+    scene_manager: SceneManager,
+    path: Path = DEFAULT_VISION_SCENE_FILE,
+    *,
+    max_age: float = DEFAULT_VISION_MAX_AGE,
+    min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
+) -> set[str]:
+    scene_objects = read_vision_scene_objects(
+        path,
+        max_age=max_age,
+        min_confidence=min_confidence,
+    )
+    for name, item in scene_objects.items():
+        if name not in scene_manager.names():
+            continue
+        scene_manager.update_object(
+            name,
+            position=item["position"],
+            confidence=item["confidence"],
+            status="on_table",
+        )
+    return set(scene_objects)
+
+
 def scene_state_mtime(path: Path = DEFAULT_SCENE_STATE_FILE) -> int | None:
     if not path.exists():
         return None
@@ -113,6 +206,27 @@ def wait_for_scene_state_update(
         if current_mtime_ns is not None and current_mtime_ns != previous_mtime_ns:
             return
         time.sleep(0.05)
+
+
+def vision_scene_mtime(path: Path = DEFAULT_VISION_SCENE_FILE) -> int | None:
+    path = Path(path).expanduser()
+    if not path.exists():
+        return None
+    return path.stat().st_mtime_ns
+
+
+def wait_for_vision_scene_update(
+    previous_mtime_ns: int | None,
+    path: Path = DEFAULT_VISION_SCENE_FILE,
+    timeout: float = 3.0,
+) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        current_mtime_ns = vision_scene_mtime(path)
+        if current_mtime_ns is not None and current_mtime_ns != previous_mtime_ns:
+            return True
+        time.sleep(0.05)
+    return False
 
 
 def command_to_mtc_args(command: dict, scene_manager: SceneManager) -> list[str]:
@@ -205,11 +319,31 @@ def execute_user_command(
     gripper_close_min: float = 0.02,
     gripper_close_max: float = 0.45,
     gripper_close_step: float = 0.08,
+    vision_scene_file: str | Path = DEFAULT_VISION_SCENE_FILE,
+    vision_max_age: float = DEFAULT_VISION_MAX_AGE,
+    vision_min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
+    vision_verification_timeout: float = 3.0,
 ) -> int:
-    if sync_scene_manager_from_isaac(scene_manager):
-        print("[Scene] synced object positions from Isaac scene state.", flush=True)
+    vision_scene_file = Path(vision_scene_file).expanduser()
+    detected_names = sync_scene_manager_from_vision(
+        scene_manager,
+        vision_scene_file,
+        max_age=vision_max_age,
+        min_confidence=vision_min_confidence,
+    )
+    print(
+        "[Scene] synced YOLO detections: " + ", ".join(sorted(detected_names)),
+        flush=True,
+    )
 
     command, mtc_args = build_mtc_invocation(user_text, provider=provider, scene_manager=scene_manager)
+    required_names = {command["pick_object"], command["target_object"]}
+    missing_required = sorted(required_names - detected_names)
+    if missing_required:
+        raise ValueError(
+            "vision scene is missing blocks required by this command: "
+            + ", ".join(missing_required)
+        )
     mtc_args = [
         *mtc_args,
         *execution_tuning_args(
@@ -231,7 +365,7 @@ def execute_user_command(
     if dry_run:
         return 0
 
-    scene_state_before_execution = scene_state_mtime()
+    vision_scene_before_execution = vision_scene_mtime(vision_scene_file)
     touch_collision_returncode = ensure_touch_collisions()
     if touch_collision_returncode != 0:
         print("[ERROR] MTC execution skipped because touch collision ACM was not applied.", flush=True)
@@ -239,13 +373,35 @@ def execute_user_command(
 
     completed = subprocess.run([run_script, *mtc_args], check=False)
     if completed.returncode == 0:
-        wait_for_scene_state_update(scene_state_before_execution)
-        if sync_scene_manager_from_isaac(scene_manager):
-            actual_position = scene_manager.get_object(command["pick_object"]).position
-            scene_manager.apply_pick_place_result(command, actual_position)
-            print("[Scene] updated command memory from Isaac actual object position.", flush=True)
-        else:
-            print("[WARN] Isaac scene state was unavailable. Scene memory was not updated.", flush=True)
+        if not wait_for_vision_scene_update(
+            vision_scene_before_execution,
+            vision_scene_file,
+            timeout=vision_verification_timeout,
+        ):
+            print("[ERROR] MTC completed, but no new YOLO vision scene was received.", flush=True)
+            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
+            return 1
+        try:
+            post_detected_names = sync_scene_manager_from_vision(
+                scene_manager,
+                vision_scene_file,
+                max_age=vision_max_age,
+                min_confidence=vision_min_confidence,
+            )
+        except ValueError as error:
+            print(f"[ERROR] MTC completed, but post-execution vision verification failed: {error}", flush=True)
+            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
+            return 1
+        if command["pick_object"] not in post_detected_names:
+            print(
+                f"[ERROR] MTC completed, but {command['pick_object']} was not detected after execution.",
+                flush=True,
+            )
+            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
+            return 1
+        actual_position = scene_manager.get_object(command["pick_object"]).position
+        scene_manager.apply_pick_place_result(command, actual_position)
+        print("[Scene] updated command memory from YOLO-observed object position.", flush=True)
     else:
         print(f"[ERROR] MTC execution failed with return code {completed.returncode}. Scene memory was not updated.", flush=True)
 
@@ -266,6 +422,10 @@ def run_interactive(
     gripper_close_min: float = 0.02,
     gripper_close_max: float = 0.45,
     gripper_close_step: float = 0.08,
+    vision_scene_file: str | Path = DEFAULT_VISION_SCENE_FILE,
+    vision_max_age: float = DEFAULT_VISION_MAX_AGE,
+    vision_min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
+    vision_verification_timeout: float = 3.0,
 ) -> int:
     scene_manager = SceneManager.from_defaults()
 
@@ -287,6 +447,10 @@ def run_interactive(
                 gripper_close_min=gripper_close_min,
                 gripper_close_max=gripper_close_max,
                 gripper_close_step=gripper_close_step,
+                vision_scene_file=vision_scene_file,
+                vision_max_age=vision_max_age,
+                vision_min_confidence=vision_min_confidence,
+                vision_verification_timeout=vision_verification_timeout,
             )
         except ValueError as error:
             last_returncode = 1
@@ -322,6 +486,10 @@ def run_interactive(
                 gripper_close_min=gripper_close_min,
                 gripper_close_max=gripper_close_max,
                 gripper_close_step=gripper_close_step,
+                vision_scene_file=vision_scene_file,
+                vision_max_age=vision_max_age,
+                vision_min_confidence=vision_min_confidence,
+                vision_verification_timeout=vision_verification_timeout,
             )
         except ValueError as error:
             last_returncode = 1
@@ -359,6 +527,10 @@ def main() -> int:
     parser.add_argument("--gripper-close-min", type=float, default=0.02)
     parser.add_argument("--gripper-close-max", type=float, default=0.45)
     parser.add_argument("--gripper-close-step", type=float, default=0.08)
+    parser.add_argument("--vision-scene-file", default=str(DEFAULT_VISION_SCENE_FILE))
+    parser.add_argument("--vision-max-age", type=float, default=DEFAULT_VISION_MAX_AGE)
+    parser.add_argument("--vision-min-confidence", type=float, default=DEFAULT_VISION_MIN_CONFIDENCE)
+    parser.add_argument("--vision-verification-timeout", type=float, default=3.0)
     parser.add_argument(
         "--gripper-close-position",
         type=float,
@@ -385,27 +557,39 @@ def main() -> int:
             gripper_close_min=args.gripper_close_min,
             gripper_close_max=args.gripper_close_max,
             gripper_close_step=args.gripper_close_step,
+            vision_scene_file=args.vision_scene_file,
+            vision_max_age=args.vision_max_age,
+            vision_min_confidence=args.vision_min_confidence,
+            vision_verification_timeout=args.vision_verification_timeout,
         )
 
     user_text = " ".join(args.command)
     if args.once:
         scene_manager = SceneManager.from_defaults()
-        return execute_user_command(
-            user_text,
-            scene_manager=scene_manager,
-            provider=args.provider,
-            run_script=args.run_script,
-            dry_run=args.dry_run,
-            planner_id=args.planner_id,
-            max_solutions=args.max_solutions,
-            move_to_pick_timeout=args.move_to_pick_timeout,
-            move_to_pick_max_path_length=args.move_to_pick_max_path_length,
-            move_to_place_timeout=args.move_to_place_timeout,
-            return_home_timeout=args.return_home_timeout,
-            gripper_close_min=args.gripper_close_min,
-            gripper_close_max=args.gripper_close_max,
-            gripper_close_step=args.gripper_close_step,
-        )
+        try:
+            return execute_user_command(
+                user_text,
+                scene_manager=scene_manager,
+                provider=args.provider,
+                run_script=args.run_script,
+                dry_run=args.dry_run,
+                planner_id=args.planner_id,
+                max_solutions=args.max_solutions,
+                move_to_pick_timeout=args.move_to_pick_timeout,
+                move_to_pick_max_path_length=args.move_to_pick_max_path_length,
+                move_to_place_timeout=args.move_to_place_timeout,
+                return_home_timeout=args.return_home_timeout,
+                gripper_close_min=args.gripper_close_min,
+                gripper_close_max=args.gripper_close_max,
+                gripper_close_step=args.gripper_close_step,
+                vision_scene_file=args.vision_scene_file,
+                vision_max_age=args.vision_max_age,
+                vision_min_confidence=args.vision_min_confidence,
+                vision_verification_timeout=args.vision_verification_timeout,
+            )
+        except ValueError as error:
+            print(f"[ERROR] {error}", flush=True)
+            return 1
 
     return run_interactive(
         args.provider,
@@ -421,6 +605,10 @@ def main() -> int:
         gripper_close_min=args.gripper_close_min,
         gripper_close_max=args.gripper_close_max,
         gripper_close_step=args.gripper_close_step,
+        vision_scene_file=args.vision_scene_file,
+        vision_max_age=args.vision_max_age,
+        vision_min_confidence=args.vision_min_confidence,
+        vision_verification_timeout=args.vision_verification_timeout,
     )
 
 

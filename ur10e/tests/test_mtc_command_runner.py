@@ -1,4 +1,6 @@
 import numpy as np
+import json
+import time
 
 from mtc_command_runner import (
     DEFAULT_TOUCH_COLLISION_COMMAND,
@@ -6,10 +8,28 @@ from mtc_command_runner import (
     command_to_mtc_args,
     execution_tuning_args,
     execute_user_command,
+    read_vision_scene_objects,
     sync_scene_manager_from_isaac,
+    sync_scene_manager_from_vision,
     run_interactive,
 )
 from scene_manager import SceneManager
+
+
+def write_vision_scene(path, *, updated_at=None, overrides=None):
+    if updated_at is None:
+        updated_at = time.time()
+    objects = {
+        "red_block": {"confidence": 0.9, "position": [0.11, 0.22, 0.05]},
+        "green_block": {"confidence": 0.91, "position": [0.31, 0.42, 0.05]},
+        "blue_block": {"confidence": 0.92, "position": [0.51, 0.62, 0.05]},
+    }
+    if overrides:
+        objects.update(overrides)
+    path.write_text(
+        json.dumps({"updated_at": updated_at, "frame": "world", "objects": objects}),
+        encoding="utf-8",
+    )
 
 
 def test_build_mtc_invocation_from_local_command():
@@ -67,8 +87,10 @@ def test_scene_manager_defaults_exclude_legacy_object():
     assert "object" not in scene_manager.names()
 
 
-def test_execute_user_command_dry_run_keeps_memory_unchanged():
+def test_execute_user_command_dry_run_keeps_memory_unchanged(tmp_path):
     scene_manager = SceneManager.from_defaults()
+    vision_scene = tmp_path / "vision.json"
+    write_vision_scene(vision_scene)
 
     result = execute_user_command(
         "빨간 블럭을 파란 블럭 옆에 둬",
@@ -76,10 +98,160 @@ def test_execute_user_command_dry_run_keeps_memory_unchanged():
         provider="local",
         run_script="/unused",
         dry_run=True,
+        vision_scene_file=vision_scene,
+        vision_max_age=2.0,
     )
 
     assert result == 0
     assert scene_manager.memory.last_moved_object is None
+
+
+def test_read_vision_scene_objects_validates_complete_fresh_world_scene(tmp_path):
+    vision_scene = tmp_path / "vision.json"
+    write_vision_scene(vision_scene, updated_at=100.0)
+
+    objects = read_vision_scene_objects(
+        vision_scene,
+        max_age=2.0,
+        min_confidence=0.8,
+        now=101.0,
+    )
+
+    assert set(objects) == {"red_block", "green_block", "blue_block"}
+    np.testing.assert_allclose(objects["red_block"]["position"], [0.11, 0.22, 0.05])
+    assert objects["blue_block"]["confidence"] == 0.92
+
+
+def test_read_vision_scene_objects_rejects_stale_scene(tmp_path):
+    vision_scene = tmp_path / "vision.json"
+    write_vision_scene(vision_scene, updated_at=100.0)
+
+    try:
+        read_vision_scene_objects(vision_scene, max_age=2.0, now=103.0)
+    except ValueError as error:
+        assert "stale" in str(error)
+    else:
+        raise AssertionError("stale vision scene should be rejected")
+
+
+def test_read_vision_scene_objects_rejects_low_confidence_block(tmp_path):
+    vision_scene = tmp_path / "vision.json"
+    write_vision_scene(
+        vision_scene,
+        updated_at=100.0,
+        overrides={"green_block": {"confidence": 0.4, "position": [0.31, 0.42, 0.05]}},
+    )
+
+    try:
+        read_vision_scene_objects(
+            vision_scene,
+            max_age=2.0,
+            min_confidence=0.6,
+            now=101.0,
+        )
+    except ValueError as error:
+        assert "green_block" in str(error)
+        assert "confidence" in str(error)
+    else:
+        raise AssertionError("low-confidence detection should be rejected")
+
+
+def test_read_vision_scene_objects_accepts_partial_scene(tmp_path):
+    vision_scene = tmp_path / "vision.json"
+    vision_scene.write_text(
+        json.dumps(
+            {
+                "updated_at": 100.0,
+                "frame": "world",
+                "objects": {
+                    "red_block": {"confidence": 0.9, "position": [0.11, 0.22, 0.05]},
+                    "blue_block": {"confidence": 0.92, "position": [0.51, 0.62, 0.05]},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    objects = read_vision_scene_objects(vision_scene, max_age=2.0, now=101.0)
+
+    assert set(objects) == {"red_block", "blue_block"}
+
+
+def test_sync_scene_manager_from_vision_updates_detected_positions(tmp_path, monkeypatch):
+    scene_manager = SceneManager.from_defaults()
+    vision_scene = tmp_path / "vision.json"
+    write_vision_scene(vision_scene, updated_at=100.0)
+    monkeypatch.setattr("mtc_command_runner.time.time", lambda: 101.0)
+
+    assert sync_scene_manager_from_vision(scene_manager, vision_scene) == {
+        "red_block",
+        "green_block",
+        "blue_block",
+    }
+    np.testing.assert_allclose(scene_manager.get_object("red_block").position, [0.11, 0.22, 0.05])
+    assert scene_manager.get_object("red_block").confidence == 0.9
+
+
+def test_execute_user_command_allows_unrelated_block_to_be_missing(tmp_path):
+    scene_manager = SceneManager.from_defaults()
+    vision_scene = tmp_path / "vision.json"
+    vision_scene.write_text(
+        json.dumps(
+            {
+                "updated_at": time.time(),
+                "frame": "world",
+                "objects": {
+                    "red_block": {"confidence": 0.9, "position": [0.11, 0.22, 0.05]},
+                    "blue_block": {"confidence": 0.92, "position": [0.51, 0.62, 0.05]},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = execute_user_command(
+        "빨간 블럭을 파란 블럭 옆에 둬",
+        scene_manager=scene_manager,
+        provider="local",
+        run_script="/unused",
+        dry_run=True,
+        vision_scene_file=vision_scene,
+    )
+
+    assert result == 0
+
+
+def test_execute_user_command_rejects_missing_required_target(tmp_path):
+    scene_manager = SceneManager.from_defaults()
+    vision_scene = tmp_path / "vision.json"
+    vision_scene.write_text(
+        json.dumps(
+            {
+                "updated_at": time.time(),
+                "frame": "world",
+                "objects": {
+                    "red_block": {"confidence": 0.9, "position": [0.11, 0.22, 0.05]},
+                    "green_block": {"confidence": 0.91, "position": [0.31, 0.42, 0.05]},
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    try:
+        execute_user_command(
+            "빨간 블럭을 파란 블럭 옆에 둬",
+            scene_manager=scene_manager,
+            provider="local",
+            run_script="/unused",
+            dry_run=True,
+            vision_scene_file=vision_scene,
+        )
+    except ValueError as error:
+        assert "blue_block" in str(error)
+        assert "required by this command" in str(error)
+    else:
+        raise AssertionError("missing target detection should prevent MTC execution")
 
 
 def test_sync_scene_manager_from_isaac_updates_actual_positions(tmp_path):
@@ -114,13 +286,18 @@ def test_execute_user_command_updates_scene_after_success(monkeypatch):
         return Completed()
 
     monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
-    monkeypatch.setattr(
-        "mtc_command_runner.sync_scene_manager_from_isaac",
-        lambda scene_manager: (
-            scene_manager.update_object("red_block", [0.51, 0.52, 0.053]) or True
-        ),
-    )
-    monkeypatch.setattr("mtc_command_runner.wait_for_scene_state_update", lambda previous_mtime_ns: None)
+    sync_count = 0
+
+    def fake_sync(scene_manager, *args, **kwargs):
+        nonlocal sync_count
+        sync_count += 1
+        position = [0.11, 0.22, 0.05] if sync_count == 1 else [0.51, 0.52, 0.053]
+        scene_manager.update_object("red_block", position, confidence=0.9)
+        return {"red_block", "green_block", "blue_block"}
+
+    monkeypatch.setattr("mtc_command_runner.sync_scene_manager_from_vision", fake_sync)
+    monkeypatch.setattr("mtc_command_runner.vision_scene_mtime", lambda path: 1)
+    monkeypatch.setattr("mtc_command_runner.wait_for_vision_scene_update", lambda *args, **kwargs: True)
 
     result = execute_user_command(
         "빨간 블럭을 파란 블럭 옆에 둬",
@@ -141,6 +318,8 @@ def test_execute_user_command_updates_scene_after_success(monkeypatch):
     assert "gripper_close_min:=0.020" in calls[1]
     assert "gripper_close_max:=0.450" in calls[1]
     assert "gripper_close_step:=0.080" in calls[1]
+    assert "object_x:=0.110000" in calls[1]
+    assert "object_y:=0.220000" in calls[1]
     assert scene_manager.memory.last_moved_object == "red_block"
     np.testing.assert_allclose(scene_manager.get_object("red_block").position, np.array([0.51, 0.52, 0.053]))
 
@@ -161,7 +340,10 @@ def test_execute_user_command_does_not_update_scene_after_failure(monkeypatch):
         return MtcCompleted()
 
     monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
-    monkeypatch.setattr("mtc_command_runner.sync_scene_manager_from_isaac", lambda scene_manager: False)
+    monkeypatch.setattr(
+        "mtc_command_runner.sync_scene_manager_from_vision",
+        lambda *args, **kwargs: {"red_block", "blue_block"},
+    )
 
     result = execute_user_command(
         "빨간 블럭을 파란 블럭 위에 둬",
@@ -188,7 +370,10 @@ def test_execute_user_command_skips_mtc_when_touch_acm_fails(monkeypatch):
         return Completed()
 
     monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
-    monkeypatch.setattr("mtc_command_runner.sync_scene_manager_from_isaac", lambda scene_manager: False)
+    monkeypatch.setattr(
+        "mtc_command_runner.sync_scene_manager_from_vision",
+        lambda *args, **kwargs: {"red_block", "blue_block"},
+    )
 
     result = execute_user_command(
         "빨간 블럭을 파란 블럭 위에 둬",

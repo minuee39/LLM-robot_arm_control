@@ -21,6 +21,13 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>moveit_visual_tools</depend>
 
+  <exec_depend>isaac_moveit_bridge</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>ur10e_robotiq_2f140_moveit_config</exec_depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

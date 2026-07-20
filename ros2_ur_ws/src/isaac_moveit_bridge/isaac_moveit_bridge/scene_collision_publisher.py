@@ -296,7 +296,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--once", action="store_true")
     parser.add_argument("--no-defaults", dest="use_defaults", action="store_false")
     parser.set_defaults(use_defaults=True)
-    return parser.parse_args()
+    args, _ros_args = parser.parse_known_args()
+    return args
 
 
 def main() -> None:

@@ -45,5 +45,7 @@ User Command
 7. README.md와 AGENTS.md 작성
 
 ## Change Logging
-- 코드, 설정, 테스트, 문서와 관련된 의미 있는 변경을 완료하면 Notion `Pallet VLA Project Hub`에 변경 요약, 수정 파일, 검증 결과, 남은 blocker를 기록한다.
-- Notion API 설정은 `notion.env`에서 읽고, API key나 token 값은 출력하거나 커밋하지 않는다.
+- 사용자가 명시적으로 다시 허용하기 전까지 Notion `Pallet VLA Project Hub`를 포함한 어떤 Notion 페이지에도 내용을 작성, 추가, 수정하거나 기록하지 않는다.
+- 작업 완료 보고와 변경 로그도 Notion에 남기지 않으며, 이 제한을 해제하려면 사용자의 명시적인 요청이 필요하다.
+- 기술 작업 기록을 작성할 때는 `UR10e + Robotiq 2F-140 MoveIt2 / Isaac Sim 작업 기록` 페이지처럼 작성일과 목적, 기준 workspace, 주요 패키지/파일, 문제와 원인, 해결 과정, 최종 구조, 실행 순서, 검증 명령과 결과, 남은 주의사항, 체크리스트 형태의 다음 작업 로드맵 순서로 정리한다.
+- 관련 경로, 설정값, 실행 명령, 핵심 로그를 구체적으로 포함하되 실제로 확인하지 않은 결과나 자료는 작성하지 않는다.

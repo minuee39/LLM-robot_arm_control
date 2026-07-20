@@ -140,6 +140,91 @@ bash ur10e/scripts/run_sim_camera_rviz.sh
 
 MoveIt bridge 관련 앱은 [isaac_moveit_bridge](ros2_ur_ws/src/isaac_moveit_bridge)와 `ur10e/apps/` 아래 실행 스크립트를 기준으로 확인합니다.
 
+MTC/MoveIt pick-and-place용 Isaac bridge에는 RGB-D 카메라가 기본으로 포함됩니다. 브리지를 실행하면 로봇과 블록을 렌더링하면서 다음 토픽을 함께 발행합니다.
+
+- RGB image: `/sim_camera/rgb`
+- Depth image: `/sim_camera/depth`
+- Point cloud: `/sim_camera/points`
+- Camera info: `/sim_camera/camera_info`
+
+```bash
+bash ur10e/scripts/run_isaac_moveit_bridge.sh
+```
+
+기본 해상도는 `640x480`이며 실행 옵션으로 변경할 수 있습니다. 카메라가 필요 없는 성능 테스트에서는 비활성화할 수 있습니다.
+
+```bash
+bash ur10e/scripts/run_isaac_moveit_bridge.sh --camera-width 1280 --camera-height 720
+bash ur10e/scripts/run_isaac_moveit_bridge.sh --disable-camera
+```
+
+브리지 실행 중 토픽 수신은 다음 명령으로 확인합니다.
+
+```bash
+ros2 topic hz /sim_camera/rgb
+ros2 topic hz /sim_camera/depth
+ros2 topic echo /sim_camera/camera_info --once
+```
+
+카메라 토픽에서 YOLO 블록 탐지를 실행하려면 다른 터미널에서 다음 스크립트를 실행합니다.
+
+```bash
+bash ur10e/scripts/run_yolo_camera_node.sh --show
+```
+
+기본 모델은 `runs/detect/train/weights/best.pt`입니다. 다른 모델이나 confidence threshold를 사용할 수도 있습니다.
+
+```bash
+bash ur10e/scripts/run_yolo_camera_node.sh \
+  --model /path/to/best.pt \
+  --conf 0.5 \
+  --show
+```
+
+탐지 노드는 RGB와 depth timestamp 차이가 기본 50ms 이내인 프레임만 동기화해 처리하고, bbox가 표시된 영상을 `/yolo/annotated`로 발행합니다. `/yolo/detections`에는 제어에 필요한 물체 이름, confidence, Isaac world position만 간결한 JSON으로 발행합니다. 프레임 내 같은 이름은 confidence가 가장 높은 탐지 하나만 사용합니다. 블록별 최근 10개 좌표 중 최소 5개를 모아 median 위치를 계산하고, confidence 0.6 이상이며 축별 표준편차가 2cm 이하인 red/green/blue 세 블록이 모두 준비됐을 때 한 메시지로 발행합니다. world 좌표 변환에는 Isaac bridge가 `/tmp/ur10e_isaac_scene_objects.json`에 기록한 실제 USD 카메라 transform을 사용합니다.
+
+```json
+{
+  "red_block": {
+    "confidence": 0.74,
+    "position": [0.0, 0.46, 0.15]
+  },
+  "green_block": {
+    "confidence": 0.89,
+    "position": [0.0, 0.45, 0.05]
+  },
+  "blue_block": {
+    "confidence": 0.83,
+    "position": [0.3, 0.3, 0.05]
+  }
+}
+```
+
+```bash
+ros2 topic echo /yolo/detections --field data --full-length
+```
+
+카메라 좌표 변환을 변경한 뒤에는 Isaac bridge와 YOLO 노드를 모두 재시작합니다. 변환 검증 시 `/yolo/detections`의 `position`과 scene-state 파일의 같은 물체 `position`을 비교합니다.
+
+안정화된 전체 scene은 `/tmp/ur10e_vision_scene.json`에도 원자적으로 저장됩니다. 이 파일에는 제어용 좌표 외에 `updated_at`, `sample_count`, `position_std`가 포함됩니다.
+
+동기화, 안정화와 발행 기준은 실행 옵션으로 조정할 수 있습니다.
+
+```bash
+bash ur10e/scripts/run_yolo_camera_node.sh \
+  --sync-slop 0.05 \
+  --stability-window 10 \
+  --stability-min-samples 5 \
+  --detection-ttl 1.0 \
+  --min-stable-confidence 0.6 \
+  --max-position-std 0.02 \
+  --outlier-distance 0.05 \
+  --publish-period 0.5 \
+  --show
+```
+
+기존 `python3 ur10e/tests/test_yolo_camera_node.py --show` 명령은 호환을 위해 유지하지만, 실제 구현은 `ur10e/apps/yolo_camera_node.py`와 `ur10e/vision/yolo_detector.py`에 있습니다.
+
 ## 개발 팁
 
 - `.cpp` 파일을 바꾸면 해당 ROS 2 패키지를 다시 `colcon build` 해야 합니다.
