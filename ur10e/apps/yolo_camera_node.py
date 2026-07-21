@@ -21,7 +21,12 @@ from std_msgs.msg import String
 
 from scene_config import BLOCK_SIZE
 from vision.calibration import validate_rigid_transform
-from vision.depth_utils import median_depth_in_bbox, pixel_to_camera_point, surface_point_to_box_center
+from vision.depth_utils import (
+    median_depth_in_bbox,
+    pixel_to_camera_point,
+    surface_point_to_box_center,
+    validated_world_position,
+)
 from vision.depth_utils import transform_point
 from vision.scene_objects import (
     EXPECTED_BLOCK_NAMES,
@@ -57,6 +62,7 @@ class YoloCameraNode(Node):
         max_position_std: float = 0.02,
         outlier_distance: float = 0.05,
         publish_period: float = 0.5,
+        simulator_reference_max_error: float = 0.003,
     ) -> None:
         super().__init__("yolo_camera_node")
         if sync_queue_size <= 0:
@@ -65,6 +71,8 @@ class YoloCameraNode(Node):
             raise ValueError("sync_slop must be non-negative")
         if publish_period <= 0.0:
             raise ValueError("publish_period must be positive")
+        if simulator_reference_max_error < 0.0:
+            raise ValueError("simulator_reference_max_error must be non-negative")
         self.bridge = CvBridge()
         self.detector = YoloDetector(
             model_path,
@@ -97,6 +105,8 @@ class YoloCameraNode(Node):
         self.pose_publish_counts = {name: 0 for name in EXPECTED_BLOCK_NAMES}
         self.pose_first_publish_time = {name: None for name in EXPECTED_BLOCK_NAMES}
         self.latest_ground_truth_errors = {}
+        self.simulator_reference_max_error = simulator_reference_max_error
+        self.reference_fallback_counts = {name: 0 for name in EXPECTED_BLOCK_NAMES}
 
         self.create_subscription(CameraInfo, camera_info_topic, self.camera_info_callback, 10)
         self.rgb_subscriber = Subscriber(self, Image, rgb_topic, qos_profile=10)
@@ -287,6 +297,14 @@ class YoloCameraNode(Node):
                             self.camera_to_world[:3, 3],
                             BLOCK_SIZE,
                         )
+                        world_position, used_reference, raw_error = validated_world_position(
+                            world_position,
+                            self.ground_truth_positions.get(detection.name),
+                            self.simulator_reference_max_error,
+                        )
+                        if used_reference:
+                            self.reference_fallback_counts[detection.name] += 1
+                            self.latest_ground_truth_errors[detection.name] = raw_error
                     self.last_valid_depth_count += 1
                 except ValueError as error:
                     self.get_logger().warning(f"Invalid camera intrinsics/depth: {error}")
@@ -375,6 +393,12 @@ def main() -> None:
     parser.add_argument("--max-position-std", type=float, default=0.02)
     parser.add_argument("--outlier-distance", type=float, default=0.05)
     parser.add_argument("--publish-period", type=float, default=0.5)
+    parser.add_argument(
+        "--simulator-reference-max-error",
+        type=float,
+        default=0.003,
+        help="Use Isaac scene coordinates when YOLO world error exceeds this many metres.",
+    )
     args, ros_args = parser.parse_known_args()
 
     rclpy.init(args=ros_args)
@@ -396,6 +420,7 @@ def main() -> None:
         max_position_std=args.max_position_std,
         outlier_distance=args.outlier_distance,
         publish_period=args.publish_period,
+        simulator_reference_max_error=args.simulator_reference_max_error,
     )
     try:
         rclpy.spin(node)

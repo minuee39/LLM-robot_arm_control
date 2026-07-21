@@ -33,13 +33,13 @@ if [ "$#" -eq 0 ]; then
 fi
 
 if ! has_arg "--show-args" "$@"; then
-  echo "Checking /execute_task_solution action server..."
+  printf '\n[CHECK] MoveIt execution server'
   for _ in {1..30}; do
     if ros2 action list 2>/dev/null | grep -qx "/execute_task_solution"; then
-      echo "Found /execute_task_solution action server."
+      printf ' : READY\n'
       break
     fi
-    echo "Waiting for /execute_task_solution action server..."
+    printf '.'
     sleep 1
   done
 
@@ -53,7 +53,44 @@ fi
 
 launch_log="$(mktemp /tmp/mtc_pick_place_launch.XXXXXX.log)"
 set +e
-ros2 launch mtc_tutorial pick_place_demo.launch.py "$@" 2>&1 | tee "${launch_log}"
+ros2 launch mtc_tutorial pick_place_demo.launch.py "$@" 2>&1 \
+  | tee "${launch_log}" \
+  | awk '
+      /Preparing PlanningScene/ && !scene_started {
+        print "[1/4] Planning scene     : preparing"; scene_started=1; fflush()
+      }
+      /PlanningScene setup complete/ && !scene_ready {
+        print "[1/4] Planning scene     : READY"; scene_ready=1; fflush()
+      }
+      /Using OMPL planner:/ && !planner_ready {
+        sub(/^.*Using OMPL planner: /, "", $0)
+        print "[2/4] Motion planner     : " $0; planner_ready=1; fflush()
+      }
+      /Planning until/ && !planning_started {
+        print "[3/4] Trajectory search  : RUNNING"; planning_started=1; fflush()
+      }
+      /timed out on attempt|Failed to fetch the PlanningScene|planning scene services are unavailable/ {
+        line=$0
+        sub(/^.*\[mtc_tutorial\]: /, "", line)
+        print "[DETAIL] " line; fflush()
+      }
+      /Executing lowest-cost solution/ && !execution_started {
+        line=$0
+        sub(/^.*Executing /, "", line)
+        print "[3/4] Trajectory search  : " line
+        print "[4/4] Robot execution    : RUNNING"
+        execution_started=1; fflush()
+      }
+      /Best solution cost/ {
+        line=$0
+        sub(/^.*Best solution cost /, "", line)
+        print "[QUALITY] trajectory rejected: cost " line; fflush()
+      }
+      /Task planning failed|Task execution failed|execution skipped/ && !failure_reported {
+        print "[FAIL] MTC execution stopped; see the detail above or full log"; fflush()
+        failure_reported=1
+      }
+    '
 launch_status=${PIPESTATUS[0]}
 set -e
 
@@ -61,7 +98,10 @@ if [ "${launch_status}" -ne 0 ]; then
   exit "${launch_status}"
 fi
 
-if grep -Eq "process has died|Task planning failed|Task execution failed" "${launch_log}"; then
+if grep -Eq "process has died|Task planning failed|Task execution failed|execution skipped" "${launch_log}"; then
   echo "ERROR: MTC pick-place failed. See launch log: ${launch_log}" >&2
   exit 1
 fi
+
+echo "[4/4] Robot execution    : COMPLETE"
+echo "[LOG] Full ROS log       : ${launch_log}"

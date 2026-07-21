@@ -35,5 +35,6 @@ UR10E_INITIAL_JOINT_POSITIONS = {
     "wrist_1_joint": 1.94,
     "wrist_2_joint": 1.57,
     "wrist_3_joint": -2.58,
+    # Direct articulation state setters and feedback use radians.
     "finger_joint": 0.01,
 }

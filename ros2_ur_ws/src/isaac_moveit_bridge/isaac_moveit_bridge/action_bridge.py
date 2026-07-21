@@ -31,9 +31,18 @@ MOVEIT_TO_ISAAC = {
 }
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
 COMMAND_PERIOD_SEC = 0.01
-GRIPPER_CLOSE_SETTLE_SEC = 0.4
-GRIPPER_OPEN_SETTLE_SEC = 0.4
+GRIPPER_FEEDBACK_TIMEOUT_SEC = 2.5
+GRIPPER_MIN_MOTION_RAD = 0.01
+GRIPPER_POSITION_TOLERANCE_RAD = 0.01
+GRIPPER_CLOSE_POSITION_TOLERANCE_RAD = 0.02
+GRIPPER_BLOCK_CONTACT_MIN_POSITION_RAD = 0.47
+GRIPPER_STALL_VELOCITY_RAD_SEC = 0.03
+GRIPPER_STALL_POSITION_DELTA_RAD = 0.002
+GRIPPER_STALL_HOLD_SEC = 0.25
+GRIPPER_FINAL_SETTLE_SEC = 0.25
 GRIPPER_OPEN_POSITION_MAX = 0.05
+MOVEIT_GRIPPER_POSITION_MIN = 0.0
+MOVEIT_GRIPPER_POSITION_MAX = 0.7
 REVOLUTE_JOINTS = set(ARM_JOINTS)
 INITIAL_MOVEIT_POSITIONS = {
     "shoulder_pan_joint": 0.56,
@@ -49,6 +58,64 @@ LOCK_FILE = Path("/tmp/isaac_moveit_action_bridge.lock")
 
 def duration_to_sec(duration) -> float:
     return float(duration.sec) + float(duration.nanosec) * 1e-9
+
+
+def _clamp_moveit_gripper_position(position: float) -> float:
+    return max(
+        MOVEIT_GRIPPER_POSITION_MIN,
+        min(MOVEIT_GRIPPER_POSITION_MAX, float(position)),
+    )
+
+
+def moveit_gripper_position_to_isaac(position: float) -> float:
+    # IsaacArticulationController.positionCommand uses radians.  This bridge
+    # talks to that controller directly, not to ParallelGripper.forward(),
+    # whose public examples use degree-valued convenience commands.
+    return _clamp_moveit_gripper_position(position)
+
+
+def isaac_gripper_position_to_moveit(position: float) -> float:
+    # /isaac_joint_states is populated from get_joint_positions(), so feedback
+    # is already in radians and must not be converted from degrees again.
+    return _clamp_moveit_gripper_position(position)
+
+
+def isaac_gripper_velocity_to_moveit(velocity: float) -> float:
+    return float(velocity)
+
+
+def gripper_motion_complete(
+    initial_position: float,
+    current_position: float,
+    target_position: float,
+    current_velocity: float,
+    stable_for: float,
+) -> tuple[bool, bool]:
+    """Return (complete, stalled) from measured articulation feedback.
+
+    A close command can legitimately stop before its target when the pads contact
+    an object, so stable low velocity after measurable motion counts as completion.
+    """
+    closing = target_position > initial_position
+    position_tolerance = (
+        GRIPPER_CLOSE_POSITION_TOLERANCE_RAD
+        if closing
+        else GRIPPER_POSITION_TOLERANCE_RAD
+    )
+    reached = abs(current_position - target_position) <= position_tolerance
+    # The 51.5 mm blocks stop the 2F-140 finger joint around 0.478--0.485 rad.
+    # Contact varies slightly with pose and physics steps, so target error alone
+    # is not a reliable grasp-completion signal.  Crossing 0.47 rad means the
+    # pads have entered the block contact range; the caller then keeps squeezing
+    # for the final settle period before allowing lift.
+    block_contact = closing and current_position >= GRIPPER_BLOCK_CONTACT_MIN_POSITION_RAD
+    moved = abs(current_position - initial_position) >= GRIPPER_MIN_MOTION_RAD
+    stalled = (
+        moved
+        and abs(current_velocity) <= GRIPPER_STALL_VELOCITY_RAD_SEC
+        and stable_for >= GRIPPER_STALL_HOLD_SEC
+    )
+    return reached or block_contact or stalled, stalled and not reached and not block_contact
 
 
 def nearest_equivalent_angle(current: float, target: float) -> float:
@@ -89,6 +156,7 @@ class IsaacMoveItActionBridge(Node):
             for joint_name in MOVEIT_JOINTS
         }
         self.latest_velocities: Dict[str, float] = {joint_name: 0.0 for joint_name in MOVEIT_JOINTS}
+        self.latest_feedback_at: Dict[str, float] = {joint_name: 0.0 for joint_name in MOVEIT_JOINTS}
 
         self.arm_server = ActionServer(
             self,
@@ -113,6 +181,9 @@ class IsaacMoveItActionBridge(Node):
         self.get_logger().info("Topic out: /isaac_joint_commands")
         self.get_logger().info("Topic out: /joint_states")
         self.get_logger().info("Optional topic in: /isaac_joint_states")
+        self.get_logger().info(
+            "Gripper commands and Isaac articulation feedback use radians"
+        )
 
     def accept_goal(self, goal_request):
         return GoalResponse.ACCEPT
@@ -128,8 +199,14 @@ class IsaacMoveItActionBridge(Node):
             moveit_name = ISAAC_TO_MOVEIT.get(isaac_name)
             if moveit_name is None:
                 continue
-            self.latest_positions[moveit_name] = float(position)
-            self.latest_velocities[moveit_name] = float(velocity_by_name.get(isaac_name, 0.0))
+            velocity = float(velocity_by_name.get(isaac_name, 0.0))
+            if isaac_name == ISAAC_GRIPPER_JOINT:
+                self.latest_positions[moveit_name] = isaac_gripper_position_to_moveit(position)
+                self.latest_velocities[moveit_name] = isaac_gripper_velocity_to_moveit(velocity)
+            else:
+                self.latest_positions[moveit_name] = float(position)
+                self.latest_velocities[moveit_name] = velocity
+            self.latest_feedback_at[moveit_name] = time.monotonic()
 
         self.publish_moveit_joint_states()
 
@@ -208,20 +285,85 @@ class IsaacMoveItActionBridge(Node):
 
     def execute_gripper(self, goal_handle):
         target_position = float(goal_handle.request.command.position)
-        self.publish_command([MOVEIT_GRIPPER_JOINT], [target_position])
-        settle_sec = (
-            GRIPPER_OPEN_SETTLE_SEC
-            if target_position <= GRIPPER_OPEN_POSITION_MAX
-            else GRIPPER_CLOSE_SETTLE_SEC
+        isaac_target_position = moveit_gripper_position_to_isaac(target_position)
+        self.get_logger().info(
+            f"Gripper command: MoveIt={target_position:.4f} rad -> "
+            f"Isaac={isaac_target_position:.4f} rad"
         )
-        time.sleep(settle_sec)
+        self.publish_command([MOVEIT_GRIPPER_JOINT], [target_position])
+
+        initial_position = self.latest_positions[MOVEIT_GRIPPER_JOINT]
+        command_started_at = time.monotonic()
+        low_velocity_started_at = None
+        low_velocity_anchor_position = initial_position
+        stalled = False
+        contact_confirmed = False
+        current_position = initial_position
+        while time.monotonic() - command_started_at < GRIPPER_FEEDBACK_TIMEOUT_SEC:
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                result = GripperCommand.Result()
+                result.position = self.latest_positions[MOVEIT_GRIPPER_JOINT]
+                result.stalled = False
+                result.reached_goal = False
+                return result
+
+            # Re-publish while waiting so the Isaac controller continues to hold
+            # the requested position even if another stage updates its inputs.
+            self.publish_command([MOVEIT_GRIPPER_JOINT], [target_position])
+            current_position = self.latest_positions[MOVEIT_GRIPPER_JOINT]
+            current_velocity = self.latest_velocities[MOVEIT_GRIPPER_JOINT]
+            now = time.monotonic()
+            position_stable = (
+                abs(current_position - low_velocity_anchor_position)
+                <= GRIPPER_STALL_POSITION_DELTA_RAD
+            )
+            if abs(current_velocity) <= GRIPPER_STALL_VELOCITY_RAD_SEC and position_stable:
+                if low_velocity_started_at is None:
+                    low_velocity_started_at = now
+            else:
+                low_velocity_started_at = None
+                low_velocity_anchor_position = current_position
+            stable_for = 0.0 if low_velocity_started_at is None else now - low_velocity_started_at
+            complete, stalled = gripper_motion_complete(
+                initial_position,
+                current_position,
+                target_position,
+                current_velocity,
+                stable_for,
+            )
+            if complete:
+                contact_confirmed = (
+                    target_position > initial_position
+                    and current_position >= GRIPPER_BLOCK_CONTACT_MIN_POSITION_RAD
+                )
+                time.sleep(GRIPPER_FINAL_SETTLE_SEC)
+                break
+            time.sleep(COMMAND_PERIOD_SEC)
+        else:
+            self.get_logger().error(
+                f"Gripper feedback timeout: target={target_position:.4f}, "
+                f"measured={current_position:.4f} rad"
+            )
+            goal_handle.abort()
+            result = GripperCommand.Result()
+            result.position = current_position
+            result.effort = 0.0
+            result.stalled = False
+            result.reached_goal = False
+            return result
+
+        self.get_logger().info(
+            f"Gripper motion confirmed: measured={current_position:.4f} rad, "
+            f"target={target_position:.4f} rad, contact={contact_confirmed}, stalled={stalled}"
+        )
 
         goal_handle.succeed()
         result = GripperCommand.Result()
-        result.position = target_position
+        result.position = current_position
         result.effort = 0.0
-        result.stalled = False
-        result.reached_goal = True
+        result.stalled = stalled
+        result.reached_goal = not stalled
         return result
 
     def joints_supported(self, joint_names: Iterable[str]) -> bool:
@@ -235,10 +377,12 @@ class IsaacMoveItActionBridge(Node):
 
         for moveit_joint_name, position in zip(moveit_joint_names, positions):
             msg.name.append(MOVEIT_TO_ISAAC[moveit_joint_name])
-            msg.position.append(float(position))
-            self.latest_positions[moveit_joint_name] = float(position)
-            self.latest_velocities[moveit_joint_name] = 0.0
-
+            isaac_position = (
+                moveit_gripper_position_to_isaac(position)
+                if moveit_joint_name == MOVEIT_GRIPPER_JOINT
+                else float(position)
+            )
+            msg.position.append(isaac_position)
         self.command_pub.publish(msg)
 
 
