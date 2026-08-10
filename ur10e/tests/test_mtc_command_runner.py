@@ -3,14 +3,17 @@ import json
 import time
 from types import SimpleNamespace
 
+import mtc_command_runner
 from mtc_command_runner import (
-    DEFAULT_TOUCH_COLLISION_COMMAND,
+    RECOVERY_MTC_ARGS,
+    MTC_EXECUTION_FAILURE_RETURN_CODE,
     build_mtc_invocation,
     command_to_mtc_args,
     execution_tuning_args,
     execute_user_command,
     read_vision_scene_objects,
     restore_scene_memory,
+    run_grasp_failure_recovery,
     save_scene_memory,
     sync_scene_manager_from_isaac,
     sync_scene_manager_from_vision,
@@ -46,6 +49,24 @@ def test_build_mtc_invocation_from_local_command():
     assert "object_y:=0.300000" in mtc_args
     assert "place_x:=0.420000" in mtc_args
     assert "place_y:=0.420000" in mtc_args
+
+
+def test_build_mtc_invocation_resolves_bare_left_and_right_without_llm(monkeypatch):
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("spatial object commands must use the deterministic parser")
+
+    monkeypatch.setattr(mtc_command_runner, "parse_user_command_with_llm", fail_if_called)
+
+    command, mtc_args = build_mtc_invocation(
+        "왼쪽 물체를 오른쪽 물체 위로 옮겨",
+        provider="gemini",
+    )
+
+    assert command["pick_object"] == "blue_block"
+    assert command["target_object"] == "red_block"
+    assert command["relation"] == "on"
+    assert "object_id:=blue_block" in mtc_args
+    assert "place_x:=-0.300000" in mtc_args
 
 
 def test_command_to_mtc_args_clamps_z_to_object_center_height():
@@ -346,22 +367,22 @@ def test_execute_user_command_updates_scene_after_success(monkeypatch):
     )
 
     assert result == 0
-    assert calls[0] == DEFAULT_TOUCH_COLLISION_COMMAND
-    assert calls[1][0] == "/run_mtc"
-    assert "planner_id:=RRTConnectkConfigDefault" in calls[1]
-    assert "max_solutions:=2" in calls[1]
-    assert "max_solution_cost:=60.000" in calls[1]
-    assert "move_to_pick_timeout:=5.000" in calls[1]
-    assert "move_to_pick_max_path_length:=-1.000" in calls[1]
-    assert "move_to_place_timeout:=4.000" in calls[1]
-    assert "move_to_place_max_path_length:=-1.000" in calls[1]
-    assert "return_home_timeout:=1.000" in calls[1]
-    assert "return_home_max_path_length:=-1.000" in calls[1]
-    assert "gripper_close_min:=0.020" in calls[1]
-    assert "gripper_close_max:=0.500" in calls[1]
-    assert "gripper_close_step:=0.080" in calls[1]
-    assert "object_x:=0.110000" in calls[1]
-    assert "object_y:=0.220000" in calls[1]
+    assert len(calls) == 1
+    assert calls[0][0] == "/run_mtc"
+    assert "planner_id:=RRTConnectkConfigDefault" in calls[0]
+    assert "max_solutions:=1" in calls[0]
+    assert "max_solution_cost:=60.000" in calls[0]
+    assert "move_to_pick_timeout:=5.000" in calls[0]
+    assert "move_to_pick_max_path_length:=-1.000" in calls[0]
+    assert "move_to_place_timeout:=4.000" in calls[0]
+    assert "move_to_place_max_path_length:=-1.000" in calls[0]
+    assert "return_home_timeout:=1.000" in calls[0]
+    assert "return_home_max_path_length:=-1.000" in calls[0]
+    assert "gripper_close_min:=0.020" in calls[0]
+    assert "gripper_close_max:=0.500" in calls[0]
+    assert "gripper_close_step:=0.080" in calls[0]
+    assert "object_x:=0.110000" in calls[0]
+    assert "object_y:=0.220000" in calls[0]
     assert scene_manager.memory.last_moved_object == "red_block"
     np.testing.assert_allclose(scene_manager.get_object("red_block").position, np.array([0.51, 0.52, 0.053]))
 
@@ -428,7 +449,13 @@ def test_execute_user_command_rejects_unverified_physical_grasp(monkeypatch):
     class Completed:
         returncode = 0
 
-    monkeypatch.setattr("mtc_command_runner.subprocess.run", lambda *args, **kwargs: Completed())
+    calls = []
+
+    def fake_run(args, check):
+        calls.append(args)
+        return Completed()
+
+    monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
     monkeypatch.setattr(
         "mtc_command_runner.sync_scene_manager_from_vision",
         lambda *args, **kwargs: {"red_block", "green_block", "blue_block"},
@@ -461,23 +488,23 @@ def test_execute_user_command_rejects_unverified_physical_grasp(monkeypatch):
     )
 
     assert result == 1
+    assert calls[0][0] == "/run_mtc"
+    assert len(calls) == 1
     assert scene_manager.memory.last_moved_object is None
 
 
 def test_execute_user_command_does_not_update_scene_after_failure(monkeypatch):
     scene_manager = SceneManager.from_defaults()
 
-    class TouchCompleted:
-        returncode = 0
-
-    class MtcCompleted:
-        returncode = 1
+    mtc_call_count = 0
 
     def fake_run(args, check):
+        nonlocal mtc_call_count
         assert check is False
-        if args == DEFAULT_TOUCH_COLLISION_COMMAND:
-            return TouchCompleted()
-        return MtcCompleted()
+        mtc_call_count += 1
+        return SimpleNamespace(
+            returncode=MTC_EXECUTION_FAILURE_RETURN_CODE if mtc_call_count == 1 else 0
+        )
 
     monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
     monkeypatch.setattr(
@@ -492,22 +519,19 @@ def test_execute_user_command_does_not_update_scene_after_failure(monkeypatch):
         run_script="/run_mtc",
     )
 
-    assert result == 1
+    assert result == MTC_EXECUTION_FAILURE_RETURN_CODE
+    assert mtc_call_count == 2
     assert scene_manager.memory.last_moved_object is None
     np.testing.assert_allclose(scene_manager.get_object("red_block").position, np.array([-0.30, 0.30, 0.02575]))
 
 
-def test_execute_user_command_skips_mtc_when_touch_acm_fails(monkeypatch):
+def test_execute_user_command_skips_recovery_after_planning_failure(monkeypatch):
     scene_manager = SceneManager.from_defaults()
     calls = []
 
-    class Completed:
-        returncode = 1
-
     def fake_run(args, check):
         calls.append(args)
-        assert check is False
-        return Completed()
+        return SimpleNamespace(returncode=1)
 
     monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
     monkeypatch.setattr(
@@ -523,8 +547,36 @@ def test_execute_user_command_skips_mtc_when_touch_acm_fails(monkeypatch):
     )
 
     assert result == 1
-    assert calls == [DEFAULT_TOUCH_COLLISION_COMMAND]
+    assert len(calls) == 1
     assert scene_manager.memory.last_moved_object is None
+
+
+def test_run_grasp_failure_recovery_appends_recovery_mode_after_task_args(monkeypatch):
+    calls = []
+
+    def fake_run(args, check):
+        calls.append((args, check))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr("mtc_command_runner.subprocess.run", fake_run)
+
+    result = run_grasp_failure_recovery(
+        "/run_mtc",
+        ["object_id:=red_block", "max_solutions:=2"],
+    )
+
+    assert result == 0
+    assert calls == [
+        (
+            [
+                "/run_mtc",
+                "object_id:=red_block",
+                "max_solutions:=2",
+                *RECOVERY_MTC_ARGS,
+            ],
+            False,
+        )
+    ]
 
 
 def test_run_interactive_executes_initial_command_then_waits_for_next(monkeypatch):

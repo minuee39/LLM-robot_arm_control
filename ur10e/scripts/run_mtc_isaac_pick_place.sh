@@ -94,11 +94,17 @@ ros2 launch mtc_tutorial pick_place_demo.launch.py "$@" 2>&1 \
 launch_status=${PIPESTATUS[0]}
 set -e
 
+if grep -q "Task execution failed" "${launch_log}" || \
+   { grep -q "Executing lowest-cost solution" "${launch_log}" && grep -q "process has died" "${launch_log}"; }; then
+  echo "ERROR: MTC execution failed after robot motion started. See launch log: ${launch_log}" >&2
+  exit 2
+fi
+
 if [ "${launch_status}" -ne 0 ]; then
   exit "${launch_status}"
 fi
 
-if grep -Eq "process has died|Task planning failed|Task execution failed|execution skipped" "${launch_log}"; then
+if grep -Eq "process has died|Task planning failed|execution skipped" "${launch_log}"; then
   echo "ERROR: MTC pick-place failed. See launch log: ${launch_log}" >&2
   exit 1
 fi

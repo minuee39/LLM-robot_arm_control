@@ -2,10 +2,9 @@
 
 moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
 
-# Gripper contact confirmation can legitimately take up to 2.5 s.  The MoveIt
-# default canceled the GripperCommand action after about 1.28 s, even though the
-# pads had already contacted the block.  Keep duration monitoring enabled, but
-# leave enough margin for measured-position/stall confirmation.
+# Gripper contact confirmation can take several seconds when Isaac runs below
+# real time.  Keep duration monitoring enabled, but leave enough margin for the
+# action bridge's measured-position/stall confirmation (10 s maximum).
 trajectory_execution:
   execution_duration_monitoring: true
   allowed_execution_duration_scaling: 1.2
@@ -31,6 +30,6 @@ moveit_simple_controller_manager:
     type: GripperCommand
     action_ns: gripper_cmd
     allowed_execution_duration_scaling: 1.5
-    allowed_goal_duration_margin: 3.0
+    allowed_goal_duration_margin: 12.0
     joints:
       - robotiq_finger_joint

@@ -85,12 +85,14 @@ public:
 private:
   // Compose an MTC task from a series of stages.
   mtc::Task createTask();
+  mtc::Task createRecoveryTask();
   void declareParameters();
   moveit_msgs::msg::CollisionObject makeObject(double x, double y, double z) const;
   bool applyTouchCollisionAcm();
 
   std::string objectId() const;
   std::string plannerId() const;
+  bool recoveryOnly() const;
   double param(const std::string& name) const;
   static std::vector<std::string> robotiqTouchLinks();
 
@@ -126,6 +128,10 @@ void MTCTaskNode::declareParameters()
   {
     node_->declare_parameter<std::string>("planner_id", "RRTConnectkConfigDefault");
   }
+  if (!node_->has_parameter("recovery_only"))
+  {
+    node_->declare_parameter("recovery_only", false);
+  }
 
   declare_if_missing("object_x", -0.3);
   declare_if_missing("object_y", 0.3);
@@ -138,7 +144,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("place_y", -0.3);
   declare_if_missing("place_z", 0.05);
 
-  declare_if_missing("max_solutions", 2.0);
+  declare_if_missing("max_solutions", 1.0);
   declare_if_missing("max_solution_cost", 60.0);
   declare_if_missing("move_to_pick_timeout", 5.0);
   // Segment PathLength is accumulated joint-space motion, not Cartesian
@@ -151,6 +157,9 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("gripper_close_min", 0.02);
   declare_if_missing("gripper_close_max", 0.50);
   declare_if_missing("gripper_close_step", 0.08);
+  declare_if_missing("recovery_retreat_distance", 0.15);
+  declare_if_missing("recovery_retreat_timeout", 3.0);
+  declare_if_missing("recovery_home_timeout", 5.0);
 }
 
 double MTCTaskNode::param(const std::string& name) const
@@ -166,6 +175,11 @@ std::string MTCTaskNode::objectId() const
 std::string MTCTaskNode::plannerId() const
 {
   return node_->get_parameter("planner_id").as_string();
+}
+
+bool MTCTaskNode::recoveryOnly() const
+{
+  return node_->get_parameter("recovery_only").as_bool();
 }
 
 std::vector<std::string> MTCTaskNode::robotiqTouchLinks()
@@ -517,7 +531,7 @@ bool MTCTaskNode::setupPlanningScene()
 
 bool MTCTaskNode::doTask()
 {
-  task_ = createTask();
+  task_ = recoveryOnly() ? createRecoveryTask() : createTask();
 
   try
   {
@@ -729,16 +743,9 @@ mtc::Task MTCTaskNode::createTask()
   wrapper->setMaxIKSolutions(4);
   wrapper->setMinSolutionDistance(0.5);
   wrapper->setIKFrame(grasp_frame_transform, hand_frame);
-  wrapper->setCostTerm(std::make_unique<mtc::cost::DistanceToReference>(
-      std::map<std::string, double>{
-          { "shoulder_pan_joint", 0.56 },
-          { "shoulder_lift_joint", -1.78 },
-          { "elbow_joint", 1.41 },
-          { "wrist_1_joint", 1.94 },
-          { "wrist_2_joint", 1.57 },
-          { "wrist_3_joint", -2.58 },
-      },
-      mtc::TrajectoryCostTerm::Mode::END_INTERFACE));
+  // Keep ComputeIK's native cost: joint-space distance from the monitored
+  // current state.  Overriding this with the fixed "ready" pose can prefer a
+  // distant wrist/shoulder branch even when a nearby IK solution is available.
   wrapper->properties().configureInitFrom(mtc::Stage::PARENT, { "eef", "group" });
   wrapper->properties().configureInitFrom(mtc::Stage::INTERFACE, { "target_pose" });
   grasp->insert(std::move(wrapper));
@@ -925,6 +932,72 @@ mtc::Task MTCTaskNode::createTask()
 
   task.add(std::move(sequence));
 
+  return task;
+}
+
+mtc::Task MTCTaskNode::createRecoveryTask()
+{
+  mtc::Task task;
+  task.stages()->setName("grasp failure recovery");
+  task.loadRobotModel(node_);
+
+  const auto& arm_group_name = "ur_manipulator";
+  const auto& hand_group_name = "gripper";
+  const auto& hand_frame = "robotiq_grasping_frame";
+
+  auto sequence = std::make_unique<mtc::SerialContainer>("open-retreat-home");
+  sequence->insert(std::make_unique<mtc::stages::CurrentState>("current"));
+
+  auto gripper_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
+  {
+    auto stage = std::make_unique<mtc::stages::MoveTo>("recovery open hand", gripper_planner);
+    stage->setGroup(hand_group_name);
+    stage->setGoal("open");
+    sequence->insert(std::move(stage));
+  }
+
+  {
+    auto stage = std::make_unique<mtc::stages::ModifyPlanningScene>("recovery detach object");
+    stage->detachObject(objectId(), hand_frame);
+    sequence->insert(std::move(stage));
+  }
+
+  auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
+  cartesian_planner->setMaxVelocityScalingFactor(0.1);
+  cartesian_planner->setMaxAccelerationScalingFactor(0.1);
+  cartesian_planner->setStepSize(0.01);
+  {
+    auto stage =
+        std::make_unique<mtc::stages::MoveRelative>("recovery vertical retreat", cartesian_planner);
+    stage->properties().set("group", arm_group_name);
+    stage->properties().set("timeout", param("recovery_retreat_timeout"));
+    const double retreat_distance = param("recovery_retreat_distance");
+    stage->setMinMaxDistance(retreat_distance, retreat_distance);
+    stage->setIKFrame(hand_frame);
+
+    geometry_msgs::msg::Vector3Stamped direction;
+    direction.header.frame_id = "world";
+    direction.vector.z = 1.0;
+    stage->setDirection(direction);
+    sequence->insert(std::move(stage));
+  }
+
+  auto sampling_planner = std::make_shared<mtc::solvers::PipelinePlanner>(node_, "ompl");
+  sampling_planner->setPlannerId(plannerId());
+  sampling_planner->setProperty("goal_joint_tolerance", 1e-3);
+  {
+    auto stage = std::make_unique<mtc::stages::MoveTo>("recovery return home", sampling_planner);
+    stage->setGroup(arm_group_name);
+    stage->properties().set("timeout", param("recovery_home_timeout"));
+    stage->setGoal("ready");
+    sequence->insert(std::move(stage));
+  }
+
+  task.add(std::move(sequence));
+  RCLCPP_INFO_STREAM(
+      LOGGER,
+      "Configured grasp failure recovery: open -> world +Z "
+          << param("recovery_retreat_distance") << " m -> ready");
   return task;
 }
 

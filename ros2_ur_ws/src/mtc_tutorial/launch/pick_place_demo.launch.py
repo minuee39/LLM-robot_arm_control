@@ -10,6 +10,10 @@ def float_launch_param(name):
     return ParameterValue(LaunchConfiguration(name), value_type=float)
 
 
+def bool_launch_param(name):
+    return ParameterValue(LaunchConfiguration(name), value_type=bool)
+
+
 def generate_launch_description():
     moveit_config = (
         MoveItConfigsBuilder(
@@ -36,6 +40,7 @@ def generate_launch_description():
             {
                 "object_id": LaunchConfiguration("object_id"),
                 "planner_id": LaunchConfiguration("planner_id"),
+                "recovery_only": bool_launch_param("recovery_only"),
                 "object_x": float_launch_param("object_x"),
                 "object_y": float_launch_param("object_y"),
                 "object_z": float_launch_param("object_z"),
@@ -56,6 +61,9 @@ def generate_launch_description():
                 "gripper_close_min": float_launch_param("gripper_close_min"),
                 "gripper_close_max": float_launch_param("gripper_close_max"),
                 "gripper_close_step": float_launch_param("gripper_close_step"),
+                "recovery_retreat_distance": float_launch_param("recovery_retreat_distance"),
+                "recovery_retreat_timeout": float_launch_param("recovery_retreat_timeout"),
+                "recovery_home_timeout": float_launch_param("recovery_home_timeout"),
             },
         ],
     )
@@ -68,6 +76,7 @@ def generate_launch_description():
                 default_value="RRTConnectkConfigDefault",
                 description="OMPL planner configuration used for sampled arm motions.",
             ),
+            DeclareLaunchArgument("recovery_only", default_value="false"),
             DeclareLaunchArgument("object_x", default_value="-0.30"),
             DeclareLaunchArgument("object_y", default_value="0.30"),
             DeclareLaunchArgument("object_z", default_value="0.05"),
@@ -79,7 +88,7 @@ def generate_launch_description():
             DeclareLaunchArgument("place_z", default_value="0.05"),
             DeclareLaunchArgument(
                 "max_solutions",
-                default_value="2",
+                default_value="1",
                 description="Number of task solutions required before execution.",
             ),
             DeclareLaunchArgument("max_solution_cost", default_value="60.0"),
@@ -92,6 +101,9 @@ def generate_launch_description():
             DeclareLaunchArgument("gripper_close_min", default_value="0.02"),
             DeclareLaunchArgument("gripper_close_max", default_value="0.50"),
             DeclareLaunchArgument("gripper_close_step", default_value="0.08"),
+            DeclareLaunchArgument("recovery_retreat_distance", default_value="0.15"),
+            DeclareLaunchArgument("recovery_retreat_timeout", default_value="3.0"),
+            DeclareLaunchArgument("recovery_home_timeout", default_value="5.0"),
             pick_place_demo,
         ]
     )

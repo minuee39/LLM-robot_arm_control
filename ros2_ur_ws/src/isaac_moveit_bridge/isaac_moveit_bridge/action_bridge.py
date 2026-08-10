@@ -31,12 +31,14 @@ MOVEIT_TO_ISAAC = {
 }
 ISAAC_TO_MOVEIT = {isaac: moveit for moveit, isaac in MOVEIT_TO_ISAAC.items()}
 COMMAND_PERIOD_SEC = 0.01
-GRIPPER_FEEDBACK_TIMEOUT_SEC = 2.5
+# Isaac's position drive can slow down substantially under contact or a low
+# real-time factor.  Keep the arm's conservative speed settings and wait for
+# measured contact/stall instead of aborting a valid grasp after 2.5 seconds.
+GRIPPER_FEEDBACK_TIMEOUT_SEC = 10.0
 GRIPPER_MIN_MOTION_RAD = 0.01
 GRIPPER_POSITION_TOLERANCE_RAD = 0.01
 GRIPPER_CLOSE_POSITION_TOLERANCE_RAD = 0.02
 GRIPPER_BLOCK_CONTACT_MIN_POSITION_RAD = 0.47
-GRIPPER_STALL_VELOCITY_RAD_SEC = 0.03
 GRIPPER_STALL_POSITION_DELTA_RAD = 0.002
 GRIPPER_STALL_HOLD_SEC = 0.25
 GRIPPER_FINAL_SETTLE_SEC = 0.25
@@ -94,7 +96,9 @@ def gripper_motion_complete(
     """Return (complete, stalled) from measured articulation feedback.
 
     A close command can legitimately stop before its target when the pads contact
-    an object, so stable low velocity after measurable motion counts as completion.
+    an object.  Isaac may report a non-zero drive velocity even while the measured
+    position is fixed, so ``stable_for`` is derived from position samples and is
+    the authoritative stall signal.
     """
     closing = target_position > initial_position
     position_tolerance = (
@@ -110,11 +114,7 @@ def gripper_motion_complete(
     # for the final settle period before allowing lift.
     block_contact = closing and current_position >= GRIPPER_BLOCK_CONTACT_MIN_POSITION_RAD
     moved = abs(current_position - initial_position) >= GRIPPER_MIN_MOTION_RAD
-    stalled = (
-        moved
-        and abs(current_velocity) <= GRIPPER_STALL_VELOCITY_RAD_SEC
-        and stable_for >= GRIPPER_STALL_HOLD_SEC
-    )
+    stalled = moved and stable_for >= GRIPPER_STALL_HOLD_SEC
     return reached or block_contact or stalled, stalled and not reached and not block_contact
 
 
@@ -294,11 +294,12 @@ class IsaacMoveItActionBridge(Node):
 
         initial_position = self.latest_positions[MOVEIT_GRIPPER_JOINT]
         command_started_at = time.monotonic()
-        low_velocity_started_at = None
-        low_velocity_anchor_position = initial_position
+        stable_position_started_at = None
+        stable_position_anchor = initial_position
         stalled = False
         contact_confirmed = False
         current_position = initial_position
+        next_progress_log_at = command_started_at + 1.0
         while time.monotonic() - command_started_at < GRIPPER_FEEDBACK_TIMEOUT_SEC:
             if goal_handle.is_cancel_requested:
                 goal_handle.canceled()
@@ -314,17 +315,27 @@ class IsaacMoveItActionBridge(Node):
             current_position = self.latest_positions[MOVEIT_GRIPPER_JOINT]
             current_velocity = self.latest_velocities[MOVEIT_GRIPPER_JOINT]
             now = time.monotonic()
+            if now >= next_progress_log_at:
+                self.get_logger().info(
+                    f"Gripper motion in progress: measured={current_position:.4f} rad, "
+                    f"target={target_position:.4f} rad, velocity={current_velocity:.4f} rad/s"
+                )
+                next_progress_log_at = now + 1.0
             position_stable = (
-                abs(current_position - low_velocity_anchor_position)
+                abs(current_position - stable_position_anchor)
                 <= GRIPPER_STALL_POSITION_DELTA_RAD
             )
-            if abs(current_velocity) <= GRIPPER_STALL_VELOCITY_RAD_SEC and position_stable:
-                if low_velocity_started_at is None:
-                    low_velocity_started_at = now
+            if position_stable:
+                if stable_position_started_at is None:
+                    stable_position_started_at = now
             else:
-                low_velocity_started_at = None
-                low_velocity_anchor_position = current_position
-            stable_for = 0.0 if low_velocity_started_at is None else now - low_velocity_started_at
+                stable_position_started_at = None
+                stable_position_anchor = current_position
+            stable_for = (
+                0.0
+                if stable_position_started_at is None
+                else now - stable_position_started_at
+            )
             complete, stalled = gripper_motion_complete(
                 initial_position,
                 current_position,

@@ -66,3 +66,10 @@ def test_gripper_motion_does_not_complete_before_stall_hold_time():
 
     assert complete is False
     assert stalled is False
+
+
+def test_gripper_stall_uses_stable_position_when_isaac_velocity_is_inconsistent():
+    complete, stalled = gripper_motion_complete(0.01, 0.175, 0.5, 1.5, 0.3)
+
+    assert complete is True
+    assert stalled is True

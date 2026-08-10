@@ -7,7 +7,12 @@ from pathlib import Path
 
 import numpy as np
 
-from command_parser import parse_user_command_with_memory, validate_command
+from command_parser import (
+    MEMORY_OBJECT_ALIASES,
+    SPATIAL_OBJECT_ALIASES,
+    parse_user_command_with_memory,
+    validate_command,
+)
 from grasp_verifier import GraspMonitor
 from llm_to_json import parse_user_command_with_llm
 from scene_config import BLOCK_SIZE
@@ -25,17 +30,17 @@ DEFAULT_VISION_MIN_CONFIDENCE = 0.6
 DEFAULT_GRASP_MIN_LIFT = 0.03
 DEFAULT_GRASP_RELATIVE_TOLERANCE = 0.03
 DEFAULT_GRASP_MIN_LIFTED_SAMPLES = 2
-DEFAULT_TOUCH_COLLISION_COMMAND = [
-    "ros2",
-    "run",
-    "isaac_moveit_bridge",
-    "allow_touch_collisions",
-]
 SUPPORTED_PLANNER_IDS = (
     "RRTkConfigDefault",
     "RRTConnectkConfigDefault",
     "RRTstarkConfigDefault",
 )
+RECOVERY_MTC_ARGS = (
+    "recovery_only:=true",
+    "max_solutions:=1",
+    "max_solution_cost:=-1.000",
+)
+MTC_EXECUTION_FAILURE_RETURN_CODE = 2
 
 
 def format_xyz(position) -> str:
@@ -113,15 +118,23 @@ def select_provider(provider: str) -> str | None:
 
 def parse_command(user_text: str, scene_manager: SceneManager, provider: str | None) -> dict:
     scene_objects = scene_manager.as_command_scene()
-    if provider is None:
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+    if (
+        provider is None
+        or any(alias in user_text for alias in MEMORY_OBJECT_ALIASES)
+        or any(alias in user_text for alias in SPATIAL_OBJECT_ALIASES)
+    ):
+        return parse_user_command_with_memory(
+            user_text,
+            scene_manager.memory,
+            scene_objects,
+        )
 
     try:
         print(f"[Parser] {provider} LLM 사용", flush=True)
         return parse_user_command_with_llm(user_text, scene_objects, provider=provider)
     except ValueError as error:
         print(f"[Parser] LLM 파싱 실패, 로컬 파서로 전환: {error}", flush=True)
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+        return parse_user_command_with_memory(user_text, scene_manager.memory, scene_objects)
 
 
 def clamp_center_z(position: np.ndarray, object_height: float) -> np.ndarray:
@@ -435,11 +448,21 @@ def build_mtc_invocation(
     return command, command_to_mtc_args(command, scene_manager)
 
 
-def ensure_touch_collisions() -> int:
-    completed = subprocess.run(DEFAULT_TOUCH_COLLISION_COMMAND, check=False)
-    if completed.returncode != 0:
+def run_grasp_failure_recovery(run_script: str, mtc_args: list[str]) -> int:
+    print(
+        "[Recovery] starting safe recovery: open gripper -> vertical retreat -> home.",
+        flush=True,
+    )
+    completed = subprocess.run(
+        [run_script, *mtc_args, *RECOVERY_MTC_ARGS],
+        check=False,
+    )
+    if completed.returncode == 0:
+        print("[Recovery] safe recovery completed.", flush=True)
+    else:
         print(
-            f"[ERROR] Failed to apply MoveIt touch collision ACM with return code {completed.returncode}.",
+            f"[Recovery] FAILED with return code {completed.returncode}; "
+            "stop automatic commands and inspect the robot state.",
             flush=True,
         )
     return completed.returncode
@@ -452,7 +475,7 @@ def execute_user_command(
     run_script: str,
     dry_run: bool = False,
     planner_id: str = "RRTConnectkConfigDefault",
-    max_solutions: int = 2,
+    max_solutions: int = 1,
     max_solution_cost: float = 60.0,
     move_to_pick_timeout: float = 5.0,
     move_to_pick_max_path_length: float = -1.0,
@@ -530,11 +553,6 @@ def execute_user_command(
         return 0
 
     vision_scene_before_execution = vision_scene_mtime(vision_scene_file)
-    touch_collision_returncode = ensure_touch_collisions()
-    if touch_collision_returncode != 0:
-        print("[ERROR] MTC execution skipped because touch collision ACM was not applied.", flush=True)
-        return touch_collision_returncode
-
     initial_object_position = scene_manager.get_object(command["pick_object"]).position
     grasp_monitor = GraspMonitor(
         DEFAULT_SCENE_STATE_FILE,
@@ -565,6 +583,10 @@ def execute_user_command(
             print(
                 "[ERROR] Controller execution completed, but physical grasp was not verified. "
                 "Command memory was not updated.",
+                flush=True,
+            )
+            print(
+                "[Recovery] the main MTC solution already completed its open, retreat, and home stages.",
                 flush=True,
             )
             return 1
@@ -616,6 +638,13 @@ def execute_user_command(
         )
     else:
         print(f"[ERROR] MTC execution failed with return code {completed.returncode}. Scene memory was not updated.", flush=True)
+        if completed.returncode == MTC_EXECUTION_FAILURE_RETURN_CODE:
+            run_grasp_failure_recovery(run_script, mtc_args)
+        else:
+            print(
+                "[Recovery] skipped because robot execution did not start; current pose is unchanged.",
+                flush=True,
+            )
 
     return completed.returncode
 
@@ -626,7 +655,7 @@ def run_interactive(
     dry_run: bool = False,
     initial_command: str | None = None,
     planner_id: str = "RRTConnectkConfigDefault",
-    max_solutions: int = 2,
+    max_solutions: int = 1,
     max_solution_cost: float = 60.0,
     move_to_pick_timeout: float = 5.0,
     move_to_pick_max_path_length: float = -1.0,
@@ -740,7 +769,7 @@ def main() -> int:
     parser.add_argument(
         "--max-solutions",
         type=int,
-        default=2,
+        default=1,
         help="Number of MTC task solutions required before execution.",
     )
     parser.add_argument("--max-solution-cost", type=float, default=60.0)
