@@ -15,7 +15,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 
 
-JOINTS = ("j2", "j3", "j4", "j5", "j6")
+JOINTS = ("j1", "j2", "j3", "j4", "j5")
 ACTION_NAME = "/pallet_arm_controller/follow_joint_trajectory"
 COMMAND_TOPIC = "/isaac_joint_commands"
 ISAAC_STATE_TOPIC = "/isaac_joint_states"
