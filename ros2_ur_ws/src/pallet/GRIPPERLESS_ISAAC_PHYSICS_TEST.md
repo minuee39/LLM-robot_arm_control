@@ -40,7 +40,23 @@ effort for every phase.
 
 ## MoveIt2 integration
 
-Build and source `pallet` and `pallet_moveit_config`, then use three terminals:
+Build `pallet` and `pallet_moveit_config` in the ROS workspace-specific build
+directories. This avoids reusing a stale CMake cache from the repository root:
+
+```bash
+cd /home/minwoo/Desktop/LLM
+source /opt/ros/humble/setup.bash
+colcon --log-base ros2_ur_ws/log build \
+  --base-paths ros2_ur_ws/src/pallet ros2_ur_ws/src/pallet_moveit_config \
+  --packages-select pallet pallet_moveit_config \
+  --build-base ros2_ur_ws/build \
+  --install-base ros2_ur_ws/install \
+  --symlink-install
+source ros2_ur_ws/install/setup.bash
+```
+
+After sourcing `ros2_ur_ws/install/setup.bash` in each shell, use three
+terminals:
 
 ```bash
 # Terminal 1: torque-limited Isaac articulation
