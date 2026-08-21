@@ -57,6 +57,18 @@ ros2 run pallet pallet_follow_joint_trajectory_bridge.py
 ros2 launch pallet_moveit_config move_group.launch.py
 ```
 
+For a directly visible Isaac Sim + RViz session, use two terminals instead:
+
+```bash
+# Terminal 1: visible Isaac Sim
+ros2 run pallet run_pallet_isaac_moveit_bridge.sh --no-headless
+```
+
+```bash
+# Terminal 2: robot_state_publisher + action bridge + MoveIt2 + RViz
+ros2 launch pallet_moveit_config isaac_demo.launch.py
+```
+
 The action bridge accepts exactly `j2` through `j6`. It returns success only
 after Isaac feedback settles within the configured goal tolerance. Torque
 saturation or insufficient gravity holding therefore appears as a trajectory
