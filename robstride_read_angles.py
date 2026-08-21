@@ -133,7 +133,7 @@ def main():
 
                 angle_deg = math.degrees(angle_rad)
                 readings.append(
-                    f"ID {motor_id}: {angle_rad: .6f} rad ({angle_deg: 7.2f} deg)"
+                    f"ID {motor_id}: {angle_deg: .4f} deg ({angle_rad: 6.2f} rad)"
                 )
 
             if args.once:

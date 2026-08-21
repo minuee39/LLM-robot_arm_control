@@ -15,6 +15,7 @@ install(
     scripts/pallet_follow_joint_trajectory_bridge.py
     scripts/pallet_isaac_gripperless_physics_test.py
     scripts/pallet_isaac_moveit_bridge.py
+    scripts/robstride_can_id.py
     scripts/run_pallet_isaac_gripperless_physics_test.sh
     scripts/run_pallet_isaac_moveit_bridge.sh
   DESTINATION lib/${PROJECT_NAME}
