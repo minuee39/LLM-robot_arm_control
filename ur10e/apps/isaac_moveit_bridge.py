@@ -244,7 +244,7 @@ def camera_optical_to_world_transform(camera_prim_path: str) -> np.ndarray:
     return transform
 
 
-def write_scene_state(world: World, path: str, include_camera: bool = True) -> None:
+def write_scene_state(world: World, robot, path: str, include_camera: bool = True) -> None:
     object_specs = {
         object_name: (BLOCK_SIZE, OBJECT_COLORS[object_name])
         for object_name in OBJECT_POSITIONS
@@ -263,7 +263,16 @@ def write_scene_state(world: World, path: str, include_camera: bool = True) -> N
         )
 
     tmp_path = f"{path}.tmp"
-    state = {"frame": "world", "objects": objects}
+    gripper_position, gripper_orientation = robot.end_effector.get_world_pose()
+    state = {
+        "frame": "world",
+        "objects": objects,
+        "gripper": {
+            "frame_id": "world",
+            "position": [float(value) for value in gripper_position],
+            "orientation_wxyz": [float(value) for value in gripper_orientation],
+        },
+    }
     if include_camera:
         state["camera"] = {
             "frame_id": CAMERA_FRAME_ID,
@@ -336,7 +345,12 @@ def main() -> None:
 
         now = time.monotonic()
         if now - last_scene_state_write >= args.scene_state_period:
-            write_scene_state(world, args.scene_state_file, include_camera=not args.disable_camera)
+            write_scene_state(
+                world,
+                robot,
+                args.scene_state_file,
+                include_camera=not args.disable_camera,
+            )
             last_scene_state_write = now
         
         
