@@ -117,8 +117,8 @@ def main():
     simulation_app.update()
 
     scene_manager = SceneManager.from_defaults()
-    command = parse_user_command_with_memory(args.command, scene_manager.memory)
     scene_objects = scene_manager.as_command_scene()
+    command = parse_user_command_with_memory(args.command, scene_manager.memory, scene_objects)
     validate_command(command, scene_objects)
     target_position = scene_manager.resolve_target_position(command)
     grasp_policy = FixedGraspPolicy()
