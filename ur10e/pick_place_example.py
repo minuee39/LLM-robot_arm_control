@@ -3,6 +3,7 @@ from llm_to_json import parse_user_command_with_llm, select_llm_provider
 from command_server import RobotCommandServer
 from command_parser import (
     MEMORY_OBJECT_ALIASES,
+    SPATIAL_OBJECT_ALIASES,
     parse_user_command_with_memory,
     validate_command,
 )
@@ -61,13 +62,16 @@ target_position = None
 
 
 def parse_command(user_text: str) -> dict:
-    if any(alias in user_text for alias in MEMORY_OBJECT_ALIASES):
+    if (
+        any(alias in user_text for alias in MEMORY_OBJECT_ALIASES)
+        or any(alias in user_text for alias in SPATIAL_OBJECT_ALIASES)
+    ):
         print("[Parser] memory-aware 로컬 명령 파서 사용")
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+        return parse_user_command_with_memory(user_text, scene_manager.memory, scene_objects)
 
     if llm_provider is None:
         print("[Parser] 로컬 명령 파서 사용")
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+        return parse_user_command_with_memory(user_text, scene_manager.memory, scene_objects)
 
     try:
         command = parse_user_command_with_llm(
@@ -82,7 +86,7 @@ def parse_command(user_text: str) -> dict:
         print(f"[LLM 경고] {llm_provider}를 사용할 수 없어 로컬 명령 파서로 전환합니다.")
         print("[LLM 오류 내용]", error)
         print("[Parser] 로컬 명령 파서 사용")
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+        return parse_user_command_with_memory(user_text, scene_manager.memory, scene_objects)
 
 
 def build_valid_command(user_text: str) -> dict:

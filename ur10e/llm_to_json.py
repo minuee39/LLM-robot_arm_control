@@ -114,12 +114,7 @@ Rules:
 - If the command is ambiguous, set confidence below 0.7.
 - If the pick object or target object cannot be clearly resolved, set confidence below 0.7.
 - If you are confident the command is executable, set confidence between 0.7 and 1.0.
-- If the user says "옆", "근처", or "near", use relation "near".
-- If the user says "위", "올려", or "on", use relation "on".
-- If the user says "왼쪽" or "left", use relation "left_of".
-- If the user says "오른쪽" or "right", use relation "right_of".
-- If the user says "앞" or "front", use relation "front_of".
-- If the user says "뒤" or "behind", use relation "behind".
+- Interpret left and right from the camera image. Interpret front as closer to the camera.
 - Use exact object names such as "red_block", "blue_block", "green_block".
 - Do not output names like "red block" or "blue block".
 
@@ -134,6 +129,90 @@ Example output:
   "relation": "near",
   "confidence": 1.0
 }}
+""".strip()
+
+
+def build_gemini_prompt(user_command: str, scene_objects: dict) -> str:
+    """Build the Gemini-specific prompt with deterministic camera references."""
+    from command_parser import resolve_spatial_object
+
+    llm_scene_objects = scene_objects_to_llm_list(scene_objects)
+    leftmost_object = resolve_spatial_object("leftmost", scene_objects)
+    middle_object = resolve_spatial_object("middle", scene_objects)
+    rightmost_object = resolve_spatial_object("rightmost", scene_objects)
+
+    return f"""
+You are a deterministic robot pick-and-place command parser.
+
+Convert one Korean or English user command into exactly one JSON object.
+Do not plan robot motion. Only identify the object to pick, the destination
+object, and their final placement relation.
+
+Available objects:
+{json.dumps(llm_scene_objects, ensure_ascii=False, indent=2)}
+
+Camera-image horizontal references for this exact scene:
+- leftmost object: {leftmost_object}
+- middle object: {middle_object}
+- rightmost object: {rightmost_object}
+
+Output fields:
+- action: always "pick_place"
+- pick_object: the object that the robot must grasp and move
+- target_object: the stationary reference object at the destination
+- relation: one of "on", "left_of", "right_of", "front_of", "behind", "near"
+- confidence: a number from 0.0 to 1.0
+
+Interpretation rules, in priority order:
+1. Resolve the pick_object and target_object before resolving relation.
+2. In Korean, the object marked by "을/를" is normally pick_object. The object
+   followed by the destination phrase such as "위에", "왼쪽에", or "옆에" is
+   target_object. Preserve these roles; never swap source and destination.
+3. "왼쪽 물체", "오른쪽 물체", "left object", and "right object" are
+   object selectors. Resolve them only from the camera-image reference list
+   above. In these noun phrases, left/right does not specify relation.
+4. A left/right word specifies relation only when it describes the final
+   destination relative to an already identified target object. For example,
+   "빨간 블럭을 파란 블럭 왼쪽에 둘" means pick red_block,
+   target blue_block, relation left_of.
+5. Choose relation from the final destination phrase, not from words inside an
+   object selector:
+   - "위", "위에", "위로", "올려", "on", "on top of" -> "on"
+   - "왼쪽에", "left of" -> "left_of"
+   - "오른쪽에", "right of" -> "right_of"
+   - "앞에", "front of" -> "front_of"
+   - "뒤에", "behind" -> "behind"
+   - "옆에", "근처에", "near" -> "near"
+6. Camera-image left/right is not the same as world-coordinate X. Never infer
+   screen side directly from the sign of a world coordinate.
+7. Use only exact names from Available objects. Never invent an object name.
+8. If either object cannot be resolved uniquely, or the command has conflicting
+   roles, set confidence below 0.7. Otherwise use confidence from 0.7 to 1.0.
+9. Return JSON only. Do not include markdown or explanations.
+
+Examples for the current scene:
+User: "왼쪽 물체를 오른쪽 물체 위로 옮겨"
+Output:
+{{
+  "action": "pick_place",
+  "pick_object": "{leftmost_object}",
+  "target_object": "{rightmost_object}",
+  "relation": "on",
+  "confidence": 1.0
+}}
+
+User: "오른쪽 물체를 가운데 물체 옆에 놓아"
+Output:
+{{
+  "action": "pick_place",
+  "pick_object": "{rightmost_object}",
+  "target_object": "{middle_object}",
+  "relation": "near",
+  "confidence": 1.0
+}}
+
+User command:
+{user_command}
 """.strip()
 
 
@@ -233,11 +312,11 @@ def parse_user_command_with_llm(
     scene_objects: dict,
     provider: LLMProvider = "gemini",
 ) -> dict:
-    prompt = build_prompt(user_text, scene_objects)
-
     if provider == "gemini":
+        prompt = build_gemini_prompt(user_text, scene_objects)
         response_text = _parse_with_gemini(prompt)
     elif provider == "chatgpt":
+        prompt = build_prompt(user_text, scene_objects)
         response_text = _parse_with_chatgpt(prompt)
     else:
         raise ValueError(f"지원하지 않는 LLM 제공자입니다: {provider}")
@@ -260,7 +339,7 @@ def _parse_with_gemini(prompt: str) -> str:
     if not api_key:
         raise ValueError("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.")
 
-    model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
     return _call_gemini_rest(prompt, api_key, model)
 
 
