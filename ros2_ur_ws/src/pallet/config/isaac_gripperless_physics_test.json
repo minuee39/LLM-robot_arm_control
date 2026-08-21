@@ -1,0 +1,31 @@
+{
+  "physics_dt": 0.004166666666666667,
+  "position_tolerance_rad": 0.08,
+  "velocity_tolerance_rad_s": 0.08,
+  "effort_limit_margin": 1.02,
+  "settle_window_seconds": 0.5,
+  "joints": {
+    "j2": {"stiffness": 180.0, "damping": 18.0},
+    "j3": {"stiffness": 110.0, "damping": 11.0},
+    "j4": {"stiffness": 90.0, "damping": 9.0},
+    "j5": {"stiffness": 35.0, "damping": 3.5},
+    "j6": {"stiffness": 30.0, "damping": 3.0}
+  },
+  "phases": [
+    {
+      "name": "gravity_hold_zero",
+      "duration_seconds": 3.0,
+      "target_rad": {"j2": 0.0, "j3": 0.0, "j4": 0.0, "j5": 0.0, "j6": 0.0}
+    },
+    {
+      "name": "move_pose_a",
+      "duration_seconds": 4.0,
+      "target_rad": {"j2": 0.35, "j3": -0.35, "j4": -0.35, "j5": 0.25, "j6": 0.25}
+    },
+    {
+      "name": "move_pose_b",
+      "duration_seconds": 4.0,
+      "target_rad": {"j2": -0.35, "j3": 0.35, "j4": 0.20, "j5": -0.25, "j6": 0.25}
+    }
+  ]
+}

@@ -7,6 +7,14 @@ find_package(ament_cmake REQUIRED)
 install(
   DIRECTORY config launch meshes scripts urdf
   DESTINATION share/${PROJECT_NAME}
+  PATTERN "__pycache__" EXCLUDE
+)
+
+install(
+  PROGRAMS
+    scripts/pallet_isaac_gripperless_physics_test.py
+    scripts/run_pallet_isaac_gripperless_physics_test.sh
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()
