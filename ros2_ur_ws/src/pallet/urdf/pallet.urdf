@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="pallet">
+  <link
+    name="base_footprint" />
+  <joint
+    name="base_footprint_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_footprint" />
+    <child
+      link="base_link" />
+  </joint>
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.000893653 -0.00158262 0.040187651"
+        rpy="0 0 0" />
+      <mass
+        value="1.541" />
+      <inertia
+        ixx="0.002319617"
+        ixy="-4.15E-05"
+        ixz="1.04E-05"
+        iyy="0.004140731"
+        iyz="7.15E-05"
+        izz="0.002335609" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="-1.1843 -0.90272 0.59122"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156863 0.819607843 0.933333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="-1.1843 -0.90272 0.59122"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/base_link_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="L2">
+    <inertial>
+      <origin
+        xyz="-0.0050393 0.11601 0.0012452"
+        rpy="0 0 0" />
+      <mass
+        value="1.549" />
+      <inertia
+        ixx="0.00302978"
+        ixy="4.49E-05"
+        ixz="1.13E-05"
+        iyy="0.003662856"
+        iyz="-7.43E-05"
+        izz="0.002181075" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/L2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/L2_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j2"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="1.6099 0 -1.0512" />
+    <parent
+      link="base_link" />
+    <child
+      link="L2" />
+    <axis
+      xyz="0.023014 0.99974 0" />
+    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="11"
+      velocity="10.471976" />
+  </joint>
+  <link
+    name="L3">
+    <inertial>
+      <origin
+        xyz="-0.12168 1.70E-05 0.029741"
+        rpy="0 0 0" />
+      <mass
+        value="0.183" />
+      <inertia
+        ixx="6.02E-05"
+        ixy="-3.19E-12"
+        ixz="-6.94E-06"
+        iyy="0.000192401"
+        iyz="-1.89E-12"
+        izz="0.000167404" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/L3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/L3_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j3"
+    type="revolute">
+    <origin
+      xyz="0.0012123 0.16129 0.0080631"
+      rpy="-1.5708 0.61077 -1.5938" />
+    <parent
+      link="L2" />
+    <child
+      link="L3" />
+    <!-- Set to the requested Z-axis rotation for L3; verify in RViz. -->
+    <axis
+      xyz="0 0 1" />
+    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
+    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
+    <limit
+      lower="-2.757620"
+      upper="1.623156"
+      effort="5"
+      velocity="10.471976" />
+  </joint>
+  <link
+    name="L4">
+    <inertial>
+      <origin
+        xyz="-0.0050366 0.00011303 0.054191"
+        rpy="0 0 0" />
+      <mass
+        value="1.004" />
+      <inertia
+        ixx="0.000849592"
+        ixy="2.51E-07"
+        ixz="-6.65878E-05"
+        iyy="0.000834376"
+        iyz="-2.10E-07"
+        izz="0.000157448" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/L4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/L4_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j4"
+    type="revolute">
+    <origin
+      xyz="-0.2105 0 -0.0068993"
+      rpy="1.9138 -1.5708 -0.15545" />
+    <parent
+      link="L3" />
+    <child
+      link="L4" />
+    <!-- Set to the requested X-axis rotation for L4; verify in RViz. -->
+    <axis
+      xyz="1 0 0" />
+    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
+    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
+    <limit
+      lower="-3.14"
+      upper="0.802851"
+      effort="5"
+      velocity="10.471976" />
+  </joint>
+  <link
+    name="L5">
+    <inertial>
+      <origin
+        xyz="-0.0013461 4.12E-05 0.030198"
+        rpy="0 0 0" />
+      <mass
+        value="0.447" />
+      <inertia
+        ixx="1.70E-04"
+        ixy="-3.68E-07"
+        ixz="1.47E-05"
+        iyy="1.94E-04"
+        iyz="1.81E-08"
+        izz="1.74E-04" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/L5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/L5_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j5"
+    type="revolute">
+    <origin
+      xyz="0.006 0 0.205"
+      rpy="0 0 0.0076608" />
+    <parent
+      link="L4" />
+    <child
+      link="L5" />
+    <!-- Inferred from the wrist geometry. Verify against the CAD reference axis. -->
+    <axis
+      xyz="0 0 1" />
+    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1.8"
+      velocity="10.471976" />
+  </joint>
+  <link
+    name="L6">
+    <inertial>
+      <origin
+        xyz="-0.035683 -1.52E-05 0.046062"
+        rpy="0 0 0" />
+      <mass
+        value="0.14745" />
+      <inertia
+        ixx="1.25E-04"
+        ixy="-1.14E-06"
+        ixz="1.75E-05"
+        iyy="1.40E-04"
+        iyz="8.20E-08"
+        izz="1.47E-04" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/L6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://pallet/meshes/collision/L6_collision.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j6"
+    type="revolute">
+    <origin
+      xyz="0.0357 0 0.042"
+      rpy="-0.87843 0 0" />
+    <parent
+      link="L5" />
+    <child
+      link="L6" />
+    <!-- Set to the requested X-axis rotation for L6; verify in RViz. -->
+    <axis
+      xyz="1 0 0" />
+    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
+    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
+    <limit
+      lower="-0.785398"
+      upper="2.548181"
+      effort="1.8"
+      velocity="10.471976" />
+  </joint>
+  <!-- Mechanical mounting frame at the center of the L6 output flange. -->
+  <link
+    name="tool0" />
+  <joint
+    name="tool0_joint"
+    type="fixed">
+    <origin
+      xyz="-0.0755 0 0"
+      rpy="0 -1.57079632679 0" />
+    <parent
+      link="L6" />
+    <child
+      link="tool0" />
+  </joint>
+  <!-- Temporary TCP; offset this frame when the end-effector geometry is known. -->
+  <link
+    name="tcp" />
+  <joint
+    name="tcp_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="tool0" />
+    <child
+      link="tcp" />
+  </joint>
+</robot>
