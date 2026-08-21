@@ -33,10 +33,12 @@ from vision.scene_objects import (
     StableDetectionStore,
     write_vision_scene,
 )
-from vision.yolo_detector import YoloDetector
+from vision.yolo_detector import LABEL_MODES, YoloDetector
 
 
-DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "runs" / "detect" / "train" / "weights" / "best.pt"
+DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "yolo26n.pt"
+DEFAULT_LABEL_MODE = "model"
+DEFAULT_CLASSES = "cup"
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
 DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
 
@@ -47,6 +49,8 @@ class YoloCameraNode(Node):
         model_path: str | Path,
         *,
         confidence_threshold: float = 0.4,
+        label_mode: str = "color",
+        classes: tuple[str, ...] | None = None,
         show_window: bool = False,
         rgb_topic: str = "/sim_camera/rgb",
         depth_topic: str = "/sim_camera/depth",
@@ -77,7 +81,11 @@ class YoloCameraNode(Node):
         self.detector = YoloDetector(
             model_path,
             confidence_threshold=confidence_threshold,
+            label_mode=label_mode,
+            classes=classes,
         )
+        self.label_mode = self.detector.label_mode
+        self.selected_classes = tuple(classes or ())
         self.show_window = show_window
         self.camera_info = None
         self.depth_image = None
@@ -99,14 +107,18 @@ class YoloCameraNode(Node):
             min_confidence=min_stable_confidence,
             max_position_std=max_position_std,
             outlier_distance=outlier_distance,
+            expected_names=EXPECTED_BLOCK_NAMES if self.label_mode == "color" else (),
+            allow_unknown_names=self.label_mode != "color",
         )
         self.last_sync_delta = None
         self.last_processing_ms = None
-        self.pose_publish_counts = {name: 0 for name in EXPECTED_BLOCK_NAMES}
-        self.pose_first_publish_time = {name: None for name in EXPECTED_BLOCK_NAMES}
+        initial_names = EXPECTED_BLOCK_NAMES if self.label_mode == "color" else ()
+        self.pose_publish_counts = {name: 0 for name in initial_names}
+        self.pose_first_publish_time = {name: None for name in initial_names}
+        self.detection_metadata = {}
         self.latest_ground_truth_errors = {}
         self.simulator_reference_max_error = simulator_reference_max_error
-        self.reference_fallback_counts = {name: 0 for name in EXPECTED_BLOCK_NAMES}
+        self.reference_fallback_counts = {name: 0 for name in initial_names}
 
         self.create_subscription(CameraInfo, camera_info_topic, self.camera_info_callback, 10)
         self.rgb_subscriber = Subscriber(self, Image, rgb_topic, qos_profile=10)
@@ -121,7 +133,7 @@ class YoloCameraNode(Node):
         self.detections_pub = self.create_publisher(String, "/yolo/detections", 10)
         self.pose_publishers = {
             name: self.create_publisher(PoseStamped, f"/vision/{name}/pose", 10)
-            for name in EXPECTED_BLOCK_NAMES
+            for name in initial_names
         }
         self.create_timer(publish_period, self.publish_compact_detections)
         self.create_timer(2.0, self.status_callback)
@@ -131,15 +143,22 @@ class YoloCameraNode(Node):
             "YOLO camera node started. Waiting for " + ", ".join(self.input_topics)
         )
         self.get_logger().info(f"Using YOLO model: {Path(model_path).expanduser().resolve()}")
+        self.get_logger().info(
+            f"Label mode: {self.label_mode}; "
+            f"class filter: {', '.join(self.selected_classes) or 'all'}"
+        )
         self.get_logger().info(f"Using camera transform from: {self.scene_state_file}")
         self.get_logger().info(
             f"Writing stable vision scene to: {self.vision_scene_file} "
             f"(sync_slop={sync_slop:.3f}s)"
         )
-        self.get_logger().info(
-            "Publishing real-time world poses: "
-            + ", ".join(f"/vision/{name}/pose" for name in EXPECTED_BLOCK_NAMES)
-        )
+        if initial_names:
+            topics = ", ".join(f"/vision/{name}/pose" for name in initial_names)
+            self.get_logger().info(f"Publishing real-time world poses: {topics}")
+        else:
+            self.get_logger().info(
+                "Real-time pose topics will be created as /vision/<detected_name>/pose"
+            )
 
     def publish_compact_detections(self) -> None:
         stable_snapshot = self.detection_store.snapshot()
@@ -149,6 +168,7 @@ class YoloCameraNode(Node):
             name: {
                 "confidence": info["confidence"],
                 "position": info["position"],
+                **(self.detection_metadata.get(name, {}) if self.label_mode != "color" else {}),
             }
             for name, info in stable_snapshot.items()
         }
@@ -157,7 +177,18 @@ class YoloCameraNode(Node):
         detection_msg.data = json.dumps(snapshot, ensure_ascii=False, indent=2)
         self.detections_pub.publish(detection_msg)
         try:
-            write_vision_scene(self.vision_scene_file, stable_snapshot)
+            scene_snapshot = {
+                name: {
+                    **info,
+                    **(self.detection_metadata.get(name, {}) if self.label_mode != "color" else {}),
+                }
+                for name, info in stable_snapshot.items()
+            }
+            write_vision_scene(
+                self.vision_scene_file,
+                scene_snapshot,
+                allowed_names=EXPECTED_BLOCK_NAMES if self.label_mode == "color" else None,
+            )
         except (OSError, ValueError) as error:
             self.get_logger().error(f"Vision scene write failed: {error}")
         lines = ["Detected scene:"]
@@ -204,17 +235,18 @@ class YoloCameraNode(Node):
 
         elapsed_rates = {}
         now = time.monotonic()
-        for name in EXPECTED_BLOCK_NAMES:
+        tracked_names = tuple(self.pose_publish_counts)
+        for name in tracked_names:
             started_at = self.pose_first_publish_time[name]
             elapsed_rates[name] = (
                 0.0
                 if started_at is None or now <= started_at
                 else self.pose_publish_counts[name] / (now - started_at)
             )
-        rates = ", ".join(f"{name}={elapsed_rates[name]:.1f}" for name in EXPECTED_BLOCK_NAMES)
+        rates = ", ".join(f"{name}={elapsed_rates[name]:.1f}" for name in tracked_names)
         errors = ", ".join(
             f"{name}={self.latest_ground_truth_errors[name]:.4f}"
-            for name in EXPECTED_BLOCK_NAMES
+            for name in tracked_names
             if name in self.latest_ground_truth_errors
         )
         self.get_logger().info(
@@ -225,9 +257,9 @@ class YoloCameraNode(Node):
             f"last_valid_depth_boxes={self.last_valid_depth_count}, "
             f"last_sync_delta={self.last_sync_delta}, "
             f"processing_ms={self.last_processing_ms}, "
-            f"pose_hz=({rates}), "
+            f"pose_hz=({rates or 'no detections'}), "
             f"gt_error_m=({errors or 'unavailable'}), "
-            f"missing_blocks={self.detection_store.missing_names()}"
+            f"missing_objects={self.detection_store.missing_names()}"
         )
 
     def camera_info_callback(self, msg: CameraInfo) -> None:
@@ -268,7 +300,7 @@ class YoloCameraNode(Node):
 
         best_by_name = {}
         for detection in detections:
-            if detection.name not in EXPECTED_BLOCK_NAMES:
+            if self.label_mode == "color" and detection.name not in EXPECTED_BLOCK_NAMES:
                 continue
             previous = best_by_name.get(detection.name)
             if previous is None or detection.confidence > previous.confidence:
@@ -292,19 +324,24 @@ class YoloCameraNode(Node):
                     )
                     if self.camera_to_world is not None:
                         surface_world_position = transform_point(camera_position, self.camera_to_world)
-                        world_position = surface_point_to_box_center(
-                            surface_world_position,
-                            self.camera_to_world[:3, 3],
-                            BLOCK_SIZE,
-                        )
-                        world_position, used_reference, raw_error = validated_world_position(
-                            world_position,
-                            self.ground_truth_positions.get(detection.name),
-                            self.simulator_reference_max_error,
-                        )
-                        if used_reference:
-                            self.reference_fallback_counts[detection.name] += 1
-                            self.latest_ground_truth_errors[detection.name] = raw_error
+                        if self.label_mode == "color":
+                            world_position = surface_point_to_box_center(
+                                surface_world_position,
+                                self.camera_to_world[:3, 3],
+                                BLOCK_SIZE,
+                            )
+                            world_position, used_reference, raw_error = validated_world_position(
+                                world_position,
+                                self.ground_truth_positions.get(detection.name),
+                                self.simulator_reference_max_error,
+                            )
+                            if used_reference:
+                                self.reference_fallback_counts[detection.name] += 1
+                                self.latest_ground_truth_errors[detection.name] = raw_error
+                        else:
+                            # Generic object dimensions are unknown, so report the visible
+                            # depth surface point instead of applying the block-size offset.
+                            world_position = surface_world_position
                     self.last_valid_depth_count += 1
                 except ValueError as error:
                     self.get_logger().warning(f"Invalid camera intrinsics/depth: {error}")
@@ -315,8 +352,16 @@ class YoloCameraNode(Node):
             elif world_position is None:
                 label += " world=unavailable"
             else:
-                label += " world_center=({:.2f},{:.2f},{:.2f})".format(*world_position)
+                position_label = "world_center" if self.label_mode == "color" else "world_surface"
+                label += f" {position_label}=({world_position[0]:.2f},{world_position[1]:.2f},"
+                label += f"{world_position[2]:.2f})"
                 self.publish_realtime_pose(detection.name, world_position, rgb_msg)
+                if self.label_mode != "color":
+                    self.detection_metadata[detection.name] = {
+                        "class_name": detection.class_name,
+                        "color": detection.color,
+                        "position_type": "visible_surface",
+                    }
                 self.detection_store.update(
                     detection.name,
                     detection.confidence,
@@ -338,6 +383,16 @@ class YoloCameraNode(Node):
         self.last_processing_ms = round((time.perf_counter() - callback_started_at) * 1000.0, 2)
 
     def publish_realtime_pose(self, name: str, world_position, rgb_msg: Image) -> None:
+        if name not in self.pose_publishers:
+            self.pose_publishers[name] = self.create_publisher(
+                PoseStamped,
+                f"/vision/{name}/pose",
+                10,
+            )
+            self.pose_publish_counts[name] = 0
+            self.pose_first_publish_time[name] = None
+            self.reference_fallback_counts[name] = 0
+            self.get_logger().info(f"Created pose topic: /vision/{name}/pose")
         pose_msg = PoseStamped()
         pose_msg.header.stamp = rgb_msg.header.stamp
         pose_msg.header.frame_id = "world"
@@ -374,10 +429,25 @@ class YoloCameraNode(Node):
         )
 
 
+def _parse_classes(value: str) -> tuple[str, ...]:
+    return tuple(item.strip() for item in value.split(",") if item.strip())
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Detect blocks from ROS 2 RGB-D camera topics.")
+    parser = argparse.ArgumentParser(description="Detect objects from ROS 2 RGB-D camera topics.")
     parser.add_argument("--model", default=str(DEFAULT_MODEL_PATH), help="YOLO weights path.")
     parser.add_argument("--conf", type=float, default=0.4, help="YOLO confidence threshold.")
+    parser.add_argument(
+        "--label-mode",
+        choices=LABEL_MODES,
+        default=DEFAULT_LABEL_MODE,
+        help="Label by HSV color, YOLO model class, or both.",
+    )
+    parser.add_argument(
+        "--classes",
+        default=DEFAULT_CLASSES,
+        help="Optional comma-separated YOLO class filter, for example: cup,bottle,bowl",
+    )
     parser.add_argument("--show", action="store_true", help="Show the annotated OpenCV window.")
     parser.add_argument("--rgb-topic", default="/sim_camera/rgb")
     parser.add_argument("--depth-topic", default="/sim_camera/depth")
@@ -405,6 +475,8 @@ def main() -> None:
     node = YoloCameraNode(
         model_path=args.model,
         confidence_threshold=args.conf,
+        label_mode=args.label_mode,
+        classes=_parse_classes(args.classes),
         show_window=args.show,
         rgb_topic=args.rgb_topic,
         depth_topic=args.depth_topic,

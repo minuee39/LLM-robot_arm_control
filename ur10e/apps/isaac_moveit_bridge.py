@@ -59,6 +59,7 @@ from isaacsim.core.api.objects import DynamicCuboid
 from isaacsim.core.utils.extensions import enable_extension
 from isaacsim.core.utils.viewports import set_camera_view
 from pxr import Gf, Usd, UsdGeom, UsdPhysics
+from isaac_scene_assets import CUP_APPROX_SIZE, CUP_NAME, add_cup
 from scene_config import (
     BLOCK_SIZE,
     OBJECT_COLORS,
@@ -246,21 +247,31 @@ def camera_optical_to_world_transform(camera_prim_path: str) -> np.ndarray:
 
 def write_scene_state(world: World, robot, path: str, include_camera: bool = True) -> None:
     object_specs = {
-        object_name: (BLOCK_SIZE, OBJECT_COLORS[object_name])
+        object_name: {
+            "size": BLOCK_SIZE,
+            "color": OBJECT_COLORS[object_name],
+            "type": "block",
+        }
         for object_name in OBJECT_POSITIONS
     }
+    object_specs[CUP_NAME] = {
+        "size": CUP_APPROX_SIZE,
+        "color": None,
+        "type": "mug_asset",
+    }
     objects = []
-    for object_name, (object_size, object_color) in object_specs.items():
+    for object_name, object_spec in object_specs.items():
         scene_object = world.scene.get_object(object_name)
         position, _ = scene_object.get_world_pose()
-        objects.append(
-            {
-                "name": object_name,
-                "position": [float(value) for value in position],
-                "size": [float(value) for value in object_size],
-                "color": [float(value) for value in object_color] + [1.0],
-            }
-        )
+        item = {
+            "name": object_name,
+            "position": [float(value) for value in position],
+            "size": [float(value) for value in object_spec["size"]],
+            "type": object_spec["type"],
+        }
+        if object_spec["color"] is not None:
+            item["color"] = [float(value) for value in object_spec["color"]] + [1.0]
+        objects.append(item)
 
     tmp_path = f"{path}.tmp"
     gripper_position, gripper_orientation = robot.end_effector.get_world_pose()
@@ -292,6 +303,7 @@ def main() -> None:
     world = World(stage_units_in_meters=1.0, physics_dt=1 / 200, rendering_dt=1 / 60)
     world.add_task(PickPlace(name=TASK_NAME))
     add_blocks(world)
+    _cup, cup_asset_path = add_cup(world)
     if not args.disable_camera:
         create_camera()
     world.reset()
@@ -318,6 +330,7 @@ def main() -> None:
     print("[INFO] Isaac MoveIt bridge graph is running", flush=True)
     print(f"[INFO] Robot prim:   {robot_prim_path}", flush=True)
     print("[INFO] Blocks:", ", ".join(OBJECT_POSITIONS.keys()), flush=True)
+    print(f"[INFO] Cup: {CUP_NAME} ({cup_asset_path})", flush=True)
     print("[INFO] Scene state file:", args.scene_state_file, flush=True)
     if args.disable_camera:
         print("[INFO] RGB-D camera disabled", flush=True)

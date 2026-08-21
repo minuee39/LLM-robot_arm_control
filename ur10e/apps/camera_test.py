@@ -9,7 +9,8 @@ simulation_app = SimulationApp({
     "renderer": "RayTracedLighting",
 })
 
-import time
+from pathlib import Path
+
 import numpy as np
 import cv2
 
@@ -23,7 +24,7 @@ import omni.kit.viewport.utility as vp_utils
 import omni.replicator.core as rep
 
 
-OUTPUT_PATH = "/home/minwoo/Desktop/LLM/ur10e/outputs/camera_rgb_output.png"
+OUTPUT_PATH = Path(__file__).resolve().parents[1] / "outputs" / "camera_rgb_output.png"
 
 
 def create_block(world, name, position, color):
@@ -63,6 +64,7 @@ def set_viewport_camera(camera_path):
 
 
 def main():
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     world = World(stage_units_in_meters=1.0)
     world.scene.add_default_ground_plane()
 
@@ -120,7 +122,7 @@ def main():
             # 저장용으로 RGB -> BGR 변환
             bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
-            success = cv2.imwrite(OUTPUT_PATH, bgr)
+            success = cv2.imwrite(str(OUTPUT_PATH), bgr)
 
             if success:
                 print("[SUCCESS] RGB image saved.")

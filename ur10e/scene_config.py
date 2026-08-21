@@ -1,7 +1,7 @@
 import numpy as np
 
 
-BLOCK_SIZE = np.array([0.1, 0.0515, 0.1])
+BLOCK_SIZE = np.array([0.1, 0.0515, 0.0515])
 
 OBJECT_POSITIONS = {
     "red_block": np.array([-0.30, 0.30, 0.02575]),
@@ -35,5 +35,6 @@ UR10E_INITIAL_JOINT_POSITIONS = {
     "wrist_1_joint": 1.94,
     "wrist_2_joint": 1.57,
     "wrist_3_joint": -2.58,
+    # Direct articulation state setters and feedback use radians.
     "finger_joint": 0.01,
 }

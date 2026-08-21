@@ -1,0 +1,37 @@
+repositories:
+  launch_param_builder:
+    type: git
+    url: https://github.com/PickNikRobotics/launch_param_builder
+    version: 7a981e910d1df37a6a9f34600555aa39d13ca372
+  moveit2:
+    type: git
+    url: https://github.com/ros-planning/moveit2
+    version: 2b2030dd73881aceeaa759e5622c57c99adf2f9c
+  moveit_resources:
+    type: git
+    url: https://github.com/ros-planning/moveit_resources
+    version: 45ea3551aa74fd5dc40cc39ef53391425cda0af9
+  moveit_task_constructor:
+    type: git
+    url: https://github.com/ros-planning/moveit_task_constructor.git
+    version: 756634951326ae17ae099882f7110c6f1d0a98c0
+  moveit_visual_tools:
+    type: git
+    url: https://github.com/ros-planning/moveit_visual_tools
+    version: c6b54038cb5197bd90acb70516efe2cc34e572bb
+  rosparam_shortcuts:
+    type: git
+    url: https://github.com/PickNikRobotics/rosparam_shortcuts
+    version: fcb53f8dedbb4f84cb4633bca88d9ce845ecd95c
+  srdfdom:
+    type: git
+    url: https://github.com/ros-planning/srdfdom.git
+    version: 2c820aa46847fa4309e4dbfe432eaf7ebdbacd85
+  moveit2_tutorials:
+    type: git
+    url: https://github.com/ros-planning/moveit2_tutorials
+    version: b8f954ce045b00f29de4da24146eb7732e7b2a9e
+  ros2_astra_camera:
+    type: git
+    url: https://github.com/orbbec/ros2_astra_camera.git
+    version: f7e71d9ce806e788cb48d8580aac2c778fba4214
