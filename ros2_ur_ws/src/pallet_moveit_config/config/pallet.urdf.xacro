@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pallet">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import pallet urdf file -->
+    <xacro:include filename="$(find pallet)/urdf/pallet.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="pallet.ros2_control.xacro" />
+
+
+    <xacro:pallet_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>
