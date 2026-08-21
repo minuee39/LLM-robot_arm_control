@@ -85,6 +85,21 @@ ros2 run pallet run_pallet_isaac_moveit_bridge.sh --no-headless
 ros2 launch pallet_moveit_config isaac_demo.launch.py
 ```
 
+If Isaac reports an undefined `spdlog`/`fmt` symbol while importing `rclpy`,
+do not append its bundled ROS libraries after `/opt/ros/humble`. The
+`run_pallet_isaac_moveit_bridge.sh` wrapper deliberately prepends
+`isaacsim.ros2.bridge/humble/lib` so the bundled `rclpy`, `rcl`, `spdlog`, and
+`fmt` ABI versions stay together. The bridge can be checked without opening a
+window:
+
+```bash
+ros2 run pallet run_pallet_isaac_moveit_bridge.sh \
+  --headless --smoke-test-seconds 2 \
+  --output /tmp/pallet_isaac_moveit_bridge_smoke.json
+```
+
+A successful check prints `rclpy loaded` and a report with `"passed": true`.
+
 The action bridge accepts exactly `j2` through `j6`. It returns success only
 after Isaac feedback settles within the configured goal tolerance. Torque
 saturation or insufficient gravity holding therefore appears as a trajectory
