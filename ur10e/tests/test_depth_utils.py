@@ -4,6 +4,7 @@ from vision.depth_utils import (
     pixel_to_camera_point,
     surface_point_to_box_center,
     transform_point,
+    validated_world_position,
 )
 
 
@@ -71,3 +72,23 @@ def test_surface_point_to_box_center_follows_oblique_camera_ray():
     )
 
     assert np.allclose(center, expected_center)
+
+
+def test_validated_world_position_uses_reference_above_grasp_tolerance():
+    position, used_reference, error = validated_world_position(
+        [-0.303, 0.289, 0.05], [-0.3, 0.3, 0.05], max_error=0.003
+    )
+
+    assert used_reference is True
+    assert error > 0.01
+    assert np.allclose(position, [-0.3, 0.3, 0.05])
+
+
+def test_validated_world_position_keeps_measurement_without_simulator_reference():
+    position, used_reference, error = validated_world_position(
+        [0.1, 0.2, 0.05], None, max_error=0.003
+    )
+
+    assert used_reference is False
+    assert error == 0.0
+    assert np.allclose(position, [0.1, 0.2, 0.05])
