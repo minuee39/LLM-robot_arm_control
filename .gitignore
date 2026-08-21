@@ -15,6 +15,7 @@ ur10e/notion.env
 **/build/
 **/install/
 **/log/
+*.log
 *.deb
 
 # Training and generated datasets
