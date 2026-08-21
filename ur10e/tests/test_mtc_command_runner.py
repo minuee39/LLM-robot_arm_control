@@ -84,9 +84,9 @@ def test_command_to_mtc_args_clamps_z_to_object_center_height():
     assert "object_id:=red_block" in mtc_args
     assert "object_size_x:=0.100000" in mtc_args
     assert "object_size_y:=0.051500" in mtc_args
-    assert "object_size_z:=0.100000" in mtc_args
-    assert "object_z:=0.050000" in mtc_args
-    assert "place_z:=0.050000" in mtc_args
+    assert "object_size_z:=0.051500" in mtc_args
+    assert "object_z:=0.025750" in mtc_args
+    assert "place_z:=0.025750" in mtc_args
 
 
 def test_execution_tuning_args_selects_requested_rrt_variant():

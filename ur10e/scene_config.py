@@ -1,7 +1,7 @@
 import numpy as np
 
 
-BLOCK_SIZE = np.array([0.1, 0.0515, 0.1])
+BLOCK_SIZE = np.array([0.1, 0.0515, 0.0515])
 
 OBJECT_POSITIONS = {
     "red_block": np.array([-0.30, 0.30, 0.02575]),

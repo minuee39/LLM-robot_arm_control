@@ -1,4 +1,12 @@
+from pathlib import Path
+import sys
+
 from isaacsim import SimulationApp
+
+
+PROJECT_DIR = Path(__file__).resolve().parents[1]
+if str(PROJECT_DIR) not in sys.path:
+    sys.path.insert(0, str(PROJECT_DIR))
 
 simulation_app = SimulationApp(
     {
@@ -16,6 +24,7 @@ from isaacsim.core.api.objects import DynamicCuboid
 from isaacsim.core.utils.extensions import enable_extension
 from isaacsim.core.utils.viewports import set_camera_view
 from pxr import Gf, UsdGeom
+from isaac_scene_assets import CUP_NAME, add_cup
 
 
 CAMERA_PRIM_PATH = "/World/RGBD_Camera"
@@ -102,6 +111,7 @@ def main():
     create_block(world, "red_block", [-0.30, 0.30, 0.025], [1.0, 0.0, 0.0])
     create_block(world, "blue_block", [0.30, 0.30, 0.025], [0.0, 0.0, 1.0])
     create_block(world, "green_block", [0.00, 0.45, 0.025], [0.0, 1.0, 0.0])
+    _cup, cup_asset_path = add_cup(world)
     create_camera()
 
     world.reset()
@@ -113,6 +123,7 @@ def main():
     print("  /sim_camera/camera_info")
     print("  /sim_camera/points")
     print("[INFO] Keep this process running while the YOLO node is running.")
+    print(f"[INFO] Cup: {CUP_NAME} ({cup_asset_path})")
 
     while simulation_app.is_running():
         world.step(render=True)

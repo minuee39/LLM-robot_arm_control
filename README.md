@@ -158,6 +158,36 @@ bash ur10e/scripts/run_isaac_moveit_bridge.sh --camera-width 1280 --camera-heigh
 bash ur10e/scripts/run_isaac_moveit_bridge.sh --disable-camera
 ```
 
+전체 MoveIt 연동은 다음 순서로 실행합니다. 각 명령은 별도 터미널에서 실행하며, 먼저 plan-only로 확인한 뒤 `--execute`를 사용합니다.
+
+```bash
+# Terminal 1: Isaac Sim bridge
+cd ~/Desktop/LLM
+bash ur10e/scripts/run_isaac_moveit_bridge.sh
+
+# Terminal 2: controller action bridge
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 run isaac_moveit_bridge action_bridge
+
+# Terminal 3: MoveIt / RViz / move_group
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 launch ur10e_robotiq_2f140_moveit_config isaac_demo.launch.py
+
+# Terminal 4: plan-only 후 실행
+cd ~/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/local_setup.bash
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ros2 run isaac_moveit_bridge moveit_pick_place_demo
+ros2 run isaac_moveit_bridge moveit_pick_place_demo --execute
+```
+
 브리지 실행 중 토픽 수신은 다음 명령으로 확인합니다.
 
 ```bash
@@ -227,6 +257,8 @@ bash ur10e/scripts/run_yolo_camera_node.sh \
 
 ## 개발 팁
 
+- Dependency 관리 원칙과 고정된 ROS source revision은 [dependency policy](docs/dependency-policy.md)와 [dependencies.repos](ros2_ur_ws/dependencies.repos)를 기준으로 확인합니다.
+- 현재 검증 기준과 알려진 실패는 [M0 baseline](docs/baselines/m0-baseline-2026-08-17.md)에 기록합니다.
 - `.cpp` 파일을 바꾸면 해당 ROS 2 패키지를 다시 `colcon build` 해야 합니다.
 - `.srdf`, `.yaml` 설정 파일은 launch가 install space를 읽는지 symlink install을 쓰는지에 따라 rebuild 또는 재실행이 필요합니다.
 - `ament_package` Python 오류가 나면 `PYTHONPATH`/`PYTHONHOME`을 비우고 `/opt/ros/humble/setup.bash`를 다시 source합니다.
@@ -239,7 +271,8 @@ Python 단위 테스트:
 
 ```bash
 cd ~/Desktop/LLM
-pytest ur10e/tests
+cd ur10e
+../.venv/bin/python -m pytest tests
 ```
 
 ROS 2 빌드 검증:

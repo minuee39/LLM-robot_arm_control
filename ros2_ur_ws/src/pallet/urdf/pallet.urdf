@@ -98,7 +98,7 @@
     </collision>
   </link>
   <joint
-    name="j2"
+    name="j1"
     type="revolute">
     <origin
       xyz="0 0 0"
@@ -109,11 +109,11 @@
       link="L2" />
     <axis
       xyz="0.023014 0.99974 0" />
-    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
+    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
     <limit
       lower="-3.14"
       upper="3.14"
-      effort="11"
+      effort="5"
       velocity="10.471976" />
   </joint>
   <link
@@ -157,7 +157,7 @@
     </collision>
   </link>
   <joint
-    name="j3"
+    name="j2"
     type="revolute">
     <origin
       xyz="0.0012123 0.16129 0.0080631"
@@ -170,11 +170,11 @@
     <axis
       xyz="0 0 1" />
     <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
+    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
     <limit
       lower="-2.757620"
       upper="1.623156"
-      effort="5"
+      effort="11"
       velocity="10.471976" />
   </joint>
   <link
@@ -218,7 +218,7 @@
     </collision>
   </link>
   <joint
-    name="j4"
+    name="j3"
     type="revolute">
     <origin
       xyz="-0.2105 0 -0.0068993"
@@ -279,7 +279,7 @@
     </collision>
   </link>
   <joint
-    name="j5"
+    name="j4"
     type="revolute">
     <origin
       xyz="0.006 0 0.205"
@@ -339,7 +339,7 @@
     </collision>
   </link>
   <joint
-    name="j6"
+    name="j5"
     type="revolute">
     <origin
       xyz="0.0357 0 0.042"
@@ -363,8 +363,8 @@
   <link
     name="tool0" />
   <joint
-    name="tool0_joint"
-    type="fixed">
+    name="j6"
+    type="revolute">
     <origin
       xyz="-0.0755 0 0"
       rpy="0 -1.57079632679 0" />
@@ -372,6 +372,15 @@
       link="L6" />
     <child
       link="tool0" />
+    <axis
+      xyz="0 0 1" />
+    <!-- Provisional full-turn range; verify end-effector cable and hard-stop limits. -->
+    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1.8"
+      velocity="10.471976" />
   </joint>
   <!-- Temporary TCP; offset this frame when the end-effector geometry is known. -->
   <link

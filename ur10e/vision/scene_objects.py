@@ -69,6 +69,7 @@ class StableDetectionStore:
         max_position_std=0.02,
         outlier_distance=0.05,
         expected_names=EXPECTED_BLOCK_NAMES,
+        allow_unknown_names=False,
     ):
         if window_size <= 0:
             raise ValueError("window_size must be positive")
@@ -86,6 +87,8 @@ class StableDetectionStore:
         self.max_position_std = float(max_position_std)
         self.outlier_distance = float(outlier_distance)
         self.expected_names = tuple(expected_names)
+        self.allow_unknown_names = bool(allow_unknown_names)
+        self._dynamic_names = []
         self._samples = {
             name: deque(maxlen=self.window_size)
             for name in self.expected_names
@@ -97,8 +100,13 @@ class StableDetectionStore:
                 samples.popleft()
 
     def update(self, name, confidence, position, timestamp=None):
-        if name not in self._samples or confidence < self.min_confidence:
+        if confidence < self.min_confidence:
             return False
+        if name not in self._samples:
+            if not self.allow_unknown_names:
+                return False
+            self._samples[name] = deque(maxlen=self.window_size)
+            self._dynamic_names.append(name)
         position = np.asarray(position, dtype=float)
         if position.shape != (3,) or not np.all(np.isfinite(position)):
             raise ValueError("position must be a finite three-dimensional vector")
@@ -126,7 +134,7 @@ class StableDetectionStore:
         self._prune(timestamp)
         result = {}
 
-        for name in self.expected_names:
+        for name in (*self.expected_names, *self._dynamic_names):
             samples = self._samples[name]
             if len(samples) < self.min_samples:
                 continue
@@ -162,13 +170,14 @@ class StableDetectionStore:
         return [name for name in self.expected_names if name not in snapshot]
 
 
-def write_vision_scene(path, objects, *, updated_at=None):
+def write_vision_scene(path, objects, *, updated_at=None, allowed_names=EXPECTED_BLOCK_NAMES):
     path = Path(path)
     if not objects:
-        raise ValueError("vision scene requires at least one detected block")
-    unknown_names = sorted(set(objects) - set(EXPECTED_BLOCK_NAMES))
-    if unknown_names:
-        raise ValueError(f"vision scene contains unknown blocks: {', '.join(unknown_names)}")
+        raise ValueError("vision scene requires at least one detected object")
+    if allowed_names is not None:
+        unknown_names = sorted(set(objects) - set(allowed_names))
+        if unknown_names:
+            raise ValueError(f"vision scene contains unknown objects: {', '.join(unknown_names)}")
     if updated_at is None:
         updated_at = time.time()
 

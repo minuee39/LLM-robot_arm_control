@@ -1,8 +1,20 @@
-# Motor assignment for the five actuated joints in pallet.urdf.
+# Motor assignment for the six actuated joints in pallet.urdf.
 # Torque and speed values follow RobStride's 2026-07-13 product specification.
 robstride_motors:
+  j1:
+    model: RS00
+    can_id: 1
+    rated_torque_nm: 5.0
+    rated_speed_rpm: 100.0
+    rated_velocity_rad_s: 10.471976
+    peak_torque_nm: 14.0
+    no_load_speed_rpm: 315.0
+    max_velocity_rad_s: 32.986723
+    reduction_ratio: 10.0
+    rated_voltage_v: 48.0
   j2:
     model: RS06
+    can_id: 2
     rated_torque_nm: 11.0
     rated_speed_rpm: 100.0
     rated_velocity_rad_s: 10.471976
@@ -13,6 +25,7 @@ robstride_motors:
     rated_voltage_v: 48.0
   j3:
     model: RS00
+    can_id: 3
     rated_torque_nm: 5.0
     rated_speed_rpm: 100.0
     rated_velocity_rad_s: 10.471976
@@ -22,17 +35,19 @@ robstride_motors:
     reduction_ratio: 10.0
     rated_voltage_v: 48.0
   j4:
-    model: RS00
-    rated_torque_nm: 5.0
+    model: RS05
+    can_id: 4
+    rated_torque_nm: 1.8
     rated_speed_rpm: 100.0
     rated_velocity_rad_s: 10.471976
-    peak_torque_nm: 14.0
-    no_load_speed_rpm: 315.0
-    max_velocity_rad_s: 32.986723
-    reduction_ratio: 10.0
+    peak_torque_nm: 5.5
+    no_load_speed_rpm: 480.0
+    max_velocity_rad_s: 50.265482
+    reduction_ratio: 7.75
     rated_voltage_v: 48.0
   j5:
     model: RS05
+    can_id: 5
     rated_torque_nm: 1.8
     rated_speed_rpm: 100.0
     rated_velocity_rad_s: 10.471976
@@ -43,6 +58,7 @@ robstride_motors:
     rated_voltage_v: 48.0
   j6:
     model: RS05
+    can_id: 6
     rated_torque_nm: 1.8
     rated_speed_rpm: 100.0
     rated_velocity_rad_s: 10.471976

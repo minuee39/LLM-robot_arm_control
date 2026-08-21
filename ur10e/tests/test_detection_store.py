@@ -85,6 +85,23 @@ def test_stable_detection_store_hides_noisy_position():
     assert store.snapshot(timestamp=1.3) == {}
 
 
+def test_stable_detection_store_can_track_dynamic_object_names():
+    store = StableDetectionStore(
+        window_size=2,
+        min_samples=2,
+        expected_names=(),
+        allow_unknown_names=True,
+    )
+    assert store.update("red_cup", 0.8, [0.1, 0.2, 0.3], timestamp=1.0)
+    assert store.update("red_cup", 0.9, [0.1, 0.2, 0.3], timestamp=1.1)
+
+    snapshot = store.snapshot(timestamp=1.2)
+
+    assert list(snapshot) == ["red_cup"]
+    assert snapshot["red_cup"]["position"] == [0.1, 0.2, 0.3]
+    assert store.missing_names(timestamp=1.2) == []
+
+
 def test_write_vision_scene_writes_complete_atomic_payload(tmp_path):
     objects = {
         name: {
@@ -123,3 +140,20 @@ def test_write_vision_scene_writes_partial_detection_payload(tmp_path):
 
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert list(payload["objects"]) == ["red_block", "blue_block"]
+
+
+def test_write_vision_scene_allows_generic_objects_when_requested(tmp_path):
+    path = tmp_path / "vision_scene.json"
+    objects = {
+        "red_cup": {
+            "confidence": 0.91,
+            "position": [0.1, 0.2, 0.3],
+            "class_name": "cup",
+            "color": "red",
+        }
+    }
+
+    write_vision_scene(path, objects, updated_at=123.5, allowed_names=None)
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["objects"]["red_cup"]["class_name"] == "cup"

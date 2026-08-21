@@ -9,6 +9,7 @@ PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 # rclpy 문제 해결 방법. 
 # Do not inherit ROS Python 3.10 paths into Isaac Sim Python 3.11.
 unset PYTHONPATH
+unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH ROS_PACKAGE_PATH
 export PYTHONPATH="${PROJECT_DIR}"
 
 export ROS_DISTRO="${ROS_DISTRO:-humble}"

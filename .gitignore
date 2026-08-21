@@ -21,6 +21,12 @@ ur10e/notion.env
 runs/
 ur10e/datasets/
 ur10e/models/
+ur10e/outputs/
+*_result.txt
+
+# Locally installed camera SDKs and upstream checkouts
+OpenNI/
+OrbbecSDK/
 
 # Superseded generated robot files
 ur10e/moveit2/
@@ -33,3 +39,16 @@ ros2_ur_ws/src/pal_robotiq_description/cmake/*Config*.cmake
 
 # Nested checkout metadata from vendored ROS packages
 **/.git/
+
+# External ROS source dependencies restored from ros2_ur_ws/dependencies.repos
+ros2_ur_ws/src/launch_param_builder/
+ros2_ur_ws/src/moveit2/
+ros2_ur_ws/src/moveit_resources/
+ros2_ur_ws/src/moveit_task_constructor/
+ros2_ur_ws/src/moveit_visual_tools/
+ros2_ur_ws/src/rosparam_shortcuts/
+ros2_ur_ws/src/srdfdom/
+ros2_ur_ws/src/ros2_astra_camera/
+
+# Local experimental fork; preserved by its own nested Git repository
+ros2_ur_ws/src/ur10e_moveit2_tutorials/

@@ -1,0 +1,28 @@
+schema_version: 1
+generated_on: 2026-08-17
+hash_algorithm: sha256
+
+models:
+  block_detector:
+    path: runs/detect/train/weights/best.pt
+    sha256: eefc19a076e730c1cb11b87e32b1808c4ea97d5134e2efc30d632feed5722254
+    purpose: project-trained block detection
+  cup_detector:
+    path: yolo26n.pt
+    sha256: 9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef
+    purpose: cup and general object detection
+  yolov8n_reference:
+    path: ur10e/models/yolov8n.pt
+    sha256: f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36
+    purpose: reference YOLOv8 nano weight
+  yolov5nu_reference:
+    path: ur10e/models/yolov5nu.pt
+    sha256: 9e9c1be448b0e1b8598975a9abcab9a0fd0e21182eb422cda7f044a0442d0937
+    purpose: reference YOLOv5 nano ultralytics weight
+
+external_models:
+  dinov3:
+    repository: facebook/dinov3-vits16-pretrain-lvd1689m
+    snapshot: 114c1379950215c8b35dfcd4e90a5c251dde0d32
+    storage: huggingface_cache
+    credentials: never_record_tokens
