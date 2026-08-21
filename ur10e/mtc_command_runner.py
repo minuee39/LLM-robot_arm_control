@@ -7,7 +7,13 @@ from pathlib import Path
 
 import numpy as np
 
-from command_parser import parse_user_command_with_memory, validate_command
+from command_parser import (
+    MEMORY_OBJECT_ALIASES,
+    SPATIAL_OBJECT_ALIASES,
+    parse_user_command_with_memory,
+    validate_command,
+)
+from grasp_verifier import GraspMonitor
 from llm_to_json import parse_user_command_with_llm
 from scene_config import BLOCK_SIZE
 from scene_manager import SceneManager
@@ -17,20 +23,84 @@ from vision.scene_objects import EXPECTED_BLOCK_NAMES
 PROJECT_DIR = Path(__file__).resolve().parent
 DEFAULT_RUN_SCRIPT = PROJECT_DIR / "scripts" / "run_mtc_isaac_pick_place.sh"
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
+DEFAULT_SCENE_MEMORY_FILE = Path("/tmp/ur10e_command_scene_memory.json")
 DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
 DEFAULT_VISION_MAX_AGE = 2.0
 DEFAULT_VISION_MIN_CONFIDENCE = 0.6
-DEFAULT_TOUCH_COLLISION_COMMAND = [
-    "ros2",
-    "run",
-    "isaac_moveit_bridge",
-    "allow_touch_collisions",
-]
+DEFAULT_GRASP_MIN_LIFT = 0.03
+DEFAULT_GRASP_RELATIVE_TOLERANCE = 0.03
+DEFAULT_GRASP_MIN_LIFTED_SAMPLES = 2
 SUPPORTED_PLANNER_IDS = (
     "RRTkConfigDefault",
     "RRTConnectkConfigDefault",
     "RRTstarkConfigDefault",
 )
+RECOVERY_MTC_ARGS = (
+    "recovery_only:=true",
+    "max_solutions:=1",
+    "max_solution_cost:=-1.000",
+)
+MTC_EXECUTION_FAILURE_RETURN_CODE = 2
+
+
+def format_xyz(position) -> str:
+    values = np.asarray(position, dtype=float)
+    return f"({values[0]:+.3f}, {values[1]:+.3f}, {values[2]:+.3f}) m"
+
+
+def format_path_limit(value: float) -> str:
+    return "off" if value < 0.0 else f"{value:.1f}"
+
+
+def print_execution_summary(
+    command: dict,
+    scene_manager: SceneManager,
+    *,
+    planner_id: str,
+    max_solutions: int,
+    max_solution_cost: float,
+    move_to_pick_timeout: float,
+    move_to_pick_max_path_length: float,
+    move_to_place_timeout: float,
+    move_to_place_max_path_length: float,
+    return_home_timeout: float,
+    return_home_max_path_length: float,
+    gripper_close_min: float,
+    gripper_close_max: float,
+) -> None:
+    pick_object = scene_manager.get_object(command["pick_object"])
+    object_size = BLOCK_SIZE if pick_object.size is None else np.asarray(pick_object.size, dtype=float)
+    pick_position = clamp_center_z(pick_object.position, float(object_size[2]))
+    target_position = clamp_center_z(
+        scene_manager.resolve_target_position(command),
+        float(object_size[2]),
+    )
+    rows = (
+        ("object", command["pick_object"]),
+        ("pick XYZ", format_xyz(pick_position)),
+        ("target", command["target_object"]),
+        ("place XYZ", format_xyz(target_position)),
+        ("planner", planner_id),
+        ("solutions", str(max_solutions)),
+        (
+            "quality limits",
+            f"cost <= {max_solution_cost:.1f} | paths {format_path_limit(move_to_pick_max_path_length)} / "
+            f"{format_path_limit(move_to_place_max_path_length)} / "
+            f"{format_path_limit(return_home_max_path_length)}",
+        ),
+        (
+            "timeouts",
+            f"pick {move_to_pick_timeout:.1f}s | place {move_to_place_timeout:.1f}s | home {return_home_timeout:.1f}s",
+        ),
+        ("gripper", f"{gripper_close_min:.3f} .. {gripper_close_max:.3f} rad"),
+    )
+    width = max(len(label) for label, _ in rows)
+    print("\n" + "=" * 68, flush=True)
+    print(" PICK & PLACE", flush=True)
+    print("-" * 68, flush=True)
+    for label, value in rows:
+        print(f" {label:<{width}} : {value}", flush=True)
+    print("=" * 68, flush=True)
 
 
 def select_provider(provider: str) -> str | None:
@@ -48,15 +118,23 @@ def select_provider(provider: str) -> str | None:
 
 def parse_command(user_text: str, scene_manager: SceneManager, provider: str | None) -> dict:
     scene_objects = scene_manager.as_command_scene()
-    if provider is None:
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+    if (
+        provider is None
+        or any(alias in user_text for alias in MEMORY_OBJECT_ALIASES)
+        or any(alias in user_text for alias in SPATIAL_OBJECT_ALIASES)
+    ):
+        return parse_user_command_with_memory(
+            user_text,
+            scene_manager.memory,
+            scene_objects,
+        )
 
     try:
         print(f"[Parser] {provider} LLM 사용", flush=True)
         return parse_user_command_with_llm(user_text, scene_objects, provider=provider)
     except ValueError as error:
         print(f"[Parser] LLM 파싱 실패, 로컬 파서로 전환: {error}", flush=True)
-        return parse_user_command_with_memory(user_text, scene_manager.memory)
+        return parse_user_command_with_memory(user_text, scene_manager.memory, scene_objects)
 
 
 def clamp_center_z(position: np.ndarray, object_height: float) -> np.ndarray:
@@ -98,6 +176,76 @@ def sync_scene_manager_from_isaac(scene_manager: SceneManager, path: Path = DEFA
             status="on_table",
         )
     return True
+
+
+def save_scene_memory(
+    scene_manager: SceneManager,
+    path: Path = DEFAULT_SCENE_MEMORY_FILE,
+) -> None:
+    objects = {}
+    for name, item in scene_manager.as_command_scene().items():
+        objects[name] = {
+            "position": np.asarray(item["position"], dtype=float).tolist(),
+            "confidence": float(item.get("confidence", 1.0)),
+            "status": str(item.get("status", "on_table")),
+        }
+        if "size" in item:
+            objects[name]["size"] = np.asarray(item["size"], dtype=float).tolist()
+        if "orientation" in item:
+            objects[name]["orientation"] = np.asarray(item["orientation"], dtype=float).tolist()
+
+    path = Path(path)
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    tmp_path.write_text(
+        json.dumps({"updated_at": time.time(), "objects": objects}),
+        encoding="utf-8",
+    )
+    os.replace(tmp_path, path)
+
+
+def restore_scene_memory(
+    scene_manager: SceneManager,
+    path: Path = DEFAULT_SCENE_MEMORY_FILE,
+) -> bool:
+    path = Path(path)
+    if not path.exists():
+        return False
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+
+    objects = data.get("objects")
+    if not isinstance(objects, dict):
+        return False
+
+    restored = False
+    for name, item in objects.items():
+        if name not in scene_manager.names() or not isinstance(item, dict):
+            continue
+        position = np.asarray(item.get("position"), dtype=float)
+        if position.shape != (3,) or not np.all(np.isfinite(position)):
+            continue
+        scene_manager.update_object(
+            name,
+            position,
+            orientation=item.get("orientation"),
+            size=item.get("size"),
+            confidence=float(item.get("confidence", 1.0)),
+            status=str(item.get("status", "on_table")),
+        )
+        restored = True
+    return restored
+
+
+def create_runtime_scene_manager() -> SceneManager:
+    scene_manager = SceneManager.from_defaults()
+    if restore_scene_memory(scene_manager):
+        print("[Scene] restored last-known object positions from local memory.", flush=True)
+    if sync_scene_manager_from_isaac(scene_manager):
+        print("[Scene] refreshed hidden object positions from the current Isaac scene.", flush=True)
+    save_scene_memory(scene_manager)
+    return scene_manager
 
 
 def read_vision_scene_objects(
@@ -259,10 +407,13 @@ def command_to_mtc_args(command: dict, scene_manager: SceneManager) -> list[str]
 def execution_tuning_args(
     planner_id: str,
     max_solutions: int,
+    max_solution_cost: float,
     move_to_pick_timeout: float,
     move_to_pick_max_path_length: float,
     move_to_place_timeout: float,
+    move_to_place_max_path_length: float,
     return_home_timeout: float,
+    return_home_max_path_length: float,
     gripper_close_min: float,
     gripper_close_max: float,
     gripper_close_step: float,
@@ -270,10 +421,13 @@ def execution_tuning_args(
     return [
         f"planner_id:={planner_id}",
         f"max_solutions:={max_solutions}",
+        f"max_solution_cost:={max_solution_cost:.3f}",
         f"move_to_pick_timeout:={move_to_pick_timeout:.3f}",
         f"move_to_pick_max_path_length:={move_to_pick_max_path_length:.3f}",
         f"move_to_place_timeout:={move_to_place_timeout:.3f}",
+        f"move_to_place_max_path_length:={move_to_place_max_path_length:.3f}",
         f"return_home_timeout:={return_home_timeout:.3f}",
+        f"return_home_max_path_length:={return_home_max_path_length:.3f}",
         f"gripper_close_min:={gripper_close_min:.3f}",
         f"gripper_close_max:={gripper_close_max:.3f}",
         f"gripper_close_step:={gripper_close_step:.3f}",
@@ -294,11 +448,21 @@ def build_mtc_invocation(
     return command, command_to_mtc_args(command, scene_manager)
 
 
-def ensure_touch_collisions() -> int:
-    completed = subprocess.run(DEFAULT_TOUCH_COLLISION_COMMAND, check=False)
-    if completed.returncode != 0:
+def run_grasp_failure_recovery(run_script: str, mtc_args: list[str]) -> int:
+    print(
+        "[Recovery] starting safe recovery: open gripper -> vertical retreat -> home.",
+        flush=True,
+    )
+    completed = subprocess.run(
+        [run_script, *mtc_args, *RECOVERY_MTC_ARGS],
+        check=False,
+    )
+    if completed.returncode == 0:
+        print("[Recovery] safe recovery completed.", flush=True)
+    else:
         print(
-            f"[ERROR] Failed to apply MoveIt touch collision ACM with return code {completed.returncode}.",
+            f"[Recovery] FAILED with return code {completed.returncode}; "
+            "stop automatic commands and inspect the robot state.",
             flush=True,
         )
     return completed.returncode
@@ -311,13 +475,16 @@ def execute_user_command(
     run_script: str,
     dry_run: bool = False,
     planner_id: str = "RRTConnectkConfigDefault",
-    max_solutions: int = 3,
+    max_solutions: int = 1,
+    max_solution_cost: float = 60.0,
     move_to_pick_timeout: float = 5.0,
-    move_to_pick_max_path_length: float = 8.0,
-    move_to_place_timeout: float = 6.0,
+    move_to_pick_max_path_length: float = -1.0,
+    move_to_place_timeout: float = 4.0,
+    move_to_place_max_path_length: float = -1.0,
     return_home_timeout: float = 1.0,
+    return_home_max_path_length: float = -1.0,
     gripper_close_min: float = 0.02,
-    gripper_close_max: float = 0.45,
+    gripper_close_max: float = 0.50,
     gripper_close_step: float = 0.08,
     vision_scene_file: str | Path = DEFAULT_VISION_SCENE_FILE,
     vision_max_age: float = DEFAULT_VISION_MAX_AGE,
@@ -340,70 +507,144 @@ def execute_user_command(
     required_names = {command["pick_object"], command["target_object"]}
     missing_required = sorted(required_names - detected_names)
     if missing_required:
-        raise ValueError(
-            "vision scene is missing blocks required by this command: "
-            + ", ".join(missing_required)
+        remembered_positions = ", ".join(
+            f"{name}={format_xyz(scene_manager.get_object(name).position)}"
+            for name in missing_required
+        )
+        print(
+            "[Scene] camera occluded; using remembered positions: " + remembered_positions,
+            flush=True,
         )
     mtc_args = [
         *mtc_args,
         *execution_tuning_args(
             planner_id,
             max_solutions,
+            max_solution_cost,
             move_to_pick_timeout,
             move_to_pick_max_path_length,
             move_to_place_timeout,
+            move_to_place_max_path_length,
             return_home_timeout,
+            return_home_max_path_length,
             gripper_close_min,
             gripper_close_max,
             gripper_close_step,
         ),
     ]
 
-    print("[Command]", command, flush=True)
-    print("[MTC args]", " ".join(mtc_args), flush=True)
+    print_execution_summary(
+        command,
+        scene_manager,
+        planner_id=planner_id,
+        max_solutions=max_solutions,
+        max_solution_cost=max_solution_cost,
+        move_to_pick_timeout=move_to_pick_timeout,
+        move_to_pick_max_path_length=move_to_pick_max_path_length,
+        move_to_place_timeout=move_to_place_timeout,
+        move_to_place_max_path_length=move_to_place_max_path_length,
+        return_home_timeout=return_home_timeout,
+        return_home_max_path_length=return_home_max_path_length,
+        gripper_close_min=gripper_close_min,
+        gripper_close_max=gripper_close_max,
+    )
 
     if dry_run:
         return 0
 
     vision_scene_before_execution = vision_scene_mtime(vision_scene_file)
-    touch_collision_returncode = ensure_touch_collisions()
-    if touch_collision_returncode != 0:
-        print("[ERROR] MTC execution skipped because touch collision ACM was not applied.", flush=True)
-        return touch_collision_returncode
+    initial_object_position = scene_manager.get_object(command["pick_object"]).position
+    grasp_monitor = GraspMonitor(
+        DEFAULT_SCENE_STATE_FILE,
+        command["pick_object"],
+        initial_object_position,
+        min_lift=DEFAULT_GRASP_MIN_LIFT,
+        relative_tolerance=DEFAULT_GRASP_RELATIVE_TOLERANCE,
+        min_lifted_samples=DEFAULT_GRASP_MIN_LIFTED_SAMPLES,
+    )
+    grasp_monitor.start()
+    try:
+        completed = subprocess.run([run_script, *mtc_args], check=False)
+    finally:
+        grasp_verification = grasp_monitor.stop()
 
-    completed = subprocess.run([run_script, *mtc_args], check=False)
     if completed.returncode == 0:
-        if not wait_for_vision_scene_update(
+        relative_deviation = grasp_verification.max_relative_deviation
+        relative_deviation_text = (
+            "n/a" if relative_deviation is None else f"{relative_deviation:.4f} m"
+        )
+        if not grasp_verification.success:
+            print("\n[RESULT] GRASP FAILED", flush=True)
+            print(f" reason             : {grasp_verification.reason}", flush=True)
+            print(f" samples            : {grasp_verification.sample_count}", flush=True)
+            print(f" lifted samples     : {grasp_verification.lifted_sample_count}", flush=True)
+            print(f" maximum lift       : {grasp_verification.max_lift:.4f} m", flush=True)
+            print(f" relative deviation : {relative_deviation_text}", flush=True)
+            print(
+                "[ERROR] Controller execution completed, but physical grasp was not verified. "
+                "Command memory was not updated.",
+                flush=True,
+            )
+            print(
+                "[Recovery] the main MTC solution already completed its open, retreat, and home stages.",
+                flush=True,
+            )
+            return 1
+        print("\n[RESULT] GRASP VERIFIED", flush=True)
+        print(f" object             : {command['pick_object']}", flush=True)
+        print(f" maximum lift       : {grasp_verification.max_lift:.4f} m", flush=True)
+        print(f" relative deviation : {relative_deviation_text}", flush=True)
+        vision_updated = wait_for_vision_scene_update(
             vision_scene_before_execution,
             vision_scene_file,
             timeout=vision_verification_timeout,
-        ):
-            print("[ERROR] MTC completed, but no new YOLO vision scene was received.", flush=True)
-            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
-            return 1
-        try:
-            post_detected_names = sync_scene_manager_from_vision(
-                scene_manager,
-                vision_scene_file,
-                max_age=vision_max_age,
-                min_confidence=vision_min_confidence,
-            )
-        except ValueError as error:
-            print(f"[ERROR] MTC completed, but post-execution vision verification failed: {error}", flush=True)
-            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
-            return 1
-        if command["pick_object"] not in post_detected_names:
+        )
+        post_detected_names: set[str] = set()
+        if vision_updated:
+            try:
+                post_detected_names = sync_scene_manager_from_vision(
+                    scene_manager,
+                    vision_scene_file,
+                    max_age=vision_max_age,
+                    min_confidence=vision_min_confidence,
+                )
+            except ValueError as error:
+                print(
+                    f"[Scene] post-execution vision unavailable; using planned position: {error}",
+                    flush=True,
+                )
+        else:
             print(
-                f"[ERROR] MTC completed, but {command['pick_object']} was not detected after execution.",
+                "[Scene] no new YOLO scene after execution; using planned position.",
                 flush=True,
             )
-            print("[ERROR] Command memory was not updated because the result is unverified.", flush=True)
-            return 1
-        actual_position = scene_manager.get_object(command["pick_object"]).position
+
+        if command["pick_object"] in post_detected_names:
+            actual_position = scene_manager.get_object(command["pick_object"]).position
+            position_source = "YOLO-observed"
+        else:
+            pick_object = scene_manager.get_object(command["pick_object"])
+            object_size = BLOCK_SIZE if pick_object.size is None else pick_object.size
+            actual_position = clamp_center_z(
+                scene_manager.resolve_target_position(command),
+                float(np.asarray(object_size, dtype=float)[2]),
+            )
+            position_source = "remembered/planned (camera occluded)"
         scene_manager.apply_pick_place_result(command, actual_position)
-        print("[Scene] updated command memory from YOLO-observed object position.", flush=True)
+        print(
+            f"[Scene] updated command memory from {position_source} object position: "
+            f"{format_xyz(actual_position)}",
+            flush=True,
+        )
     else:
         print(f"[ERROR] MTC execution failed with return code {completed.returncode}. Scene memory was not updated.", flush=True)
+        if completed.returncode == MTC_EXECUTION_FAILURE_RETURN_CODE:
+            run_grasp_failure_recovery(run_script, mtc_args)
+        else:
+            print(
+                "[Recovery] skipped because robot execution did not start; current pose is unchanged.",
+                flush=True,
+            )
 
     return completed.returncode
 
@@ -414,20 +655,23 @@ def run_interactive(
     dry_run: bool = False,
     initial_command: str | None = None,
     planner_id: str = "RRTConnectkConfigDefault",
-    max_solutions: int = 3,
+    max_solutions: int = 1,
+    max_solution_cost: float = 60.0,
     move_to_pick_timeout: float = 5.0,
-    move_to_pick_max_path_length: float = 8.0,
-    move_to_place_timeout: float = 6.0,
+    move_to_pick_max_path_length: float = -1.0,
+    move_to_place_timeout: float = 4.0,
+    move_to_place_max_path_length: float = -1.0,
     return_home_timeout: float = 1.0,
+    return_home_max_path_length: float = -1.0,
     gripper_close_min: float = 0.02,
-    gripper_close_max: float = 0.45,
+    gripper_close_max: float = 0.50,
     gripper_close_step: float = 0.08,
     vision_scene_file: str | Path = DEFAULT_VISION_SCENE_FILE,
     vision_max_age: float = DEFAULT_VISION_MAX_AGE,
     vision_min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
     vision_verification_timeout: float = 3.0,
 ) -> int:
-    scene_manager = SceneManager.from_defaults()
+    scene_manager = create_runtime_scene_manager()
 
     last_returncode = 0
     if initial_command:
@@ -440,10 +684,13 @@ def run_interactive(
                 dry_run=dry_run,
                 planner_id=planner_id,
                 max_solutions=max_solutions,
+                max_solution_cost=max_solution_cost,
                 move_to_pick_timeout=move_to_pick_timeout,
                 move_to_pick_max_path_length=move_to_pick_max_path_length,
                 move_to_place_timeout=move_to_place_timeout,
+                move_to_place_max_path_length=move_to_place_max_path_length,
                 return_home_timeout=return_home_timeout,
+                return_home_max_path_length=return_home_max_path_length,
                 gripper_close_min=gripper_close_min,
                 gripper_close_max=gripper_close_max,
                 gripper_close_step=gripper_close_step,
@@ -452,6 +699,7 @@ def run_interactive(
                 vision_min_confidence=vision_min_confidence,
                 vision_verification_timeout=vision_verification_timeout,
             )
+            save_scene_memory(scene_manager)
         except ValueError as error:
             last_returncode = 1
             print(f"[ERROR] {error}", flush=True)
@@ -479,10 +727,13 @@ def run_interactive(
                 dry_run=dry_run,
                 planner_id=planner_id,
                 max_solutions=max_solutions,
+                max_solution_cost=max_solution_cost,
                 move_to_pick_timeout=move_to_pick_timeout,
                 move_to_pick_max_path_length=move_to_pick_max_path_length,
                 move_to_place_timeout=move_to_place_timeout,
+                move_to_place_max_path_length=move_to_place_max_path_length,
                 return_home_timeout=return_home_timeout,
+                return_home_max_path_length=return_home_max_path_length,
                 gripper_close_min=gripper_close_min,
                 gripper_close_max=gripper_close_max,
                 gripper_close_step=gripper_close_step,
@@ -491,6 +742,7 @@ def run_interactive(
                 vision_min_confidence=vision_min_confidence,
                 vision_verification_timeout=vision_verification_timeout,
             )
+            save_scene_memory(scene_manager)
         except ValueError as error:
             last_returncode = 1
             print(f"[ERROR] {error}", flush=True)
@@ -517,15 +769,18 @@ def main() -> int:
     parser.add_argument(
         "--max-solutions",
         type=int,
-        default=3,
+        default=1,
         help="Number of MTC task solutions required before execution.",
     )
+    parser.add_argument("--max-solution-cost", type=float, default=60.0)
     parser.add_argument("--move-to-pick-timeout", type=float, default=5.0)
-    parser.add_argument("--move-to-pick-max-path-length", type=float, default=8.0)
-    parser.add_argument("--move-to-place-timeout", type=float, default=6.0)
+    parser.add_argument("--move-to-pick-max-path-length", type=float, default=-1.0)
+    parser.add_argument("--move-to-place-timeout", type=float, default=4.0)
+    parser.add_argument("--move-to-place-max-path-length", type=float, default=-1.0)
     parser.add_argument("--return-home-timeout", type=float, default=1.0)
+    parser.add_argument("--return-home-max-path-length", type=float, default=-1.0)
     parser.add_argument("--gripper-close-min", type=float, default=0.02)
-    parser.add_argument("--gripper-close-max", type=float, default=0.45)
+    parser.add_argument("--gripper-close-max", type=float, default=0.50)
     parser.add_argument("--gripper-close-step", type=float, default=0.08)
     parser.add_argument("--vision-scene-file", default=str(DEFAULT_VISION_SCENE_FILE))
     parser.add_argument("--vision-max-age", type=float, default=DEFAULT_VISION_MAX_AGE)
@@ -550,10 +805,13 @@ def main() -> int:
             dry_run=args.dry_run,
             planner_id=args.planner_id,
             max_solutions=args.max_solutions,
+            max_solution_cost=args.max_solution_cost,
             move_to_pick_timeout=args.move_to_pick_timeout,
             move_to_pick_max_path_length=args.move_to_pick_max_path_length,
             move_to_place_timeout=args.move_to_place_timeout,
+            move_to_place_max_path_length=args.move_to_place_max_path_length,
             return_home_timeout=args.return_home_timeout,
+            return_home_max_path_length=args.return_home_max_path_length,
             gripper_close_min=args.gripper_close_min,
             gripper_close_max=args.gripper_close_max,
             gripper_close_step=args.gripper_close_step,
@@ -565,9 +823,9 @@ def main() -> int:
 
     user_text = " ".join(args.command)
     if args.once:
-        scene_manager = SceneManager.from_defaults()
+        scene_manager = create_runtime_scene_manager()
         try:
-            return execute_user_command(
+            result = execute_user_command(
                 user_text,
                 scene_manager=scene_manager,
                 provider=args.provider,
@@ -575,10 +833,13 @@ def main() -> int:
                 dry_run=args.dry_run,
                 planner_id=args.planner_id,
                 max_solutions=args.max_solutions,
+                max_solution_cost=args.max_solution_cost,
                 move_to_pick_timeout=args.move_to_pick_timeout,
                 move_to_pick_max_path_length=args.move_to_pick_max_path_length,
                 move_to_place_timeout=args.move_to_place_timeout,
+                move_to_place_max_path_length=args.move_to_place_max_path_length,
                 return_home_timeout=args.return_home_timeout,
+                return_home_max_path_length=args.return_home_max_path_length,
                 gripper_close_min=args.gripper_close_min,
                 gripper_close_max=args.gripper_close_max,
                 gripper_close_step=args.gripper_close_step,
@@ -587,6 +848,8 @@ def main() -> int:
                 vision_min_confidence=args.vision_min_confidence,
                 vision_verification_timeout=args.vision_verification_timeout,
             )
+            save_scene_memory(scene_manager)
+            return result
         except ValueError as error:
             print(f"[ERROR] {error}", flush=True)
             return 1
@@ -598,10 +861,13 @@ def main() -> int:
         initial_command=user_text,
         planner_id=args.planner_id,
         max_solutions=args.max_solutions,
+        max_solution_cost=args.max_solution_cost,
         move_to_pick_timeout=args.move_to_pick_timeout,
         move_to_pick_max_path_length=args.move_to_pick_max_path_length,
         move_to_place_timeout=args.move_to_place_timeout,
+        move_to_place_max_path_length=args.move_to_place_max_path_length,
         return_home_timeout=args.return_home_timeout,
+        return_home_max_path_length=args.return_home_max_path_length,
         gripper_close_min=args.gripper_close_min,
         gripper_close_max=args.gripper_close_max,
         gripper_close_step=args.gripper_close_step,
