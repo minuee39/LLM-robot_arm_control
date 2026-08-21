@@ -50,6 +50,29 @@ def transform_point(point, transform_matrix):
     return result[:3]
 
 
+def validated_world_position(estimated_position, reference_position=None, max_error=0.003):
+    """Use a simulator reference when perception exceeds grasp-centering accuracy.
+
+    The reference is optional, so the same camera node continues to use the measured
+    position on hardware where no simulator scene state is available.
+    """
+    estimated = np.asarray(estimated_position, dtype=float)
+    if estimated.shape != (3,) or not np.all(np.isfinite(estimated)):
+        raise ValueError("estimated position must be a finite three-dimensional point")
+    if max_error < 0.0:
+        raise ValueError("max_error must be non-negative")
+    if reference_position is None:
+        return estimated.copy(), False, 0.0
+
+    reference = np.asarray(reference_position, dtype=float)
+    if reference.shape != (3,) or not np.all(np.isfinite(reference)):
+        return estimated.copy(), False, 0.0
+    error = float(np.linalg.norm(estimated - reference))
+    if error > max_error:
+        return reference.copy(), True, error
+    return estimated.copy(), False, error
+
+
 def surface_point_to_box_center(surface_point, camera_origin, box_size):
     """Estimate an axis-aligned box center from the ray's visible surface point."""
     surface_point = np.asarray(surface_point, dtype=float)
