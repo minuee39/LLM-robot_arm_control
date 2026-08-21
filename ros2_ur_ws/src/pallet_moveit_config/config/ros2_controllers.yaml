@@ -13,11 +13,11 @@ controller_manager:
 pallet_arm_controller:
   ros__parameters:
     joints:
+      - j1
       - j2
       - j3
       - j4
       - j5
-      - j6
     command_interfaces:
       - position
     state_interfaces:

@@ -1,6 +1,6 @@
 # Gripperless Pallet Isaac Sim physics test
 
-This experiment validates the five-axis Pallet arm (`j2` through `j6`) without
+This experiment validates the five-axis Pallet arm (`j1` through `j5`) without
 a gripper. It imports the source URDF directly into Isaac Sim, enables gravity,
 uses the URDF mass/inertia, and clamps each position drive to its URDF rated
 effort limit in force mode.
@@ -100,7 +100,7 @@ ros2 run pallet run_pallet_isaac_moveit_bridge.sh \
 
 A successful check prints `rclpy loaded` and a report with `"passed": true`.
 
-The action bridge accepts exactly `j2` through `j6`. It returns success only
+The action bridge accepts exactly `j1` through `j5`. It returns success only
 after Isaac feedback settles within the configured goal tolerance. Torque
 saturation or insufficient gravity holding therefore appears as a trajectory
 goal tolerance failure instead of a false successful execution.
@@ -108,8 +108,8 @@ goal tolerance failure instead of a false successful execution.
 ### Current rated-torque result
 
 The host-GPU test with the checked-in rated torque limits currently fails the
-physics acceptance criteria. `move_pose_a` misses `j3` by about `0.789 rad`,
-and `move_pose_b` misses `j6` by about `0.761 rad`. The action bridge correctly
+physics acceptance criteria. `move_pose_a` misses `j2` by about `0.789 rad`,
+and `move_pose_b` misses `j5` by about `0.761 rad`. The action bridge correctly
 returns `GOAL_TOLERANCE_VIOLATED` for these cases. Do not increase the action
 tolerance to hide this result; verify link inertia/frames and the motor-side to
 joint-side torque conversion before changing the rated effort limits.

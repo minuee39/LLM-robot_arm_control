@@ -35,7 +35,7 @@ def resolve_package_root() -> Path:
 PACKAGE_ROOT = resolve_package_root()
 DEFAULT_URDF = PACKAGE_ROOT / "urdf" / "pallet.urdf"
 DEFAULT_CONFIG = PACKAGE_ROOT / "config" / "isaac_gripperless_physics_test.json"
-EXPECTED_JOINTS = ("j2", "j3", "j4", "j5", "j6")
+EXPECTED_JOINTS = ("j1", "j2", "j3", "j4", "j5")
 
 
 def parse_args() -> argparse.Namespace:
@@ -93,7 +93,7 @@ def read_urdf_limits(path: Path) -> dict[str, dict[str, float]]:
 
 def validate_config(config: dict[str, Any], limits: dict[str, dict[str, float]]) -> None:
     if set(config["joints"]) != set(EXPECTED_JOINTS):
-        raise ValueError("Config must contain exactly j2, j3, j4, j5 and j6")
+        raise ValueError("Config must contain exactly j1, j2, j3, j4 and j5")
     for phase in config["phases"]:
         targets = phase["target_rad"]
         if set(targets) != set(EXPECTED_JOINTS):
