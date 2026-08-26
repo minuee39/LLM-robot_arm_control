@@ -211,7 +211,32 @@ bash ur10e/scripts/run_yolo_camera_node.sh \
   --show
 ```
 
-탐지 노드는 RGB와 depth timestamp 차이가 기본 50ms 이내인 프레임만 동기화해 처리하고, bbox가 표시된 영상을 `/yolo/annotated`로 발행합니다. `/yolo/detections`에는 제어에 필요한 물체 이름, confidence, Isaac world position만 간결한 JSON으로 발행합니다. 프레임 내 같은 이름은 confidence가 가장 높은 탐지 하나만 사용합니다. 블록별 최근 10개 좌표 중 최소 5개를 모아 median 위치를 계산하고, confidence 0.6 이상이며 축별 표준편차가 2cm 이하인 red/green/blue 세 블록이 모두 준비됐을 때 한 메시지로 발행합니다. world 좌표 변환에는 Isaac bridge가 `/tmp/ur10e_isaac_scene_objects.json`에 기록한 실제 USD 카메라 transform을 사용합니다.
+실제 Astra를 외부 캘리브레이션 전에 사용할 때는 카메라 optical frame 좌표를 mm 단위로 발행합니다. 결과는 world 좌표 scene과 분리된 `/tmp/ur10e_camera_vision_scene_mm.json`에 저장됩니다.
+
+Astra 카메라, YOLO26n segmentation, PointCloud·YOLO mask·Depth가 설정된 RViz를 한 번에 실행할 수 있습니다. `yolo26n-seg.pt`처럼 `-seg` 가중치가 필요합니다.
+
+```bash
+cd /home/minwoo/Desktop/LLM/ros2_ur_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch ur10e_vision_bringup astra_yolo_rviz.launch.py
+```
+
+```bash
+bash ur10e/scripts/run_yolo_camera_node.sh \
+  --model /home/minwoo/Desktop/LLM/yolo26n-seg.pt \
+  --require-segmentation \
+  --label-mode model \
+  --classes "" \
+  --rgb-topic /camera/color/image_raw \
+  --depth-topic /camera/depth/image_raw \
+  --camera-info-topic /camera/color/camera_info \
+  --coordinate-mode camera
+```
+
+이 모드의 `/vision/<detected_name>/pose_mm`와 scene 파일은 `camera_color_optical_frame` 기준의 보이는 표면 좌표이며 `unit: mm`를 사용합니다. 외부 캘리브레이션이 끝나기 전에는 MoveIt target pose로 사용하지 않습니다.
+
+탐지 노드는 RGB와 depth timestamp 차이가 기본 50ms 이내인 프레임만 동기화해 처리합니다. Segmentation mask의 중앙값 픽셀과 mask 내부 depth 중앙값을 좌표 계산에 사용하며, 물체 윤곽과 반투명 mask가 표시된 영상을 `/yolo/annotated`로 발행합니다. `/yolo/detections`에는 제어에 필요한 물체 이름, confidence, Isaac world position만 간결한 JSON으로 발행합니다. 프레임 내 같은 이름은 confidence가 가장 높은 탐지 하나만 사용합니다. 블록별 최근 10개 좌표 중 최소 5개를 모아 median 위치를 계산하고, confidence 0.6 이상이며 축별 표준편차가 2cm 이하인 red/green/blue 세 블록이 모두 준비됐을 때 한 메시지로 발행합니다. world 좌표 변환에는 Isaac bridge가 `/tmp/ur10e_isaac_scene_objects.json`에 기록한 실제 USD 카메라 transform을 사용합니다.
 
 ```json
 {

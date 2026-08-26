@@ -23,7 +23,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--urdf", type=Path, default=DEFAULT_URDF)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
-    parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument(
+        "--rviz-home",
+        action="store_true",
+        help=(
+            "Disable gravity on the Pallet articulation so the zero-radian "
+            "home pose matches the non-physics RViz display"
+        ),
+    )
     parser.add_argument("--smoke-test-seconds", type=float, default=0.0)
     parser.add_argument("--output", type=Path, default=Path("/tmp/pallet_isaac_moveit_report.json"))
     return parser.parse_args()
@@ -69,12 +77,16 @@ def main() -> int:
             rendering_dt=max(physics_dt, 1.0 / 60.0),
             backend="numpy",
         )
-        world.scene.add_default_ground_plane()
+        # The exported base collision extends 4.3 mm below base_footprint.
+        # Avoid preloading the fixed-base articulation through the floor.
+        world.scene.add_default_ground_plane(z_position=-0.005)
 
         status, import_config = omni.kit.commands.execute("URDFCreateImportConfig")
         if not status:
             raise RuntimeError("URDFCreateImportConfig failed")
-        import_config.merge_fixed_joints = False
+        # Avoid Isaac's 1 kg fallback mass for coordinate-only fixed links such
+        # as tool0 and tcp. ROS still publishes those frames from the URDF.
+        import_config.merge_fixed_joints = True
         import_config.import_inertia_tensor = True
         import_config.fix_base = True
         import_config.distance_scale = 1.0
@@ -105,6 +117,8 @@ def main() -> int:
 
         robot = world.scene.add(SingleArticulation(prim_path=prim_path, name="pallet_moveit"))
         world.reset()
+        if args.rviz_home:
+            robot.disable_gravity()
         dof_names = tuple(robot.dof_names)
         if set(dof_names) != set(EXPECTED_JOINTS) or len(dof_names) != len(EXPECTED_JOINTS):
             raise RuntimeError(f"Unexpected Isaac joints: {dof_names}")
@@ -161,6 +175,8 @@ def main() -> int:
             {
                 "passed": True,
                 "drive_mode": "force",
+                "rviz_home": args.rviz_home,
+                "gravity_enabled": not args.rviz_home,
                 "rated_effort_nm": dict(zip(dof_names, rated_efforts.tolist())),
                 "max_applied_effort_ratio": dict(zip(dof_names, max_effort_ratio.tolist())),
                 "max_measured_effort_nm": dict(zip(dof_names, max_measured_effort.tolist())),

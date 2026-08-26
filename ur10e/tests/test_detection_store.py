@@ -157,3 +157,25 @@ def test_write_vision_scene_allows_generic_objects_when_requested(tmp_path):
 
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["objects"]["red_cup"]["class_name"] == "cup"
+
+
+def test_write_vision_scene_records_camera_frame(tmp_path):
+    path = tmp_path / "camera_vision_scene.json"
+    objects = {
+        "red_block": {
+            "confidence": 0.91,
+            "position": [10.0, -20.0, 593.0],
+        }
+    }
+
+    write_vision_scene(
+        path,
+        objects,
+        updated_at=123.5,
+        frame="camera_color_optical_frame",
+        unit="mm",
+    )
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["frame"] == "camera_color_optical_frame"
+    assert payload["unit"] == "mm"

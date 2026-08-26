@@ -170,10 +170,22 @@ class StableDetectionStore:
         return [name for name in self.expected_names if name not in snapshot]
 
 
-def write_vision_scene(path, objects, *, updated_at=None, allowed_names=EXPECTED_BLOCK_NAMES):
+def write_vision_scene(
+    path,
+    objects,
+    *,
+    updated_at=None,
+    allowed_names=EXPECTED_BLOCK_NAMES,
+    frame="world",
+    unit="m",
+):
     path = Path(path)
     if not objects:
         raise ValueError("vision scene requires at least one detected object")
+    if not isinstance(frame, str) or not frame.strip():
+        raise ValueError("vision scene frame must be a non-empty string")
+    if unit not in {"m", "mm"}:
+        raise ValueError("vision scene unit must be 'm' or 'mm'")
     if allowed_names is not None:
         unknown_names = sorted(set(objects) - set(allowed_names))
         if unknown_names:
@@ -183,7 +195,8 @@ def write_vision_scene(path, objects, *, updated_at=None, allowed_names=EXPECTED
 
     payload = {
         "updated_at": float(updated_at),
-        "frame": "world",
+        "frame": frame.strip(),
+        "unit": unit,
         "objects": objects,
     }
     tmp_path = Path(f"{path}.tmp")

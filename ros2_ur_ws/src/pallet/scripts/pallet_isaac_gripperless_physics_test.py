@@ -179,12 +179,18 @@ def main() -> int:
             rendering_dt=max(physics_dt, 1.0 / 60.0),
             backend="numpy",
         )
-        world.scene.add_default_ground_plane()
+        # The exported base collision extends 4.3 mm below base_footprint.
+        # Keep a small clearance so the fixed base does not preload every joint
+        # through a permanent ground-plane penetration.
+        world.scene.add_default_ground_plane(z_position=-0.005)
 
         status, import_config = omni.kit.commands.execute("URDFCreateImportConfig")
         if not status:
             raise RuntimeError("URDFCreateImportConfig failed")
-        import_config.merge_fixed_joints = False
+        # Massless coordinate-only links (base_footprint, tool0 and tcp) are
+        # otherwise imported as 1 kg rigid bodies by Isaac.  Merge their fixed
+        # joints so they do not create phantom payload mass.
+        import_config.merge_fixed_joints = True
         import_config.import_inertia_tensor = True
         import_config.fix_base = True
         import_config.distance_scale = 1.0
@@ -218,6 +224,22 @@ def main() -> int:
 
         robot = world.scene.add(SingleArticulation(prim_path=prim_path, name="pallet_gripperless"))
         world.reset()
+        articulation_view = robot._articulation_view
+        report["body_names"] = list(articulation_view.body_names)
+        report["body_masses_kg"] = dict(
+            zip(
+                articulation_view.body_names,
+                np.asarray(articulation_view.get_body_masses()[0], dtype=float).tolist(),
+            )
+        )
+        report["initial_gravity_effort_nm"] = dict(
+            zip(
+                robot.dof_names,
+                np.asarray(
+                    articulation_view.get_generalized_gravity_forces()[0], dtype=float
+                ).tolist(),
+            )
+        )
         dof_names = tuple(robot.dof_names)
         if set(dof_names) != set(EXPECTED_JOINTS) or len(dof_names) != len(EXPECTED_JOINTS):
             raise RuntimeError(f"Imported articulation is not the expected five-axis model: {dof_names}")
@@ -241,14 +263,31 @@ def main() -> int:
 
         for phase in config["phases"]:
             target = np.array([phase["target_rad"][name] for name in dof_names], dtype=float)
-            sample_count = max(settle_window, math.ceil(float(phase["duration_seconds"]) / physics_dt))
+            move_sample_count = max(
+                1, math.ceil(float(phase["duration_seconds"]) / physics_dt)
+            )
+            start = np.asarray(robot.get_joint_positions(), dtype=float)
             position_samples: list[Any] = []
             velocity_samples: list[Any] = []
             applied_samples: list[Any] = []
             measured_samples: list[Any] = []
-            action = ArticulationAction(joint_positions=target)
 
-            for _ in range(sample_count):
+            # Match a time-parameterized MoveIt trajectory instead of applying
+            # an unphysical full-position step.  Smoothstep has zero endpoint
+            # velocity and bounded acceleration.
+            for sample in range(1, move_sample_count + 1):
+                progress = sample / move_sample_count
+                blend = progress * progress * (3.0 - 2.0 * progress)
+                command = start + blend * (target - start)
+                controller.apply_action(ArticulationAction(joint_positions=command))
+                world.step(render=not args.headless)
+                position_samples.append(np.asarray(robot.get_joint_positions(), dtype=float))
+                velocity_samples.append(np.asarray(robot.get_joint_velocities(), dtype=float))
+                applied_samples.append(np.asarray(robot.get_applied_joint_efforts(), dtype=float))
+                measured_samples.append(np.asarray(robot.get_measured_joint_efforts(), dtype=float))
+
+            action = ArticulationAction(joint_positions=target)
+            for _ in range(settle_window):
                 controller.apply_action(action)
                 world.step(render=not args.headless)
                 position_samples.append(np.asarray(robot.get_joint_positions(), dtype=float))

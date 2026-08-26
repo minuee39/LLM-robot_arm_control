@@ -1,6 +1,30 @@
 import numpy as np
 
 
+def depth_value_to_meters(depth, encoding):
+    """Convert a ROS depth sample to metres based on its image encoding."""
+    if not np.isfinite(depth) or depth <= 0.0:
+        raise ValueError("depth must be finite and positive")
+    normalized_encoding = str(encoding).strip().upper()
+    if normalized_encoding in {"16UC1", "MONO16"}:
+        return float(depth) / 1000.0
+    if normalized_encoding == "32FC1":
+        return float(depth)
+    raise ValueError(f"unsupported depth encoding: {encoding}")
+
+
+def depth_value_to_millimeters(depth, encoding):
+    """Convert a ROS depth sample to millimetres based on its image encoding."""
+    if not np.isfinite(depth) or depth <= 0.0:
+        raise ValueError("depth must be finite and positive")
+    normalized_encoding = str(encoding).strip().upper()
+    if normalized_encoding in {"16UC1", "MONO16"}:
+        return float(depth)
+    if normalized_encoding == "32FC1":
+        return float(depth) * 1000.0
+    raise ValueError(f"unsupported depth encoding: {encoding}")
+
+
 def median_depth_in_bbox(depth_image, bbox, center_fraction=0.3):
     if depth_image is None or np.asarray(depth_image).ndim != 2:
         raise ValueError("depth_image must be a 2D array")
@@ -27,6 +51,22 @@ def median_depth_in_bbox(depth_image, bbox, center_fraction=0.3):
     sample_y2 = min(y2, sample_y1 + sample_height)
 
     samples = depth_image[sample_y1:sample_y2, sample_x1:sample_x2].astype(float)
+    valid_samples = samples[np.isfinite(samples) & (samples > 0.0)]
+    if valid_samples.size == 0:
+        return None
+    return float(np.median(valid_samples))
+
+
+def median_depth_in_mask(depth_image, mask):
+    """Return median valid depth from only the segmented object pixels."""
+    if depth_image is None or np.asarray(depth_image).ndim != 2:
+        raise ValueError("depth_image must be a 2D array")
+    depth_image = np.asarray(depth_image)
+    mask = np.asarray(mask, dtype=bool)
+    if mask.shape != depth_image.shape:
+        raise ValueError("mask must have the same shape as depth_image")
+
+    samples = depth_image[mask].astype(float)
     valid_samples = samples[np.isfinite(samples) & (samples > 0.0)]
     if valid_samples.size == 0:
         return None

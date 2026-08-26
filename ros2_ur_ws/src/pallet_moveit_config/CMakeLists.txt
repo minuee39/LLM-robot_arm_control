@@ -3,6 +3,11 @@ project(pallet_moveit_config)
 
 find_package(ament_cmake REQUIRED)
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_operational_limits test/test_operational_limits.py)
+endif()
+
 ament_package()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/launch")

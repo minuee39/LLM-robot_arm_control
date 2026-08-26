@@ -1,11 +1,35 @@
 import numpy as np
 from vision.depth_utils import (
+    depth_value_to_millimeters,
+    depth_value_to_meters,
     median_depth_in_bbox,
+    median_depth_in_mask,
     pixel_to_camera_point,
     surface_point_to_box_center,
     transform_point,
     validated_world_position,
 )
+
+
+def test_depth_value_to_meters_converts_astra_millimetres():
+    assert depth_value_to_meters(593, "16UC1") == 0.593
+
+
+def test_depth_value_to_meters_keeps_float_depth_metres():
+    assert depth_value_to_meters(0.593, "32FC1") == 0.593
+
+
+def test_depth_value_to_meters_rejects_unknown_encoding():
+    with np.testing.assert_raises_regex(ValueError, "unsupported depth encoding"):
+        depth_value_to_meters(593, "8UC1")
+
+
+def test_depth_value_to_millimeters_keeps_astra_depth():
+    assert depth_value_to_millimeters(593, "16UC1") == 593.0
+
+
+def test_depth_value_to_millimeters_converts_float_depth():
+    assert depth_value_to_millimeters(0.593, "32FC1") == 593.0
 
 
 def test_pixel_to_camera_point_center():
@@ -35,6 +59,20 @@ def test_median_depth_in_bbox_returns_none_without_valid_depth():
     depth = np.zeros((10, 10), dtype=float)
 
     assert median_depth_in_bbox(depth, (2, 2, 8, 8)) is None
+
+
+def test_median_depth_in_mask_uses_only_segmented_shape():
+    depth = np.full((4, 5), 900.0)
+    mask = np.zeros_like(depth, dtype=bool)
+    mask[1:3, 1:4] = True
+    depth[mask] = [500.0, 0.0, 520.0, np.nan, 510.0, 530.0]
+
+    assert median_depth_in_mask(depth, mask) == 515.0
+
+
+def test_median_depth_in_mask_rejects_mismatched_shape():
+    with np.testing.assert_raises_regex(ValueError, "same shape"):
+        median_depth_in_mask(np.ones((4, 5)), np.ones((2, 2), dtype=bool))
 
 
 def test_transform_point_identity():

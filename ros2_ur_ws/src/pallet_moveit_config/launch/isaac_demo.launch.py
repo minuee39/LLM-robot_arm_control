@@ -34,6 +34,12 @@ def generate_launch_description() -> LaunchDescription:
                 ],
             ),
             include_moveit_launch("move_group.launch.py"),
+            Node(
+                package="pallet",
+                executable="pallet_planning_scene_floor.py",
+                name="pallet_planning_scene_floor",
+                output="screen",
+            ),
             include_moveit_launch("moveit_rviz.launch.py"),
         ]
     )

@@ -39,6 +39,15 @@ class FakeModel:
         return [SimpleNamespace(boxes=[box])]
 
 
+class FakeSegmentationModel(FakeModel):
+    def __call__(self, image, conf, verbose):
+        result = super().__call__(image, conf, verbose)[0]
+        mask = np.zeros((1, 10, 15), dtype=np.float32)
+        mask[0, 3:6, 4:7] = 1.0
+        result.masks = SimpleNamespace(data=FakeTensor(mask))
+        return [result]
+
+
 def test_yolo_detector_combines_box_with_color_name():
     image = np.zeros((20, 30, 3), dtype=np.uint8)
     image[4:14, 5:15] = [255, 0, 0]
@@ -96,3 +105,24 @@ def test_yolo_detector_rejects_non_rgb_input():
 
     with pytest.raises(ValueError, match="shape"):
         detector.detect(np.zeros((20, 30), dtype=np.uint8))
+
+
+def test_yolo_detector_uses_segmentation_shape_for_center_and_color():
+    image = np.zeros((20, 30, 3), dtype=np.uint8)
+    image[6:12, 8:14] = [0, 255, 0]
+    image[4:14, 5:8] = [255, 0, 0]
+    detector = YoloDetector(model=FakeSegmentationModel(), require_segmentation=True)
+
+    detection = detector.detect(image)[0]
+
+    assert detection.center_pixel == (10, 8)
+    assert detection.mask.shape == (20, 30)
+    assert detection.mask[8, 10]
+    assert detection.name == "green_block"
+
+
+def test_yolo_detector_rejects_detect_only_model_when_segmentation_is_required():
+    detector = YoloDetector(model=FakeModel(), require_segmentation=True)
+
+    with pytest.raises(ValueError, match="does not provide segmentation masks"):
+        detector.detect(np.zeros((20, 30, 3), dtype=np.uint8))

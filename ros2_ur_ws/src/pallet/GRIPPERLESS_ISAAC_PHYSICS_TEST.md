@@ -76,14 +76,19 @@ ros2 launch pallet_moveit_config move_group.launch.py
 For a directly visible Isaac Sim + RViz session, use two terminals instead:
 
 ```bash
-# Terminal 1: visible Isaac Sim
-ros2 run pallet run_pallet_isaac_moveit_bridge.sh --no-headless
+# Terminal 1: visible Isaac Sim, holding the same zero-radian home pose as RViz
+ros2 run pallet run_pallet_isaac_moveit_bridge.sh --no-headless --rviz-home
 ```
 
 ```bash
 # Terminal 2: robot_state_publisher + action bridge + MoveIt2 + RViz
 ros2 launch pallet_moveit_config isaac_demo.launch.py
 ```
+
+`--rviz-home` disables gravity only on the imported Pallet articulation. This
+keeps its `j1` through `j5` zero-radian pose aligned with RViz, whose display
+does not simulate gravity. Omit the option when validating rated-torque gravity
+holding; the standalone gripperless physics test always keeps gravity enabled.
 
 If Isaac reports an undefined `spdlog`/`fmt` symbol while importing `rclpy`,
 do not append its bundled ROS libraries after `/opt/ros/humble`. The
@@ -107,9 +112,10 @@ goal tolerance failure instead of a false successful execution.
 
 ### Current rated-torque result
 
-The host-GPU test with the checked-in rated torque limits currently fails the
-physics acceptance criteria. `move_pose_a` misses `j2` by about `0.789 rad`,
-and `move_pose_b` misses `j5` by about `0.761 rad`. The action bridge correctly
-returns `GOAL_TOLERANCE_VIOLATED` for these cases. Do not increase the action
-tolerance to hide this result; verify link inertia/frames and the motor-side to
-joint-side torque conversion before changing the rated effort limits.
+The host-GPU test passes with the checked-in continuous rated-torque limits.
+Isaac fixed-joint merging is required: without it, the importer assigns a 1 kg
+fallback mass to each massless coordinate-only link (`base_footprint`, `tool0`,
+and `tcp`), creating a phantom payload and false torque saturation. The test
+uses smooth, acceleration-bounded commands and collision-safe poses. The
+MoveIt Isaac launch also installs a floor collision object matching the Isaac
+ground plane so planning rejects below-floor trajectories before execution.

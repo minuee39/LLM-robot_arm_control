@@ -109,11 +109,11 @@
       link="L2" />
     <axis
       xyz="0.023014 0.99974 0" />
-    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
+    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
     <limit
       lower="-3.14"
       upper="3.14"
-      effort="11"
+      effort="5"
       velocity="10.471976" />
   </joint>
   <link
@@ -170,11 +170,11 @@
     <axis
       xyz="0 0 1" />
     <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
+    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
     <limit
       lower="-2.757620"
       upper="1.623156"
-      effort="5"
+      effort="11"
       velocity="10.471976" />
   </joint>
   <link
@@ -231,11 +231,11 @@
     <axis
       xyz="1 0 0" />
     <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
+    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
     <limit
       lower="-3.14"
       upper="0.802851"
-      effort="1.8"
+      effort="5"
       velocity="10.471976" />
   </joint>
   <link
