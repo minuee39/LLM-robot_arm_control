@@ -1,0 +1,13 @@
+gravity_m_s2: -9.81
+physics_dt: 0.004166666666666667
+
+# Position-drive gains use the existing Pallet motor profile. J6 and J8 extend
+# the conservative RS05 profile. Effort saturation comes from the URDF limits.
+joints:
+  J1: {stiffness: 180.0, damping: 5.0}
+  J2: {stiffness: 110.0, damping: 11.0}
+  J3: {stiffness: 90.0, damping: 5.0}
+  J4: {stiffness: 35.0, damping: 3.5}
+  J5: {stiffness: 30.0, damping: 3.0}
+  J6: {stiffness: 30.0, damping: 3.0}
+  J8: {stiffness: 30.0, damping: 3.0}

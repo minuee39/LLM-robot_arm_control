@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: pallet_gripper
+    relative_path: urdf/pallet_gripper.urdf
+  srdf:
+    relative_path: config/pallet_gripper.srdf
+  package_settings:
+    author_name: ""
+    author_email: ""
+    generated_timestamp: 1789558629
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

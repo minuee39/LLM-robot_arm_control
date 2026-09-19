@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="pallet_gripper">
+  <!-- Native ROS Z-up coordinates; converted from the SolidWorks Y-up export. -->
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <!-- Raise the lowest point of the normalized base mesh to z=0. -->
+    <origin xyz="0 0 0.0042247553356" rpy="0 0 0"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.0017738 -5.75909999913e-08 0.039216" rpy="0 0 0"/>
+      <mass value="0.76777"/>
+      <inertia ixx="0.0012084" ixy="6.2774e-06" ixz="-4.267e-05" iyy="0.0012021" iyz="2.8312e-07" izz="0.0021498"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/base_link.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/base_link_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="J1">
+    <inertial>
+      <origin xyz="0.0091039 -0.0063557 0.072516" rpy="0 0 0"/>
+      <mass value="0.90348"/>
+      <inertia ixx="0.0013882" ixy="-0.00020438" ixz="-4.7994e-05" iyy="0.0016343" iyz="-1.6853e-05" izz="0.002157"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/no.1.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/no.1_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J1" type="revolute">
+    <origin xyz="-0.0019451 0 0.043004" rpy="0.0192105439766 0.0409123320909 -2.70258976292"/>
+    <parent link="base_link"/>
+    <child link="J1"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="14" velocity="6.28"/>
+  </joint>
+  <link name="J2">
+    <inertial>
+      <origin xyz="-0.12461 -0.022348 2.4879e-05" rpy="0 0 0"/>
+      <mass value="0.19043"/>
+      <inertia ixx="6.2071e-05" ixy="7.1942e-06" ixz="0" iyy="0.00017425" iyz="1.55550000001e-09" izz="0.00020011"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/no.2.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/no.2_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J2" type="revolute">
+    <origin xyz="0.013308 0.0076835 0.11835" rpy="3.14158980267 1.08661880453 0.523588156725"/>
+    <parent link="J1"/>
+    <child link="J2"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-3.14" upper="3.14" effort="36" velocity="6.28"/>
+  </joint>
+  <link name="J3">
+    <inertial>
+      <origin xyz="-0.020747 -0.043723 -2.4696e-05" rpy="0 0 0"/>
+      <mass value="0.46509"/>
+      <inertia ixx="0.00038727" ixy="1.9311e-05" ixz="3.4702e-08" iyy="0.00027261" iyz="3.8077e-07" izz="0.00035543"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/no.3.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/no.3_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J3" type="revolute">
+    <origin xyz="-0.2135 0 0" rpy="2.986 0 -1.5708"/>
+    <parent link="J2"/>
+    <child link="J3"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-3.14" upper="3.14" effort="14" velocity="6.28"/>
+  </joint>
+  <link name="J4">
+    <inertial>
+      <origin xyz="-0.001517 -0.053987 1.5799e-05" rpy="0 0 0"/>
+      <mass value="0.058621"/>
+      <inertia ixx="2.2241e-05" ixy="-2.0198e-06" ixz="-2.0556e-08" iyy="2.2662e-05" iyz="2.4342e-09" izz="2.5188e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/no.4.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/no.4_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J4" type="revolute">
+    <origin xyz="-0.0079993 -0.16723 -0.00015" rpy="0 -0.61608 0"/>
+    <parent link="J3"/>
+    <child link="J4"/>
+    <axis xyz="0 -1 0"/>
+    <limit lower="-3.14" upper="3.14" effort="5.5" velocity="6.28"/>
+  </joint>
+  <link name="J5">
+    <inertial>
+      <origin xyz="9.2524e-05 0.04622 -1.4413e-05" rpy="0 0 0"/>
+      <mass value="0.14465"/>
+      <inertia ixx="6.2896e-05" ixy="-8.708e-06" ixz="2.8786e-07" iyy="7.3519e-05" iyz="4.1718e-08" izz="7.0929e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/no.5.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/no.5_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J5" type="revolute">
+    <origin xyz="0 -0.065768 0" rpy="1.78369265359 7.34641020683e-06 3.14159265359"/>
+    <parent link="J4"/>
+    <child link="J5"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-3.14" upper="3.14" effort="5.5" velocity="6.28"/>
+  </joint>
+  <link name="J6">
+    <inertial>
+      <origin xyz="-5.1051e-06 0.00012739 -0.0028486" rpy="0 0 0"/>
+      <mass value="0.16095"/>
+      <inertia ixx="8.0162e-05" ixy="-7.8838e-06" ixz="5.4833e-07" iyy="6.4407e-05" iyz="3.2626e-07" izz="8.6397e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/gripper.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/gripper_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J6" type="revolute">
+    <origin xyz="0.00205 0.15365 0" rpy="1.57079265359 1.19689265359 -3.14159265359"/>
+    <parent link="J5"/>
+    <child link="J6"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="10" velocity="3.14"/>
+  </joint>
+  <link name="J7">
+    <inertial>
+      <origin xyz="0 0 0.008" rpy="0 0 0"/>
+      <mass value="0.0028394"/>
+      <inertia ixx="1.3317e-07" ixy="0" ixz="0" iyy="1.2761e-07" iyz="0" izz="1.4347e-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/move_gripper.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/move_gripper_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J7" type="fixed">
+    <origin xyz="0 0 0.029921" rpy="0 0 1.1781"/>
+    <parent link="J6"/>
+    <child link="J7"/>
+  </joint>
+  <!--
+    TCP at the midpoint of the two zero-position fingertip endpoints.
+    J7 +Z is the outward approach direction through the jaw center.
+  -->
+  <link name="tcp"/>
+  <joint name="tcp_joint" type="fixed">
+    <origin xyz="0 0 0.094545039" rpy="0 0 0"/>
+    <parent link="J7"/>
+    <child link="tcp"/>
+  </joint>
+  <link name="J8">
+    <inertial>
+      <origin xyz="-0.033504 0.0082666 -0.029535" rpy="0 0 0"/>
+      <mass value="0.03017"/>
+      <inertia ixx="2.504e-06" ixy="-6.2888e-08" ixz="-1.5917e-07" iyy="5.8268e-06" iyz="-2.842e-08" izz="5.4734e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/gripper_r.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/gripper_r_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J8" type="revolute">
+    <origin xyz="-0.007486 -0.0082 0.0031518" rpy="-3.14159265359 1.39629265359 -3.14159265359"/>
+    <parent link="J7"/>
+    <child link="J8"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="0.103" effort="10" velocity="1.0"/>
+  </joint>
+  <link name="J9">
+    <inertial>
+      <origin xyz="-0.033445 0.0082666 0.029588" rpy="0 0 0"/>
+      <mass value="0.03017"/>
+      <inertia ixx="2.5076e-06" ixy="-6.2857e-08" ixz="1.4934e-07" iyy="5.8268e-06" iyz="2.8537e-08" izz="5.4698e-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/gripper_l.STL"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://pallet_gripper/meshes/collision/gripper_l_collision.obj"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J9" type="revolute">
+    <origin xyz="0.007486 -0.0082 0.0031518" rpy="0 1.3963 0"/>
+    <parent link="J7"/>
+    <child link="J9"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.103" upper="0" effort="10" velocity="1.0"/>
+    <mimic joint="J8" multiplier="-1" offset="0"/>
+  </joint>
+</robot>
