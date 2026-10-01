@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="어셈블리1.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0017738 0.039216 5.7591E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.76777" />
+      <inertia
+        ixx="0.0012084"
+        ixy="-4.267E-05"
+        ixz="-6.2774E-06"
+        iyy="0.0021498"
+        iyz="-2.8312E-07"
+        izz="0.0012021" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="no.1">
+    <inertial>
+      <origin
+        xyz="0.0091039 0.072516 0.0063557"
+        rpy="0 0 0" />
+      <mass
+        value="0.90348" />
+      <inertia
+        ixx="0.0013882"
+        ixy="-4.7994E-05"
+        ixz="0.00020438"
+        iyy="0.002157"
+        iyz="1.6853E-05"
+        izz="0.0016343" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J1"
+    type="revolute">
+    <origin
+      xyz="-0.0019451 0.043004 0"
+      rpy="3.1416 -0.43861 -3.0964" />
+    <parent
+      link="base_link" />
+    <child
+      link="no.1" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="14"
+      velocity="6.28" />
+  </joint>
+  <link
+    name="no.2">
+    <inertial>
+      <origin
+        xyz="-0.12461 2.4879E-05 0.022348"
+        rpy="0 0 0" />
+      <mass
+        value="0.19043" />
+      <inertia
+        ixx="6.2071E-05"
+        ixy="-2.5694E-12"
+        ixz="-7.1942E-06"
+        iyy="0.00020011"
+        iyz="-1.5555E-09"
+        izz="0.00017425" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J2"
+    type="revolute">
+    <origin
+      xyz="0.013308 0.11835 -0.0076835"
+      rpy="2.6692 0.23489 -1.1434" />
+    <parent
+      link="no.1" />
+    <child
+      link="no.2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="36"
+      velocity="6.28" />
+  </joint>
+  <link
+    name="no.3">
+    <inertial>
+      <origin
+        xyz="-0.020747 -2.4696E-05 0.043723"
+        rpy="0 0 0" />
+      <mass
+        value="0.46509" />
+      <inertia
+        ixx="0.00038727"
+        ixy="3.4702E-08"
+        ixz="-1.9311E-05"
+        iyy="0.00035543"
+        iyz="-3.8077E-07"
+        izz="0.00027261" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J3"
+    type="revolute">
+    <origin
+      xyz="-0.2135 0 0"
+      rpy="2.986 -1.5708 0" />
+    <parent
+      link="no.2" />
+    <child
+      link="no.3" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="14"
+      velocity="6.28" />
+  </joint>
+  <link
+    name="no.4">
+    <inertial>
+      <origin
+        xyz="-0.001517 1.5799E-05 0.053987"
+        rpy="0 0 0" />
+      <mass
+        value="0.058621" />
+      <inertia
+        ixx="2.2241E-05"
+        ixy="-2.0556E-08"
+        ixz="2.0198E-06"
+        iyy="2.5188E-05"
+        iyz="-2.4342E-09"
+        izz="2.2662E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J4"
+    type="revolute">
+    <origin
+      xyz="-0.0079993 -0.00015 0.16723"
+      rpy="0 0 0.61608" />
+    <parent
+      link="no.3" />
+    <child
+      link="no.4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="5.5"
+      velocity="6.28" />
+  </joint>
+  <link
+    name="no.5">
+    <inertial>
+      <origin
+        xyz="9.2524E-05 -1.4413E-05 -0.04622"
+        rpy="0 0 0" />
+      <mass
+        value="0.14465" />
+      <inertia
+        ixx="6.2896E-05"
+        ixy="2.8786E-07"
+        ixz="8.708E-06"
+        iyy="7.0929E-05"
+        iyz="-4.1718E-08"
+        izz="7.3519E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/no.5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J5"
+    type="revolute">
+    <origin
+      xyz="0 0 0.065768"
+      rpy="-1.3579 0 3.1416" />
+    <parent
+      link="no.4" />
+    <child
+      link="no.5" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="5.5"
+      velocity="6.28" />
+  </joint>
+  <link
+    name="gripper">
+    <inertial>
+      <origin
+        xyz="-5.1051E-06 -0.0028486 -0.00012739"
+        rpy="0 0 0" />
+      <mass
+        value="0.16095" />
+      <inertia
+        ixx="8.0162E-05"
+        ixy="5.4833E-07"
+        ixz="7.8838E-06"
+        iyy="8.6397E-05"
+        iyz="-3.2626E-07"
+        izz="6.4407E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="g1"
+    type="fixed">
+    <origin
+      xyz="0.00205 0 -0.15365"
+      rpy="-1.5708 0 -1.9447" />
+    <parent
+      link="no.5" />
+    <child
+      link="gripper" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="10"
+      velocity="3.14" />
+  </joint>
+  <link
+    name="move_gripper">
+    <inertial>
+      <origin
+        xyz="4.1078E-15 0.008 1.3323E-15"
+        rpy="0 0 0" />
+      <mass
+        value="0.0028394" />
+      <inertia
+        ixx="1.3317E-07"
+        ixy="1.2573E-22"
+        ixz="1.125E-22"
+        iyy="1.4347E-07"
+        iyz="-3.1309E-22"
+        izz="1.2761E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/move_gripper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/move_gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="g2"
+    type="revolute">
+    <origin
+      xyz="0 0.029921 0"
+      rpy="0 1.1781 0" />
+    <parent
+      link="gripper" />
+    <child
+      link="move_gripper" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="gripper_r">
+    <inertial>
+      <origin
+        xyz="-0.033504 -0.029535 -0.0082666"
+        rpy="0 0 0" />
+      <mass
+        value="0.03017" />
+      <inertia
+        ixx="2.504E-06"
+        ixy="-1.5917E-07"
+        ixz="6.2888E-08"
+        iyy="5.4734E-06"
+        iyz="2.842E-08"
+        izz="5.8268E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper_r.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper_r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="g_r"
+    type="prismatic">
+    <origin
+      xyz="-0.007486 0.0031518 0.0082"
+      rpy="0 0 -1.7453" />
+    <parent
+      link="move_gripper" />
+    <child
+      link="gripper_r" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="gripper_l">
+    <inertial>
+      <origin
+        xyz="-0.033445 0.029588 -0.0082666"
+        rpy="0 0 0" />
+      <mass
+        value="0.03017" />
+      <inertia
+        ixx="2.5076E-06"
+        ixy="1.4934E-07"
+        ixz="6.2857E-08"
+        iyy="5.4698E-06"
+        iyz="-2.8537E-08"
+        izz="5.8268E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper_l.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://어셈블리1.SLDASM/meshes/gripper_l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="g_l"
+    type="prismatic">
+    <origin
+      xyz="0.007486 0.0031518 0.0082"
+      rpy="0 0 -1.3963" />
+    <parent
+      link="move_gripper" />
+    <child
+      link="gripper_l" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="10"
+      velocity="3.14" />
+  </joint>
+</robot>

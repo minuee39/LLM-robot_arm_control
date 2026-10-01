@@ -51,6 +51,197 @@ def test_build_mtc_invocation_from_local_command():
     assert "place_y:=0.420000" in mtc_args
 
 
+def test_pallet_scene_uses_its_camera_and_object_dimensions(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": 100.0,
+        "camera": {
+            "eye": [0.0, -1.0, 1.0], "target": [0.0, 0.0, 0.0],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+            "blue_block": {"position": [0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.96},
+        },
+    }), encoding="utf-8")
+    manager = mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    command, args = build_mtc_invocation(
+        "왼쪽 물체를 오른쪽 물체 왼쪽에 놓아", provider="local",
+        scene_manager=manager,
+    )
+    assert command["pick_object"] == "red_block"
+    assert command["target_object"] == "blue_block"
+    assert "object_size_x:=0.030000" in args
+    assert "place_x:=0.150000" in args
+    assert "place_z:=0.025000" in args
+
+    command, args = build_mtc_invocation(
+        "빨간 블록을 파란 블록 위에 놓아", provider="local",
+        scene_manager=manager,
+    )
+    assert command["relation"] == "on"
+    assert "place_z:=0.075000" in args
+
+    command, args = build_mtc_invocation(
+        json.dumps({
+            "action": "pick_place", "pick_object": "red_block",
+            "target_object": "blue_block", "relation": "right_of",
+            "confidence": 1.0,
+        }),
+        provider="local", scene_manager=manager,
+    )
+    assert command["relation"] == "right_of"
+    assert "place_x:=0.450000" in args
+
+
+def test_pallet_scene_rejects_stale_or_wrong_frame(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "world", "unit": "m", "updated_at": 100.0,
+    }), encoding="utf-8")
+    import pytest
+    with pytest.raises(ValueError, match="frame"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    data = json.loads(scene_path.read_text(encoding="utf-8"))
+    data["frame"] = "base_footprint"
+    scene_path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="age"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=105.0)
+
+
+def test_pallet_direct_place_uses_only_camera_detected_pick(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": 100.0,
+        "camera": {
+            "eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.028], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+        },
+    }), encoding="utf-8")
+    manager = mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    command, args = build_mtc_invocation(
+        json.dumps({"action": "pick_place", "pick_object": "red_block",
+                    "place_xyz": [0.3, -0.3, 0.025]}),
+        provider="local", scene_manager=manager,
+    )
+    assert command["pick_object"] == "red_block"
+    assert "object_z:=0.028000" in args
+    assert "place_x:=0.300000" in args
+    assert "place_y:=-0.300000" in args
+    import pytest
+    with pytest.raises(ValueError, match="finite"):
+        build_mtc_invocation(
+            json.dumps({"action": "pick_place", "pick_object": "red_block",
+                        "place_xyz": [float("nan"), -0.3, 0.025]}),
+            provider="local", scene_manager=manager,
+        )
+    data = json.loads(scene_path.read_text(encoding="utf-8"))
+    data["objects"]["red_block"]["confidence"] = 0.3
+    scene_path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="confidence"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+
+
+def test_pallet_cli_dry_run_prints_planning_only_launch(tmp_path, monkeypatch, capsys):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {
+            "eye": [0.0, -1.0, 1.0], "target": [0.0, 0.0, 0.0],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+            "blue_block": {"position": [0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.96},
+        },
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--dry-run", "--once",
+        "빨간 블록을 파란 블록 왼쪽에 놓아",
+    ])
+    assert mtc_command_runner.main() == 0
+    output = capsys.readouterr().out
+    assert "robot_profile:=pallet_gripper" in output
+    assert "planning_only:=true" in output
+    assert "object_size_x:=0.030000" in output
+    assert "place_x:=0.150000" in output
+
+
+def test_pallet_cli_can_request_sim_execution(tmp_path, monkeypatch, capsys):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {"eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+                   "up": [0.0, 0.0, 1.0]},
+        "objects": {"red_block": {"position": [-0.3, 0.3, 0.025],
+                                  "size": [0.03, 0.03, 0.05], "confidence": 0.97}},
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--pallet-execution-mode", "standard",
+        "--dry-run", json.dumps({"action": "pick_place", "pick_object": "red_block",
+                                  "place_xyz": [0.3, -0.3, 0.025]}),
+    ])
+    assert mtc_command_runner.main() == 0
+    output = capsys.readouterr().out
+    assert "planning_only:=false" in output
+    assert "place_y:=-0.300000" in output
+
+
+def test_pallet_physical_verification_requires_fresh_success(monkeypatch):
+    expected = [0.3, -0.3, 0.025]
+    summary = {
+        "frame": "base_footprint", "unit": "m", "target": expected,
+        "fresh_feedback": True, "placement_pass": True,
+    }
+    calls = []
+
+    def completed(command, **kwargs):
+        calls.append((command, kwargs))
+        return SimpleNamespace(returncode=0, stdout=json.dumps(summary) + "\n", stderr="")
+
+    monkeypatch.setattr(mtc_command_runner.subprocess, "run", completed)
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 0
+    assert calls[0][0][-4:] == ["--target", "0.300000", "-0.300000", "0.025000"]
+    assert calls[0][1]["timeout"] == 15
+    summary["placement_pass"] = False
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 3
+    summary["placement_pass"] = True
+    summary["fresh_feedback"] = False
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 3
+
+
+def test_pallet_standard_propagates_physical_failure(tmp_path, monkeypatch):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {"eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+                   "up": [0.0, 0.0, 1.0]},
+        "objects": {"red_block": {"position": [-0.3, 0.3, 0.025],
+                                  "size": [0.03, 0.03, 0.05], "confidence": 0.97}},
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--pallet-execution-mode", "standard",
+        "--once", json.dumps({"action": "pick_place", "pick_object": "red_block",
+                              "place_xyz": [0.3, -0.3, 0.025]}),
+    ])
+    monkeypatch.setattr(mtc_command_runner.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(returncode=0))
+    targets = []
+    monkeypatch.setattr(mtc_command_runner, "verify_pallet_physical_placement",
+                        lambda target: targets.append(target.tolist()) or 3)
+    assert mtc_command_runner.main() == 3
+    assert targets == [[0.3, -0.3, 0.025]]
+
+
 def test_build_mtc_invocation_resolves_bare_left_and_right_without_llm(monkeypatch):
     def fail_if_called(*args, **kwargs):
         raise AssertionError("spatial object commands must use the deterministic parser")

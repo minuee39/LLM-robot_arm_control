@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-cd /home/minwoo/Desktop/LLM/ros2_ur_ws
+cd /home/minwoo/Development/LLM/ros2_ur_ws
 export ROS_LOG_DIR="${ROS_LOG_DIR:-/tmp/ros_logs}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 
 has_arg() {
@@ -46,7 +46,7 @@ if ! has_arg "--show-args" "$@"; then
   if ! ros2 action list 2>/dev/null | grep -qx "/execute_task_solution"; then
     echo "ERROR: /execute_task_solution action server is not available."
     echo "Start this in another terminal first:"
-    echo "  /home/minwoo/Desktop/LLM/ur10e/scripts/run_mtc_isaac_demo.sh"
+    echo "  /home/minwoo/Development/LLM/ur10e/scripts/run_mtc_isaac_demo.sh"
     exit 1
   fi
 fi

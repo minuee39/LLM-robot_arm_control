@@ -1,0 +1,122 @@
+{
+  "m100_base_w30_v50": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.1,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m100_offset_w30_v35": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.1,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.35,
+    "arm_acceleration_scaling": 0.2,
+    "cartesian_velocity_scaling": 0.35,
+    "cartesian_acceleration_scaling": 0.2
+  },
+  "m100_base_w25_v50": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.025, 0.05],
+    "mass_kg": 0.1,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m100_offset_w40_v50": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.04, 0.05],
+    "mass_kg": 0.1,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m300_base_w30_v35": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.3,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.35,
+    "arm_acceleration_scaling": 0.2,
+    "cartesian_velocity_scaling": 0.35,
+    "cartesian_acceleration_scaling": 0.2
+  },
+  "m300_offset_w30_v50": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.3,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m300_base_w40_v50": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.04, 0.05],
+    "mass_kg": 0.3,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m300_offset_w25_v50": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.025, 0.05],
+    "mass_kg": 0.3,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m500_base_w30_v50": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m500_offset_w30_v35": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.03, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.35,
+    "arm_acceleration_scaling": 0.2,
+    "cartesian_velocity_scaling": 0.35,
+    "cartesian_acceleration_scaling": 0.2
+  },
+  "m500_base_w25_v50": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.025, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  },
+  "m500_offset_w40_v50": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.04, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "arm_velocity_scaling": 0.5,
+    "arm_acceleration_scaling": 0.25,
+    "cartesian_velocity_scaling": 0.5,
+    "cartesian_acceleration_scaling": 0.25
+  }
+}

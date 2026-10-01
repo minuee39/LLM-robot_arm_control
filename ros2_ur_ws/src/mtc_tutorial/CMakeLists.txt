@@ -13,7 +13,9 @@ find_package(moveit_msgs REQUIRED)
 find_package(moveit_ros_planning REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(moveit_task_constructor_core REQUIRED)
+find_package(moveit_task_constructor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(shape_msgs REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -25,7 +27,9 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   moveit_ros_planning
   moveit_ros_planning_interface
   moveit_task_constructor_core
+  moveit_task_constructor_msgs
   rclcpp
+  rclcpp_action
   shape_msgs
   tf2_eigen
   tf2_geometry_msgs
@@ -42,11 +46,12 @@ ament_target_dependencies(
 
 install(TARGETS mtc_tutorial
   DESTINATION lib/${PROJECT_NAME})
-  
-install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
   find_package(moveit_visual_tools REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -56,6 +61,7 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+  ament_add_pytest_test(robot_profiles test/test_robot_profiles.py)
 endif()
 
 ament_package()

@@ -1,0 +1,2 @@
+# Independent movable joints; J9 mimics J8. Preview configuration only.
+controller_joint_names: [J1, J2, J3, J4, J5, J6, J8]

@@ -1,0 +1,26 @@
+gravity_m_s2: -9.81
+physics_dt: 0.004166666666666667
+startup_settle_seconds: 0.5
+home_tolerance_arm_rad: 0.02
+home_tolerance_gripper_m: 0.001
+
+# Isaac-only sensitivity candidate from the gripper mechanism-ratio estimate.
+# This is 60 N per finger, not a measured motor torque or hardware setting.
+gripper_effort_limit_n_per_finger: 60.0
+gripper_symmetry_gain: 1.0
+gripper_symmetry_max_correction_m: 0.005
+gripper_open_velocity_m_s: 0.005
+gripper_close_velocity_m_s: 0.005
+gripper_settle_velocity_m_s: 0.001
+gripper_settle_seconds: 0.4
+
+# Arm gains use the existing Pallet motor profile. J8 is a linear simulation
+# proxy in metres; its drive gain is not a measured motor controller setting.
+joints:
+  J1: {stiffness: 180.0, damping: 5.0}
+  J2: {stiffness: 110.0, damping: 11.0}
+  J3: {stiffness: 90.0, damping: 5.0}
+  J4: {stiffness: 35.0, damping: 3.5}
+  J5: {stiffness: 30.0, damping: 3.0}
+  J6: {stiffness: 30.0, damping: 3.0}
+  J8: {stiffness: 1500.0, damping: 18.0}
