@@ -266,12 +266,15 @@
       </geometry>
     </collision>
   </link>
-  <joint name="J8" type="revolute">
-    <origin xyz="-0.007486 -0.0082 0.0031518" rpy="-3.14159265359 1.39629265359 -3.14159265359"/>
+  <!-- J8/J9 are a symmetric parallel-jaw approximation. Their collision-mesh
+       fingertip gap is zero at q=0; a 0.0335 m travel on each side produces
+       the measured 0.067 m maximum opening. Finger/finger contact is ignored. -->
+  <joint name="J8" type="prismatic">
+    <origin xyz="0.014474 -0.0082 0.0031518" rpy="-3.14159265359 1.39629265359 -3.14159265359"/>
     <parent link="J7"/>
     <child link="J8"/>
-    <axis xyz="0 1 0"/>
-    <limit lower="0" upper="0.103" effort="10" velocity="1.0"/>
+    <axis xyz="0.17361937 0 -0.98481283"/>
+    <limit lower="0" upper="0.0335" effort="10" velocity="0.03"/>
   </joint>
   <link name="J9">
     <inertial>
@@ -295,12 +298,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="J9" type="revolute">
-    <origin xyz="0.007486 -0.0082 0.0031518" rpy="0 1.3963 0"/>
+  <joint name="J9" type="prismatic">
+    <origin xyz="-0.014474 -0.0082 0.0031518" rpy="0 1.3963 0"/>
     <parent link="J7"/>
     <child link="J9"/>
-    <axis xyz="0 1 0"/>
-    <limit lower="-0.103" upper="0" effort="10" velocity="1.0"/>
-    <mimic joint="J8" multiplier="-1" offset="0"/>
+    <axis xyz="0.17361214 0 0.98481411"/>
+    <limit lower="0" upper="0.0335" effort="10" velocity="0.03"/>
+    <mimic joint="J8" multiplier="1" offset="0"/>
   </joint>
 </robot>

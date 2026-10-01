@@ -1,390 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot
-  name="pallet">
-  <link
-    name="base_footprint" />
-  <joint
-    name="base_footprint_joint"
-    type="fixed">
-    <origin
-      xyz="0 0 0"
-      rpy="0 0 0" />
-    <parent
-      link="base_footprint" />
-    <child
-      link="base_link" />
-  </joint>
-  <link
-    name="base_link">
+<robot name="pallet">
+  <!--Mass-revised visual model. NOT dynamics-certified: provisional base mass frame; no.2/no.3 invalid source tensors. See MASS_REVISED_MIGRATION.md and config/mass_revised_audit.json.-->
+  <link name="base_link">
     <inertial>
-      <origin
-        xyz="-0.000893653 -0.00158262 0.040187651"
-        rpy="0 0 0" />
-      <mass
-        value="1.541" />
-      <inertia
-        ixx="0.002319617"
-        ixy="-4.15E-05"
-        ixz="1.04E-05"
-        iyy="0.004140731"
-        iyz="7.15E-05"
-        izz="0.002335609" />
+      <origin xyz="-0.0017917270976323 0.039217584410161 2.223709062954e-05" rpy="-0.078609874443187 1.0498236515473 2.0863790813064e-08" />
+      <mass value="1.662859" />
+      <inertia ixx="0.00332054" ixy="3.163E-05" ixz="-3.99E-06" iyy="0.00471532" iyz="-5.546E-05" izz="0.00331361" />
     </inertial>
     <visual>
-      <origin
-        xyz="-1.1843 -0.90272 0.59122"
-        rpy="0 0 0" />
+      <origin xyz="0.1508160199299 0.66028162834058 1.4520054605764" rpy="-1.6494062012381 1.0498236515473 2.0863798244619e-08" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/base_link.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/base_link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.792156863 0.819607843 0.933333333 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="-1.1843 -0.90272 0.59122"
-        rpy="0 0 0" />
+      <origin xyz="0.1508160199299 0.66028162834058 1.4520054605764" rpy="-1.6494062012381 1.0498236515473 2.0863798244619e-08" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/base_link_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/base_link.STL" />
       </geometry>
     </collision>
   </link>
-  <link
-    name="L2">
+  <link name="no.1">
     <inertial>
-      <origin
-        xyz="-0.0050393 0.11601 0.0012452"
-        rpy="0 0 0" />
-      <mass
-        value="1.549" />
-      <inertia
-        ixx="0.00302978"
-        ixy="4.49E-05"
-        ixz="1.13E-05"
-        iyy="0.003662856"
-        iyz="-7.43E-05"
-        izz="0.002181075" />
+      <origin xyz="0.0091039 0.072516 0.0063557" rpy="-6.2450045135166e-17 0 -5.5511151231256e-17" />
+      <mass value="0.99102896" />
+      <inertia ixx="0.00249001" ixy="-0.00026003" ixz="4.608E-05" iyy="0.00199329" iyz="-0.00014996" izz="0.00280726" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="6.2450045135165e-17 -3.1918911957973e-16 -1.5612511283791e-17" rpy="-6.2450045135166e-17 0 -5.5511151231256e-17" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/L2.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.1.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="6.2450045135165e-17 -3.1918911957973e-16 -1.5612511283791e-17" rpy="-6.2450045135166e-17 0 -5.5511151231256e-17" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/L2_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.1.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="j1"
-    type="revolute">
-    <origin
-      xyz="0 0 0"
-      rpy="1.6099 0 -1.0512" />
-    <parent
-      link="base_link" />
-    <child
-      link="L2" />
-    <axis
-      xyz="0.023014 0.99974 0" />
-    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="5"
-      velocity="10.471976" />
-  </joint>
-  <link
-    name="L3">
+  <link name="no.2">
     <inertial>
-      <origin
-        xyz="-0.12168 1.70E-05 0.029741"
-        rpy="0 0 0" />
-      <mass
-        value="0.183" />
-      <inertia
-        ixx="6.02E-05"
-        ixy="-3.19E-12"
-        ixz="-6.94E-06"
-        iyy="0.000192401"
-        iyz="-1.89E-12"
-        izz="0.000167404" />
+      <origin xyz="-0.12460462302051 2.647881186659e-05 0.022347999998403" rpy="5.9330673707336e-10 1.2150682682233e-09 -1.1758077977651" />
+      <mass value="0.202" />
+      <inertia ixx="0.00087971" ixy="0.00070208" ixz="3.72E-05" iyy="0.00066466" iyz="4.686E-05" izz="0.00145567" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="2.1002838369749e-11 3.343069579193e-11 8.3446374568628e-12" rpy="5.9330673707336e-10 1.2150682682233e-09 -1.1758077977651" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/L3.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.2.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="2.1002838369749e-11 3.343069579193e-11 8.3446374568628e-12" rpy="5.9330673707336e-10 1.2150682682233e-09 -1.1758077977651" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/L3_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.2.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="j2"
-    type="revolute">
-    <origin
-      xyz="0.0012123 0.16129 0.0080631"
-      rpy="-1.5708 0.61077 -1.5938" />
-    <parent
-      link="L2" />
-    <child
-      link="L3" />
-    <!-- Set to the requested Z-axis rotation for L3; verify in RViz. -->
-    <axis
-      xyz="0 0 1" />
-    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS06 rated operating point: 11 Nm at 100 rpm. -->
-    <limit
-      lower="-2.757620"
-      upper="1.623156"
-      effort="11"
-      velocity="10.471976" />
-  </joint>
-  <link
-    name="L4">
+  <link name="no.3">
     <inertial>
-      <origin
-        xyz="-0.0050366 0.00011303 0.054191"
-        rpy="0 0 0" />
-      <mass
-        value="1.004" />
-      <inertia
-        ixx="0.000849592"
-        ixy="2.51E-07"
-        ixz="-6.65878E-05"
-        iyy="0.000834376"
-        iyz="-2.10E-07"
-        izz="0.000157448" />
+      <origin xyz="-0.020747000030904 -2.8478339899024e-05 0.043723333770644" rpy="-2.3218510786302e-11 2.5401458714214e-10 -1.1480782355438e-09" />
+      <mass value="1.166" />
+      <inertia ixx="0.00640585" ixy="0.0016851" ixz="0.00022465" iyy="0.00148047" iyz="0.00077631" izz="0.00660946" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="2.3009976746429e-10 0.21503152163758 0.099227333760381" rpy="-2.3218510786302e-11 2.5401458714214e-10 -1.1480782355438e-09" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/L4.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.3.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="2.3009976746429e-10 0.21503152163758 0.099227333760381" rpy="-2.3218510786302e-11 2.5401458714214e-10 -1.1480782355438e-09" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/L4_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.3.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="j3"
-    type="revolute">
-    <origin
-      xyz="-0.2105 0 -0.0068993"
-      rpy="1.9138 -1.5708 -0.15545" />
-    <parent
-      link="L3" />
-    <child
-      link="L4" />
-    <!-- Set to the requested X-axis rotation for L4; verify in RViz. -->
-    <axis
-      xyz="1 0 0" />
-    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS00 rated operating point: 5 Nm at 100 rpm. -->
-    <limit
-      lower="-3.14"
-      upper="0.802851"
-      effort="5"
-      velocity="10.471976" />
-  </joint>
-  <link
-    name="L5">
+  <link name="no.4">
     <inertial>
-      <origin
-        xyz="-0.0013461 4.12E-05 0.030198"
-        rpy="0 0 0" />
-      <mass
-        value="0.447" />
-      <inertia
-        ixx="1.70E-04"
-        ixy="-3.68E-07"
-        ixz="1.47E-05"
-        iyy="1.94E-04"
-        iyz="1.81E-08"
-        izz="1.74E-04" />
+      <origin xyz="-0.0015161135473846 1.7940428258256e-05 0.053987334130975" rpy="-9.3710840855871e-10 6.8296568400683e-10 2.5242980198848e-10" />
+      <mass value="0.25212036" />
+      <inertia ixx="5.542E-05" ixy="4.87E-06" ixz="6.21E-06" iyy="4.106E-05" iyz="8.2E-07" izz="5.036E-05" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0.12425388643922 0.1754979405024 0.099227333880634" rpy="-9.3710840855871e-10 6.8296568400683e-10 2.5242980198848e-10" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/L5.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.4.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="1 1 1 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0.12425388643922 0.1754979405024 0.099227333880634" rpy="-9.3710840855871e-10 6.8296568400683e-10 2.5242980198848e-10" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/L5_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.4.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="j4"
-    type="revolute">
-    <origin
-      xyz="0.006 0 0.205"
-      rpy="0 0 0.0076608" />
-    <parent
-      link="L4" />
-    <child
-      link="L5" />
-    <!-- Inferred from the wrist geometry. Verify against the CAD reference axis. -->
-    <axis
-      xyz="0 0 1" />
-    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="1.8"
-      velocity="10.471976" />
-  </joint>
-  <link
-    name="L6">
+  <link name="no.5">
     <inertial>
-      <origin
-        xyz="-0.035683 -1.52E-05 0.046062"
-        rpy="0 0 0" />
-      <mass
-        value="0.14745" />
-      <inertia
-        ixx="1.25E-04"
-        ixy="-1.14E-06"
-        ixz="1.75E-05"
-        iyy="1.40E-04"
-        iyz="8.20E-08"
-        izz="1.47E-04" />
+      <origin xyz="9.6113877699783e-05 -1.5063608519134e-05 -0.046222739292869" rpy="-6.6087677933213e-10 -9.9955599353052e-10 -6.6656042383513e-11" />
+      <mass value="0.35" />
+      <inertia ixx="0.00019208" ixy="-5.496E-05" ixz="-5.071E-05" iyy="0.00026015" iyz="3.054E-05" izz="0.00020944" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="-0.12425388602693 -0.1340650636692 -0.15057273932857" rpy="-6.6087677933213e-10 -9.9955599353052e-10 -6.6656042383513e-11" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/L6.STL" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.5.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="-0.12425388602693 -0.1340650636692 -0.15057273932857" rpy="-6.6087677933213e-10 -9.9955599353052e-10 -6.6656042383513e-11" />
       <geometry>
-        <mesh
-          filename="package://pallet/meshes/collision/L6_collision.obj" />
+        <mesh filename="package://pallet/meshes/mass_revised/no.5.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="j5"
-    type="revolute">
-    <origin
-      xyz="0.0357 0 0.042"
-      rpy="-0.87843 0 0" />
-    <parent
-      link="L5" />
-    <child
-      link="L6" />
-    <!-- Set to the requested X-axis rotation for L6; verify in RViz. -->
-    <axis
-      xyz="1 0 0" />
-    <!-- Provisional geometric limit from a 1-degree collision sweep with 5 mm clearance. -->
-    <!-- RobStride RS05 rated operating point: 1.8 Nm at 100 rpm. -->
-    <limit
-      lower="-0.785398"
-      upper="2.548181"
-      effort="1.8"
-      velocity="10.471976" />
+  <link name="gripper">
+    <inertial>
+      <origin xyz="-5.2809570660339e-06 -0.0028472612426801 -0.00012798006247315" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <mass value="0.35218616" />
+      <inertia ixx="0.00017781" ixy="-5.818E-05" ixz="7.205E-05" iyy="0.00024068" iyz="3.354E-05" izz="0.00022588" />
+    </inertial>
+    <visual>
+      <origin xyz="0.16586133531753 0.15057273884674 0.076827644210076" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.16586133531753 0.15057273884674 0.076827644210076" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="move_gripper">
+    <inertial>
+      <origin xyz="-3.5613040225702e-06 0.0080027382199954 -1.5628113537447e-06" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <mass value="0.027" />
+      <inertia ixx="1.3E-06" ixy="5E-08" ixz="6E-08" iyy="1.27E-06" iyz="0" izz="1.28E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.0075071007659241 0.15057273709249 0.18263656249944" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/move_gripper.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.0075071007659241 0.15057273709249 0.18263656249944" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/move_gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="gripper_r">
+    <inertial>
+      <origin xyz="-0.033502691765836 -0.029534708961876 -0.0082701330319241" rpy="0.79970327964741 0.12575049190638 0.053202050390787" />
+      <mass value="0.234" />
+      <inertia ixx="1.322E-05" ixy="5.09E-06" ixz="-7.51E-06" iyy="1.886E-05" iyz="2.16E-06" izz="1.665E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.14635579372277 -0.037091936961579 0.17469785865968" rpy="0.79970327964741 0.12575049190638 0.053202050390787" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper_r.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.14635579372277 -0.037091936961579 0.17469785865968" rpy="0.79970327964741 0.12575049190638 0.053202050390787" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper_r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="gripper_l">
+    <inertial>
+      <origin xyz="-0.033445200072533 0.02958362738991 -0.0082672712950433" rpy="0.79970328754697 -0.12575048619975 -0.053202050177011" />
+      <mass value="0.244" />
+      <inertia ixx="1.37E-05" ixy="-6.33E-07" ixz="-6.61E-06" iyy="1.807E-05" iyz="2.27E-06" izz="1.823E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.15101915627066 0.010637325529215 0.18551449229154" rpy="0.79970328754697 -0.12575048619975 -0.053202050177011" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper_l.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.15101915627066 0.010637325529215 0.18551449229154" rpy="0.79970328754697 -0.12575048619975 -0.053202050177011" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper_l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="J1" type="revolute">
+    <origin xyz="-0.0019451 0.043004 0" rpy="3.1416 -0.43861 -3.0964" />
+    <parent link="base_link" />
+    <child link="no.1" />
+    <axis xyz="0 1 0" />
+    <limit lower="-3.14" upper="3.14" effort="14" velocity="6.28" />
   </joint>
-  <!-- Mechanical mounting frame at the center of the L6 output flange. -->
-  <link
-    name="tool0" />
-  <joint
-    name="tool0_joint"
-    type="fixed">
-    <origin
-      xyz="-0.0755 0 0"
-      rpy="0 -1.57079632679 0" />
-    <parent
-      link="L6" />
-    <child
-      link="tool0" />
+  <joint name="J2" type="revolute">
+    <origin xyz="0.0133081654565508 0.11835224659499 -0.00768347290876137" rpy="2.6691912421104 0.23489083084202 -1.14340949773462" />
+    <parent link="no.1" />
+    <child link="no.2" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.14" upper="3.14" effort="36" velocity="6.28" />
   </joint>
-  <!-- Temporary TCP; offset this frame when the end-effector geometry is known. -->
-  <link
-    name="tcp" />
-  <joint
-    name="tcp_joint"
-    type="fixed">
-    <origin
-      xyz="0 0 0"
-      rpy="0 0 0" />
-    <parent
-      link="tool0" />
-    <child
-      link="tcp" />
+  <joint name="J3" type="revolute">
+    <origin xyz="-0.213500000000005 0 0" rpy="2.98602758216798 -1.5707963267949 0" />
+    <parent link="no.2" />
+    <child link="no.3" />
+    <axis xyz="1 0 0" />
+    <limit lower="-3.14" upper="3.14" effort="14" velocity="6.28" />
+  </joint>
+  <joint name="J4" type="revolute">
+    <origin xyz="-0.00799931400118803 -0.000150000000022965 0.167232496581933" rpy="0 0 0.616080039238196" />
+    <parent link="no.3" />
+    <child link="no.4" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.14" upper="3.14" effort="5.5" velocity="6.28" />
+  </joint>
+  <joint name="J5" type="revolute">
+    <origin xyz="0 0 0.065768" rpy="-1.3579 0 3.1416" />
+    <parent link="no.4" />
+    <child link="no.5" />
+    <axis xyz="1 0 0" />
+    <limit lower="-3.14" upper="3.14" effort="5.5" velocity="6.28" />
+  </joint>
+  <joint name="J6" type="revolute">
+    <origin xyz="0.00205 0 -0.15365" rpy="-1.5708 0 -1.9447" />
+    <parent link="no.5" />
+    <child link="gripper" />
+    <axis xyz="0 1 0" />
+    <limit lower="-3.14" upper="3.14" effort="10" velocity="3.14" />
+  </joint>
+  <joint name="g2" type="fixed">
+    <origin xyz="0 0.0299209524500723 0" rpy="0 1.17809724509618 0" />
+    <parent link="gripper" />
+    <child link="move_gripper" />
+  </joint>
+  <joint name="g_r" type="revolute">
+    <origin xyz="-0.007486 0.0031518 0.0082" rpy="0 0 -1.7453" />
+    <parent link="move_gripper" />
+    <child link="gripper_r" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0" upper="0.103" effort="10" velocity="1.0" />
+  </joint>
+  <joint name="g_l" type="revolute">
+    <origin xyz="0.007486 0.0031518 0.0082" rpy="0 0 -1.3963" />
+    <parent link="move_gripper" />
+    <child link="gripper_l" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.103" upper="0" effort="10" velocity="1.0" />
+    <mimic joint="g_r" multiplier="-1" offset="0" />
+  </joint>
+  <link name="base_footprint" />
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint" />
+    <child link="base_link" />
+    <origin xyz="0 0 0.0042247429751953" rpy="1.5707963267949 0 0" />
   </joint>
 </robot>

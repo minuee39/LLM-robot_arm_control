@@ -12,9 +12,10 @@ unset PYTHONPATH
 unset AMENT_PREFIX_PATH COLCON_PREFIX_PATH CMAKE_PREFIX_PATH ROS_PACKAGE_PATH
 export PYTHONPATH="${PROJECT_DIR}"
 
-export ROS_DISTRO="${ROS_DISTRO:-humble}"
+ISAAC_ROS_DISTRO="${ISAAC_ROS_DISTRO:-humble}"
+export ROS_DISTRO="${ISAAC_ROS_DISTRO}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
-export LD_LIBRARY_PATH="${ISAAC_SIM_ROOT}/exts/isaacsim.ros2.bridge/${ROS_DISTRO}/lib:${LD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="${ISAAC_SIM_ROOT}/exts/isaacsim.ros2.bridge/${ISAAC_ROS_DISTRO}/lib:${LD_LIBRARY_PATH:-}"
 
 # apps/pick_place_with_camera.py 실행
 exec "${ISAAC_SIM_ROOT}/python.sh" "${PROJECT_DIR}/apps/pick_place_with_camera.py" "$@"

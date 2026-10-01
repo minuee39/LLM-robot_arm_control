@@ -68,8 +68,8 @@ def parse_args():
         "--motor",
         type=int,
         nargs="+",
-        default=list(range(1, 7)),
-        help="motor IDs to read (default: 1 2 3 4 5 6)",
+        default=list(range(1, 8)),
+        help="motor IDs to read (default: 1 2 3 4 5 6 7)",
     )
     parser.add_argument("--channel", default="can0")
     parser.add_argument("--timeout", type=float, default=1.0)

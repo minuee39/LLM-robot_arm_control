@@ -66,6 +66,11 @@ def generate_launch_description():
             output='screen',
         ),
         include('move_group.launch.py'),
+        Node(
+            package=PACKAGE,
+            executable='workcell_scene.py',
+            output='screen',
+        ),
         move_group_gate,
     ]
     rviz = [

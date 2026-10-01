@@ -74,9 +74,9 @@ on, left_of, right_of, front_of, behind, near
 ROS 환경을 먼저 로드합니다.
 
 ```bash
-cd ~/Desktop/LLM/ros2_ur_ws
+cd /home/minwoo/Development/LLM/ros2_ur_ws
 unset PYTHONPATH PYTHONHOME
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 ```
 
 `mtc_tutorial`만 다시 빌드할 때:
@@ -122,7 +122,7 @@ RViz 초기 자세는 SRDF의 `ready`만으로 결정되지 않고 [initial_posi
 Isaac Sim 카메라 또는 시뮬레이션 상태를 ROS 2로 내보낸 뒤, OpenCV/YOLO로 물체를 인식하고, RViz에서 planning result를 확인하는 흐름을 사용합니다.
 
 ```bash
-cd ~/Desktop/LLM
+cd /home/minwoo/Development/LLM
 python3 ur10e/apps/pick_place_with_camera.py
 ```
 
@@ -162,26 +162,26 @@ bash ur10e/scripts/run_isaac_moveit_bridge.sh --disable-camera
 
 ```bash
 # Terminal 1: Isaac Sim bridge
-cd ~/Desktop/LLM
+cd /home/minwoo/Development/LLM
 bash ur10e/scripts/run_isaac_moveit_bridge.sh
 
 # Terminal 2: controller action bridge
-cd ~/Desktop/LLM/ros2_ur_ws
-source /opt/ros/humble/setup.bash
+cd /home/minwoo/Development/LLM/ros2_ur_ws
+source /opt/ros/jazzy/setup.bash
 source install/local_setup.bash
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 ros2 run isaac_moveit_bridge action_bridge
 
 # Terminal 3: MoveIt / RViz / move_group
-cd ~/Desktop/LLM/ros2_ur_ws
-source /opt/ros/humble/setup.bash
+cd /home/minwoo/Development/LLM/ros2_ur_ws
+source /opt/ros/jazzy/setup.bash
 source install/local_setup.bash
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 ros2 launch ur10e_robotiq_2f140_moveit_config isaac_demo.launch.py
 
 # Terminal 4: plan-only 후 실행
-cd ~/Desktop/LLM/ros2_ur_ws
-source /opt/ros/humble/setup.bash
+cd /home/minwoo/Development/LLM/ros2_ur_ws
+source /opt/ros/jazzy/setup.bash
 source install/local_setup.bash
 export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 ros2 run isaac_moveit_bridge moveit_pick_place_demo
@@ -216,15 +216,15 @@ bash ur10e/scripts/run_yolo_camera_node.sh \
 Astra 카메라, YOLO26n segmentation, PointCloud·YOLO mask·Depth가 설정된 RViz를 한 번에 실행할 수 있습니다. `yolo26n-seg.pt`처럼 `-seg` 가중치가 필요합니다.
 
 ```bash
-cd /home/minwoo/Desktop/LLM/ros2_ur_ws
-source /opt/ros/humble/setup.bash
+cd /home/minwoo/Development/LLM/ros2_ur_ws
+source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 ros2 launch ur10e_vision_bringup astra_yolo_rviz.launch.py
 ```
 
 ```bash
 bash ur10e/scripts/run_yolo_camera_node.sh \
-  --model /home/minwoo/Desktop/LLM/yolo26n-seg.pt \
+  --model /home/minwoo/Development/LLM/yolo26n-seg.pt \
   --require-segmentation \
   --label-mode model \
   --classes "" \
@@ -286,7 +286,7 @@ bash ur10e/scripts/run_yolo_camera_node.sh \
 - 현재 검증 기준과 알려진 실패는 [M0 baseline](docs/baselines/m0-baseline-2026-08-17.md)에 기록합니다.
 - `.cpp` 파일을 바꾸면 해당 ROS 2 패키지를 다시 `colcon build` 해야 합니다.
 - `.srdf`, `.yaml` 설정 파일은 launch가 install space를 읽는지 symlink install을 쓰는지에 따라 rebuild 또는 재실행이 필요합니다.
-- `ament_package` Python 오류가 나면 `PYTHONPATH`/`PYTHONHOME`을 비우고 `/opt/ros/humble/setup.bash`를 다시 source합니다.
+- `ament_package` Python 오류가 나면 `PYTHONPATH`/`PYTHONHOME`을 비우고 `/opt/ros/jazzy/setup.bash`를 다시 source합니다.
 - wall이나 floor 같은 collision object는 launch만 실행한다고 자동으로 생기지 않습니다. Planning Scene에 object를 추가하는 노드나 코드가 실제로 실행되어야 합니다.
 - 원격 MoveIt dependency checkout은 별도 upstream Git 저장소입니다. 이 저장소에 포함하려면 vendoring 또는 submodule 정책을 정한 뒤 추가하는 것이 좋습니다.
 
@@ -295,7 +295,7 @@ bash ur10e/scripts/run_yolo_camera_node.sh \
 Python 단위 테스트:
 
 ```bash
-cd ~/Desktop/LLM
+cd /home/minwoo/Development/LLM
 cd ur10e
 ../.venv/bin/python -m pytest tests
 ```
@@ -303,9 +303,9 @@ cd ur10e
 ROS 2 빌드 검증:
 
 ```bash
-cd ~/Desktop/LLM/ros2_ur_ws
+cd /home/minwoo/Development/LLM/ros2_ur_ws
 unset PYTHONPATH PYTHONHOME
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 colcon build --packages-select mtc_tutorial
 ```
 

@@ -17,5 +17,7 @@ def generate_launch_description():
         Node(package="pallet_gripper_moveit_config", executable="isaac_action_bridge.py",
              output="screen"),
         include("move_group.launch.py"),
+        Node(package="pallet_gripper_moveit_config", executable="workcell_scene.py",
+             output="screen"),
         include("moveit_rviz.launch.py"),
     ])

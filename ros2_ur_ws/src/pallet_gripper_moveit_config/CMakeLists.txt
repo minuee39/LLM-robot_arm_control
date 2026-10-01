@@ -20,4 +20,6 @@ install(
     scripts/isaac_sim.py
     scripts/run_isaac.sh
     scripts/startup_gate.py
+    scripts/workcell_scene.py
   DESTINATION lib/${PROJECT_NAME})
+install(FILES scripts/workcell_scenario.py DESTINATION lib/${PROJECT_NAME})

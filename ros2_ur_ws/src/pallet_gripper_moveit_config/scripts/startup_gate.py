@@ -3,8 +3,11 @@
 import argparse
 import math
 import time
+from pathlib import Path
 
 import rclpy
+import yaml
+from ament_index_python.packages import get_package_share_directory
 from moveit_msgs.msg import PlanningSceneComponents
 from moveit_msgs.srv import GetPlanningScene
 from rclpy.node import Node
@@ -17,12 +20,23 @@ REQUIRED_JOINTS = {f'J{i}' for i in range(1, 7)} | {'J8'}
 
 def wait_for_isaac(node, timeout):
     ready = False
+    config = Path(get_package_share_directory('pallet_gripper_moveit_config')) / 'config'
+    home = yaml.safe_load((config / 'initial_positions.yaml').read_text())['initial_positions']
+    physics = yaml.safe_load((config / 'isaac_physics.yaml').read_text())
+    arm_tolerance = float(physics['home_tolerance_arm_rad'])
+    gripper_tolerance = float(physics['home_tolerance_gripper_m'])
 
     def feedback(msg):
         nonlocal ready
         values = dict(zip(msg.name, msg.position))
-        ready = REQUIRED_JOINTS.issubset(values) and all(
-            math.isfinite(values[name]) for name in REQUIRED_JOINTS
+        ready = (
+            REQUIRED_JOINTS.issubset(values)
+            and all(math.isfinite(values[name]) for name in REQUIRED_JOINTS)
+            and all(
+                abs(values[name] - float(home[name])) <=
+                (gripper_tolerance if name == 'J8' else arm_tolerance)
+                for name in REQUIRED_JOINTS
+            )
         )
 
     subscription = node.create_subscription(
@@ -34,7 +48,7 @@ def wait_for_isaac(node, timeout):
     node.destroy_subscription(subscription)
     if not ready:
         raise RuntimeError(f'No valid /isaac_joint_states within {timeout:g} seconds')
-    node.get_logger().info('Isaac joint feedback is ready')
+    node.get_logger().info('Isaac joint feedback is ready at the configured home position')
 
 
 def wait_for_move_group(node, timeout):

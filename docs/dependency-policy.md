@@ -2,7 +2,7 @@
 
 ## 목적
 
-이 문서는 `/home/minwoo/Desktop/LLM`의 프로젝트 코드와 외부 의존성을 구분하고, M0 기준선을 다른 환경에서도 재현하기 위한 관리 규칙을 정의한다.
+이 문서는 `/home/minwoo/Development/LLM`의 프로젝트 코드와 외부 의존성을 구분하고, M0 기준선을 다른 환경에서도 재현하기 위한 관리 규칙을 정의한다.
 
 ## 소유권 경계
 
@@ -17,20 +17,23 @@
 
 ## ROS 2 의존성
 
-- source dependency는 `ros2_ur_ws/dependencies.repos`에 원격 URL과 commit SHA를 고정한다.
+- Jazzy에서 제공되는 MoveIt, MTC, SRDF, launch 보조 패키지는 `ros2_ur_ws/scripts/install_jazzy_dependencies.sh`로 binary package를 설치한다.
+- Jazzy binary가 없는 source dependency만 `ros2_ur_ws/dependencies.repos`에 원격 URL과 commit SHA를 고정한다.
 - 새 workspace에서는 빈 `src`에 `vcs import`로 복원한다.
 - `build/`, `install/`, `log/`는 생성물이므로 Git에 저장하지 않는다.
-- `ros2_astra_camera`는 `dependencies.repos`에 고정된 upstream checkout으로 복원하며 메인 저장소에 vendoring하지 않는다.
+- `ros2_astra_camera`는 `dependencies.repos`에 고정된 upstream checkout으로 복원하고, `patches/ros2_astra_camera-jazzy.patch`를 설치 스크립트가 멱등하게 적용한다.
 - `OpenNI/`와 `OrbbecSDK/`는 로컬 카메라 SDK 설치물이므로 Git에 저장하지 않는다.
-- `Universal_Robots_ROS2_Description`, `pal_robotiq_description`, `moveit2_tutorials`는 현재 기준선에 포함된 legacy vendoring이다. M0 후속 정리에서 source provenance를 검증한 뒤 `.repos` 또는 ROS binary package 방식으로 전환한다.
+- `Universal_Robots_ROS2_Description`와 `pal_robotiq_description`은 현재 로봇 description 호환성 검증을 위해 유지한다.
+- Humble `moveit2_tutorials` checkout은 보존하지만 `COLCON_IGNORE`로 Jazzy build에서 제외한다.
 - `ur10e_moveit2_tutorials`는 upstream 전체를 수정한 실험용 fork다. 로컬 기준 commit `38420a40faef89878d07462f283981c57cba192e`로 보존하며 canonical runtime package로 사용하지 않는다. 필요한 UR10e 전용 구현은 `mtc_tutorial`로 이동한다.
 
 복원 명령:
 
 ```bash
-cd /home/minwoo/Desktop/LLM/ros2_ur_ws
+cd /home/minwoo/Development/LLM/ros2_ur_ws
 vcs import src < dependencies.repos
-rosdep install --from-paths src --ignore-src -r -y
+./scripts/install_jazzy_dependencies.sh
+./scripts/rebuild_jazzy_workspace.sh
 ```
 
 ## Python 환경
@@ -40,7 +43,7 @@ rosdep install --from-paths src --ignore-src -r -y
 - `.venv`: 단위 테스트, 데이터 처리, 일반 vision 도구
 - Isaac Sim Python: Isaac/Omni 전용 앱
 - `remind` Conda 환경: YOLO-Seg, DINOv3, REMIND
-- ROS 2 Python: `/opt/ros/humble`과 colcon overlay
+- ROS 2 Python: `/opt/ros/jazzy`와 Jazzy에서 새로 빌드한 colcon overlay
 
 서로 다른 환경의 `PYTHONPATH`, user-site package, OpenCV/NumPy ABI를 섞지 않는다. 현재 `.venv`의 정확한 스냅샷은 `requirements/baseline-lock.txt`에 기록한다. 이 파일은 기준선 재현용이며, 모든 환경에 그대로 설치하는 통합 requirements가 아니다.
 

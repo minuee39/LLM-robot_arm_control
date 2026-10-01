@@ -47,7 +47,7 @@ try:
     gripper = ActionClient(client, GripperCommand, '/gripper_controller/gripper_cmd')
     assert gripper.wait_for_server(timeout_sec=5)
     goal = GripperCommand.Goal()
-    goal.command.position = .05
+    goal.command.position = .02
     handle = wait(gripper.send_goal_async(goal))
     assert handle.accepted
     result = wait(handle.get_result_async())

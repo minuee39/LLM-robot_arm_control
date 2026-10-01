@@ -29,7 +29,7 @@
         <joint name="J6" value="0"/>
     </group_state>
     <group_state name="open" group="gripper">
-        <joint name="J8" value="0"/>
+        <joint name="J8" value="0.0335"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="pallet_gripper" parent_link="J7" group="gripper" parent_group="pallet_arm"/>
@@ -58,4 +58,5 @@
     <disable_collisions link1="J6" link2="J9" reason="User"/>
     <disable_collisions link1="J7" link2="J8" reason="Adjacent"/>
     <disable_collisions link1="J7" link2="J9" reason="Adjacent"/>
+    <disable_collisions link1="J8" link2="J9" reason="User"/>
 </robot>
