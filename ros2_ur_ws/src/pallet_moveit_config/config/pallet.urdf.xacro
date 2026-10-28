@@ -1,15 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pallet">
-    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
-
-    <!-- Import pallet urdf file -->
-    <!-- Legacy five-axis controllers/SRDF are not compatible with the new CAD model. -->
-    <xacro:include filename="$(find pallet)/urdf/pallet_gripperless.urdf" />
-
-    <!-- Import control_xacro -->
-    <xacro:include filename="pallet.ros2_control.xacro" />
-
-
-    <xacro:pallet_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
-
+  <xacro:arg name="initial_positions_file" default="initial_positions.yaml"/>
+  <xacro:include filename="$(find pallet)/urdf/pallet_with_gripper.urdf"/>
+  <xacro:include filename="pallet.ros2_control.xacro"/>
+  <xacro:pallet_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
 </robot>
