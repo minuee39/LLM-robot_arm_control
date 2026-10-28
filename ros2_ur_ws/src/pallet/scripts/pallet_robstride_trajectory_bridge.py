@@ -191,6 +191,11 @@ class PalletRobStrideTrajectoryBridge(Node):
                     raise TrajectoryError(
                         f"first point is {start_error:.6f} rad from measured state; limit is {self._config.max_start_error_rad:.6f} rad"
                     )
+                if not self._dry_run and not self._allow_live_direct_goal:
+                    raise TrajectoryError(
+                        "Direct final-target execution on live hardware requires "
+                        "allow_live_direct_goal:=true after workspace and collision review"
+                    )
                 if self._bus is not None:
                     actual_by_name = dict(zip(names, actual))
                     for joint in self._config.joints:
@@ -200,11 +205,6 @@ class PalletRobStrideTrajectoryBridge(Node):
                 # per joint. The motor's VEL_MAX / ACC_SET generate motion.
                 # This intentionally does not stream MoveIt waypoints.
                 # Intermediate path collision guarantees do not carry over.
-                if not self._dry_run and not self._allow_live_direct_goal:
-                    raise TrajectoryError(
-                        "Direct final-target execution on live hardware requires "
-                        "allow_live_direct_goal:=true after workspace and collision review"
-                    )
                 final_target = points[-1][1]
                 self._command(names, final_target)
                 started = time.monotonic()
