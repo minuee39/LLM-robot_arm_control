@@ -36,7 +36,9 @@ class PalletRobStrideTrajectoryBridge(Node):
         self.declare_parameter("config_file", default_config) # ROS2 Parameter 선언. 
         self.declare_parameter("can_interface", "") # Can 인터페이스를 parameter로 
         self.declare_parameter("dry_run", True)
-        self._dry_run = bool(self.get_parameter("dry_run").value) 
+        self.declare_parameter("allow_live_direct_goal", False)
+        self._dry_run = bool(self.get_parameter("dry_run").value)
+        self._allow_live_direct_goal = bool(self.get_parameter("allow_live_direct_goal").value) 
         # ros parameter를 가져와 python bool로 변환 / _dry_run처럼 _로 시작하는 이름 -> 클래스 내부에서 사용하는 변수
         self._config: HardwareConfig = load_hardware_config(  # : HardwareConfig -> type hint
             str(self.get_parameter("config_file").value),
@@ -189,51 +191,26 @@ class PalletRobStrideTrajectoryBridge(Node):
                     raise TrajectoryError(
                         f"first point is {start_error:.6f} rad from measured state; limit is {self._config.max_start_error_rad:.6f} rad"
                     )
+                if not self._dry_run and not self._allow_live_direct_goal:
+                    raise TrajectoryError(
+                        "Direct final-target execution on live hardware requires "
+                        "allow_live_direct_goal:=true after workspace and collision review"
+                    )
                 if self._bus is not None:
                     actual_by_name = dict(zip(names, actual))
                     for joint in self._config.joints:
                         self._bus.configure_position_mode(joint, actual_by_name[joint.name])
 
+                # PP(position profile) mode: send one final position command
+                # per joint. The motor's VEL_MAX / ACC_SET generate motion.
+                # This intentionally does not stream MoveIt waypoints.
+                # Intermediate path collision guarantees do not carry over.
+                final_target = points[-1][1]
+                self._command(names, final_target)
                 started = time.monotonic()
-                previous_time = 0.0
-                previous_positions = actual
-                last_poll = started
-                for target_time, target in points:
-                    while time.monotonic() - started < target_time:
-                        now = time.monotonic()
-                        elapsed = now - started
-                        
-                        #cancel 처리
-                        if goal_handle.is_cancel_requested:
-                            self._safe_stop()
-                            goal_handle.canceled()
-                            return self._result(FollowJointTrajectory.Result.SUCCESSFUL, "Canceled; motors stopped")
-                        
-                        #intrepolation ratio 계산
-                        ratio = max(0.0, min(1.0, (elapsed - previous_time) / max(target_time - previous_time, 1e-9)))
-                        
-                        # 선형 보간 , 현재 시점의 목표 joint angle을 계산
-                        desired = [before + ratio * (after - before) for before, after in zip(previous_positions, target)]
-                        
-                        # Can command 전송 ( 시간 계산 -> 보간 -> desired joint position -> can 전송)
-                        self._command(names, desired)
-                        # feedback 주기 확인
-                        if now - last_poll >= self._config.feedback_period_s:
-                            actual = self._actual_in_goal_order(names)
-                            self._action_feedback(goal_handle, names, desired, actual) # moveit에 desired actual error 전달
-                            # 모터가 정상추종을 하지 못할 경우 종료
-                            max_error = max(abs(commanded - observed) for commanded, observed in zip(desired, actual))
-                            if elapsed >= self._config.tracking_error_grace_s and max_error > self._config.max_tracking_error_rad:
-                                raise RuntimeError(f"tracking error {max_error:.6f} rad exceeds {self._config.max_tracking_error_rad:.6f} rad")
-                            last_poll = now
-                        time.sleep(self._config.command_period_s)
-                        #loop 끝나면 target point 한번 보내주기. (오차로 인해 마지막 값에 정확히 가지 못하는 경우를 대비)
-                    self._command(names, target)
-                    previous_time = target_time
-                    previous_positions = target
-
-                # 추가 검증. 
-                deadline = time.monotonic() + self._config.settle_timeout_s
+                # Allow at least the planned trajectory duration plus settle time;
+                # check feedback independently of how often commands are issued.
+                deadline = started + points[-1][0] + self._config.settle_timeout_s
                 max_error = math.inf
                 while time.monotonic() < deadline:
                     if goal_handle.is_cancel_requested:
@@ -241,13 +218,12 @@ class PalletRobStrideTrajectoryBridge(Node):
                         goal_handle.canceled()
                         return self._result(
                             FollowJointTrajectory.Result.SUCCESSFUL,
-                            "Canceled while settling; motors stopped",
+                            "Canceled; motors stopped",
                         )
-                    
-                    #최종 위치 오차 검사
                     actual = self._actual_in_goal_order(names)
-                    max_error = max(abs(target - observed) for target, observed in zip(previous_positions, actual))
-                    self._action_feedback(goal_handle, names, previous_positions, actual)
+                    max_error = max(abs(target - observed) for target, observed in zip(final_target, actual))
+                    self._action_feedback(goal_handle, names, final_target, actual)
+                    elapsed = time.monotonic() - started
                     if max_error <= self._config.goal_tolerance_rad:
                         goal_handle.succeed()
                         return self._result(FollowJointTrajectory.Result.SUCCESSFUL, f"Goal reached; max error={max_error:.6f} rad")
