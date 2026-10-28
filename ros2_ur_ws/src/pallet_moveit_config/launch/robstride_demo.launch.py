@@ -27,6 +27,10 @@ def generate_launch_description() -> LaunchDescription:
             "can_interface", default_value="can0", description="SocketCAN interface"
         ),
         DeclareLaunchArgument(
+            "allow_live_direct_goal", default_value="false",
+            description="Explicitly allow final-target-only PP motion on live motors",
+        ),
+        DeclareLaunchArgument(
             "hardware_config",
             default_value=str(default_config),
             description="Commissioned RobStride joint mapping and safety limits",
@@ -42,6 +46,9 @@ def generate_launch_description() -> LaunchDescription:
                     LaunchConfiguration("dry_run"), value_type=bool
                 ),
                 "can_interface": LaunchConfiguration("can_interface"),
+                "allow_live_direct_goal": ParameterValue(
+                    LaunchConfiguration("allow_live_direct_goal"), value_type=bool
+                ),
                 "config_file": LaunchConfiguration("hardware_config"),
             }],
         ),
