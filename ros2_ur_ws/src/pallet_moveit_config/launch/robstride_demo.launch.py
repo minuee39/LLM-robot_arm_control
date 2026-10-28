@@ -7,7 +7,6 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.conditions import IfCondition
 from launch_ros.parameter_descriptions import ParameterValue
 
 
@@ -28,14 +27,6 @@ def generate_launch_description() -> LaunchDescription:
             "can_interface", default_value="can0", description="SocketCAN interface"
         ),
         DeclareLaunchArgument(
-            "allow_live_direct_goal", default_value="false",
-            description="Explicitly allow final-target-only PP motion on live motors",
-        ),
-        DeclareLaunchArgument(
-            "add_floor", default_value="false",
-            description="Add a visible collision floor to the planning scene",
-        ),
-        DeclareLaunchArgument(
             "hardware_config",
             default_value=str(default_config),
             description="Commissioned RobStride joint mapping and safety limits",
@@ -51,16 +42,10 @@ def generate_launch_description() -> LaunchDescription:
                     LaunchConfiguration("dry_run"), value_type=bool
                 ),
                 "can_interface": LaunchConfiguration("can_interface"),
-                "allow_live_direct_goal": ParameterValue(
-                    LaunchConfiguration("allow_live_direct_goal"), value_type=bool
-                ),
                 "config_file": LaunchConfiguration("hardware_config"),
             }],
         ),
         include_moveit_launch("move_group.launch.py"),
-        Node(
-            package="pallet", executable="pallet_planning_scene_floor.py",
-            output="screen", condition=IfCondition(LaunchConfiguration("add_floor")),
-        ),
+        Node(package="pallet", executable="pallet_planning_scene_floor.py", output="screen"),
         include_moveit_launch("moveit_rviz.launch.py"),
     ])

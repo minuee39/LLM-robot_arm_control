@@ -1,0 +1,22 @@
+# Live CAN execution refuses to start until commissioning is complete.
+commissioned: false
+interface: can0
+host_id: 253
+command_period_s: 0.02
+feedback_period_s: 0.05
+feedback_timeout_s: 0.10
+max_start_error_rad: 0.05
+max_tracking_error_rad: 0.35
+tracking_error_grace_s: 0.50
+goal_tolerance_rad: 0.05
+settle_timeout_s: 2.0
+
+# LEGACY five-axis simulation profile only; not the physical six-axis robot.
+# Physical mapping is in hand_guiding.yaml and robstride_hardware.yaml. Verify directions, zero
+# offsets, ratios, limits, current limits, and E-stop before commissioning.
+joints:
+  j1: {motor_id: 1, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 3.14, max_velocity_rad_s: 0.35, max_acceleration_rad_s2: 0.50, current_limit_a: 1.0}
+  j2: {motor_id: 2, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -2.757620, upper_rad: 1.623156, max_velocity_rad_s: 0.20, max_acceleration_rad_s2: 0.35, current_limit_a: 1.0}
+  j3: {motor_id: 3, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 0.802851, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.50, current_limit_a: 0.8}
+  j4: {motor_id: 4, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 3.14, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.75, current_limit_a: 0.8}
+  j5: {motor_id: 5, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -0.785398, upper_rad: 2.548181, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.75, current_limit_a: 0.8}
