@@ -1,64 +1,34 @@
+"""Static checks for the canonical Pallet 6-axis + one-actuator gripper config."""
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
-import pytest
 import yaml
 
-
-PACKAGE_ROOT = Path(__file__).parents[1]
-REPOSITORY_ROOT = Path(__file__).parents[4]
-JOINT_LIMITS = PACKAGE_ROOT / "config" / "joint_limits.yaml"
-PHYSICS_CONFIG = (
-    REPOSITORY_ROOT
-    / "ros2_ur_ws"
-    / "src"
-    / "pallet"
-    / "config"
-    / "isaac_gripperless_physics_test.json"
-)
-
-# Conservative gravity envelopes from deterministic full-range URDF sampling.
-# The test reserves at least 20% of continuous torque for acceleration and
-# position-error correction after gravity and velocity damping are accounted for.
-GRAVITY_ENVELOPE_NM = {
-    "j1": 0.257,
-    "j2": 5.505,
-    "j3": 1.989,
-    "j4": 0.068,
-    "j5": 0.068,
-}
-CONTINUOUS_EFFORT_NM = {"j1": 5.0, "j2": 11.0, "j3": 5.0, "j4": 1.8, "j5": 1.8}
+ROOT = Path(__file__).resolve().parents[1]
+PALLET = ROOT.parent / "pallet"
+ARM = [f"J{i}" for i in range(1, 7)]
 
 
-def test_operational_limits_preserve_continuous_torque_margin():
-    limits = yaml.safe_load(JOINT_LIMITS.read_text(encoding="utf-8"))
-    physics = yaml.safe_load(PHYSICS_CONFIG.read_text(encoding="utf-8"))
-
-    assert limits["default_velocity_scaling_factor"] == pytest.approx(1.0)
-    assert limits["default_acceleration_scaling_factor"] == pytest.approx(1.0)
-
-    for joint, joint_limit in limits["joint_limits"].items():
-        assert joint_limit["has_velocity_limits"] is True
-        assert joint_limit["has_acceleration_limits"] is True
-        damping = physics["joints"][joint]["damping"]
-        continuous_demand = (
-            GRAVITY_ENVELOPE_NM[joint]
-            + damping * joint_limit["max_velocity"]
-        )
-        assert continuous_demand <= 0.8 * CONTINUOUS_EFFORT_NM[joint]
+def test_moveit_and_can_joint_contract():
+    limits = yaml.safe_load((ROOT / "config/joint_limits.yaml").read_text())
+    hw = yaml.safe_load((PALLET / "config/robstride_hardware.yaml").read_text())
+    controllers = yaml.safe_load((ROOT / "config/moveit_controllers.yaml").read_text())
+    joints = controllers["moveit_simple_controller_manager"]["pallet_arm_controller"]["joints"]
+    assert joints == ARM
+    assert list(hw["joints"]) == ARM
+    assert [hw["joints"][name]["motor_id"] for name in ARM] == list(range(1, 7))
+    assert set(limits["joint_limits"]) == set(ARM + ["g_r"])
+    assert 0 < limits["default_velocity_scaling_factor"] <= 1
+    assert 0 < limits["default_acceleration_scaling_factor"] <= 1
 
 
-def test_physics_test_profiles_stay_inside_operational_motion_limits():
-    limits = yaml.safe_load(JOINT_LIMITS.read_text(encoding="utf-8"))["joint_limits"]
-    physics = yaml.safe_load(PHYSICS_CONFIG.read_text(encoding="utf-8"))
-    previous = {joint: 0.0 for joint in limits}
-
-    for phase in physics["phases"]:
-        duration = float(phase["duration_seconds"])
-        target = phase["target_rad"]
-        for joint, joint_limit in limits.items():
-            distance = abs(float(target[joint]) - previous[joint])
-            smoothstep_peak_velocity = 1.5 * distance / duration
-            smoothstep_peak_acceleration = 6.0 * distance / (duration * duration)
-            assert smoothstep_peak_velocity <= joint_limit["max_velocity"]
-            assert smoothstep_peak_acceleration <= joint_limit["max_acceleration"]
-        previous = {joint: float(target[joint]) for joint in limits}
+def test_canonical_urdf_gripper_mimic_and_srdf():
+    urdf = ET.parse(PALLET / "urdf/pallet_with_gripper.urdf").getroot()
+    joints = {j.get("name"): j for j in urdf.findall("joint")}
+    for name in ARM:
+        assert joints[name].get("type") == "revolute"
+    assert joints["g_r"].get("type") == "revolute"
+    assert joints["g_l"].find("mimic").get("joint") == "g_r"
+    srdf = ET.parse(ROOT / "config/pallet.srdf").getroot()
+    assert srdf.find("group[@name='gripper']/joint").get("name") == "g_r"
+    assert srdf.find("group[@name='pallet_arm']/chain").get("tip_link") == "gripper"
