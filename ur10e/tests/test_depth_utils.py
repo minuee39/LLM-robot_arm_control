@@ -132,6 +132,17 @@ def test_pallet_table_block_center_rejects_false_color_below_table():
         )
 
 
+def test_pallet_table_block_center_rejects_block_outside_xy_footprint():
+    with np.testing.assert_raises_regex(ValueError, "outside the Pallet table XY"):
+        pallet_table_block_center(
+            surface_point=[1.02, 0.0, 0.02],
+            camera_origin=[-0.55, 0.65, 0.85],
+            box_size=[0.03, 0.03, 0.05],
+            table_size_xy=[1.8, 0.75],
+            table_center_xy=[0.0, 0.0],
+        )
+
+
 def test_validated_world_position_uses_reference_above_grasp_tolerance():
     position, used_reference, error = validated_world_position(
         [-0.303, 0.289, 0.05], [-0.3, 0.3, 0.05], max_error=0.003

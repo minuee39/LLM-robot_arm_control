@@ -6,6 +6,7 @@ from collections import deque
 import json
 import math
 import os
+import signal
 import time
 from pathlib import Path
 
@@ -20,9 +21,47 @@ from tf2_ros import Buffer, TransformException, TransformListener
 
 TELEMETRY_MAX_AGE_SECONDS = 0.5
 TELEMETRY_SYNC_DELAY_SECONDS = 0.15
+POSE_STREAM_CONFIRM_SECONDS = 0.15
 CONTACT_EFFORT_N = 1.0
 CONTACT_MAX_JAW_SPEED_M_S = 0.001
 LOADED_CONTACT_STATES = {'bilateral_loaded', 'bilateral_stationary_loaded'}
+
+
+def monitor_end_reason(supervised, interrupted, ros_ok, elapsed, duration, error=False):
+    """Distinguish supervisor shutdown from lost monitoring coverage."""
+    if error:
+        return 'error'
+    if interrupted:
+        return 'supervisor_stop' if supervised else 'interrupted'
+    if not ros_ok:
+        return 'ros_shutdown'
+    if elapsed >= duration:
+        return 'timeout' if supervised else 'duration_complete'
+    return 'error'
+
+
+def monitor_completion_allowed(supervised, end_reason):
+    return end_reason == ('supervisor_stop' if supervised else 'duration_complete')
+
+
+def protect_monitor_finalization(supervised):
+    """A supervisor may SIGINT an already-ending monitor to collect its result."""
+    if supervised:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+def write_monitor_result(result, samples, output, monitor_error, previous_sigint_handler):
+    """Persist diagnostics before restoring interrupts or re-raising errors."""
+    try:
+        if output:
+            output.write_text(json.dumps({'summary': result, 'samples': samples}, indent=2) + '\n')
+        print(json.dumps(result), flush=True)
+    finally:
+        if previous_sigint_handler is not None:
+            signal.signal(signal.SIGINT, previous_sigint_handler)
+    if monitor_error is not None:
+        raise monitor_error
+    return 0 if result['placement_pass'] else 1
 
 
 def rotate_vector_inverse(vector, orientation):
@@ -72,6 +111,49 @@ def closest_joint_feedback(history, stamp_seconds):
         return None, None
     feedback = min(history, key=lambda item: abs(item['stamp_seconds'] - stamp_seconds))
     return feedback, abs(feedback['stamp_seconds'] - stamp_seconds)
+
+
+def arm_measurement(positions, velocities, efforts):
+    """Complete measured J1~J6 snapshot; unavailable channels remain null."""
+    names = [f'J{i}' for i in range(1, 7)]
+    if not all(name in positions and math.isfinite(positions[name]) for name in names):
+        return {}
+    def finite_or_none(values, name):
+        value = values.get(name)
+        return value if value is not None and math.isfinite(value) else None
+    return {name: {'position_rad': positions[name],
+                   'velocity_rad_s': finite_or_none(velocities, name),
+                   'effort_nm': finite_or_none(efforts, name)} for name in names}
+
+
+class ContactReference:
+    """Latch first sustained bilateral contact, without waiting until carry settles."""
+
+    def __init__(self, confirm_samples=3):
+        if confirm_samples <= 0:
+            raise ValueError('confirm_samples must be positive')
+        self.confirm_samples = confirm_samples
+        self.pending = []
+        self.reference = None
+        self.last_seconds = None
+
+    def update(self, seconds, relative, position, contact_state):
+        if self.reference is not None:
+            return self.reference
+        if self.last_seconds is not None and seconds <= self.last_seconds:
+            return None
+        self.last_seconds = seconds
+        if (contact_state not in LOADED_CONTACT_STATES or relative is None or
+                len(relative) != 3 or not all(map(math.isfinite, relative))):
+            self.pending.clear()
+            return None
+        if self.pending and seconds - self.pending[-1]['seconds'] > 0.5:
+            self.pending.clear()
+        self.pending.append({'seconds': seconds, 'relative': list(relative),
+                             'position': list(position)})
+        if len(self.pending) >= self.confirm_samples:
+            self.reference = self.pending[0]
+        return self.reference
 
 
 class SlipDetector:
@@ -158,19 +240,30 @@ class RuntimeFaultDetector:
         }
         self.first_samples = {}
         self.event = None
+        self.pose_stream_stale_count = 0
+        self.pose_stream_first_exceeded_seconds = None
 
     def pose_stream_watchdog(self, seconds, age_seconds, timeout_seconds):
-        """Return a stale event when an armed pose stream stops completely."""
+        """Stop for a sustained pose-stream gap, not one scheduling outlier."""
         if self.event is not None or self.released or not self.armed:
             return None
         if age_seconds < timeout_seconds:
+            self.pose_stream_stale_count = 0
+            self.pose_stream_first_exceeded_seconds = None
+            return None
+        self.pose_stream_stale_count += 1
+        if self.pose_stream_first_exceeded_seconds is None:
+            self.pose_stream_first_exceeded_seconds = seconds - age_seconds + timeout_seconds
+        if (self.pose_stream_stale_count < self.confirm_samples or
+                seconds - self.pose_stream_first_exceeded_seconds <
+                POSE_STREAM_CONFIRM_SECONDS):
             return None
         self.event = {
             'code': 'TELEMETRY_STALE',
             'seconds': seconds,
-            'first_exceeded_seconds': seconds - age_seconds + timeout_seconds,
+            'first_exceeded_seconds': self.pose_stream_first_exceeded_seconds,
             'confirmed_seconds': seconds,
-            'confirm_samples': 0,
+            'confirm_samples': self.confirm_samples,
             'block_position_m': None,
             'stale_measurements': ['block_pose_stream'],
             'pose_stream_age_seconds': age_seconds,
@@ -345,6 +438,10 @@ def transfer_clearance(samples, target, block_size, table_top_z):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--seconds', type=float, default=180.0)
+    parser.add_argument('--supervised', action='store_true',
+                        help='Require supervisor SIGINT; duration expiry is a safety fault')
+    parser.add_argument('--monitor-id', default=None)
+    parser.add_argument('--pose-topic', default='/isaac_calibration_block_pose')
     parser.add_argument('--target', nargs=3, type=float, default=[0.30, -0.30, 0.025])
     parser.add_argument('--tolerance', type=float, default=0.02)
     parser.add_argument('--height-tolerance', type=float, default=0.005)
@@ -399,6 +496,11 @@ def main():
     if not math.isfinite(args.inject_sim_fault_delay) or args.inject_sim_fault_delay < 0:
         parser.error('--inject-sim-fault-delay must be finite and non-negative')
     rclpy.init()
+    previous_sigint_handler = None
+    if args.supervised:
+        # rclpy's SIGINT handler may shut down the context before raising.
+        # Supervisor stop must be distinguishable from an unexpected ROS exit.
+        previous_sigint_handler = signal.signal(signal.SIGINT, signal.default_int_handler)
     node = rclpy.create_node('pallet_block_motion_check')
     tf_buffer = Buffer()
     tf_listener = TransformListener(tf_buffer, node, spin_thread=False)
@@ -413,10 +515,13 @@ def main():
         args.drop_clearance_threshold, args.tilt_threshold_deg,
         args.fault_confirm_samples)
     started = time.monotonic()
+    started_at_unix = time.time()
+    monitor_id = args.monitor_id or f'watch-pallet-block-{os.getpid()}-{time.monotonic_ns()}'
     samples = []
     joint_history = deque(maxlen=400)
     pending_poses = deque()
     contact_reference = None
+    contact_reference_detector = ContactReference()
     contact_reference_seconds = None
     published_safety_event = None
     published_sim_fault = None
@@ -468,6 +573,7 @@ def main():
             'stamp_seconds': stamp.nanoseconds / 1e9,
             'received': time.monotonic(),
             'jaws': jaws,
+            'arm': arm_measurement(positions, velocities, efforts),
         })
 
     def on_pose(msg):
@@ -511,6 +617,7 @@ def main():
             'age_seconds': feedback_alignment,
             'alignment_error_seconds': feedback_alignment,
             'jaws': jaws,
+            'arm': feedback.get('arm', {}) if feedback_fresh else {},
             'contact_state': contact_state,
         }
 
@@ -539,11 +646,13 @@ def main():
         except TransformException:
             pass
 
-        if (contact_reference is None and relative is not None and
-                contact_state == 'bilateral_stationary_loaded'):
-            contact_reference = list(relative)
-            contact_reference_seconds = pose['seconds']
-            loaded_source_position = list(position)
+        if contact_reference is None:
+            reference = contact_reference_detector.update(
+                pose['seconds'], relative, position, contact_state)
+            if reference is not None:
+                contact_reference = reference['relative']
+                contact_reference_seconds = reference['seconds']
+                loaded_source_position = reference['position']
         displacement = (
             [relative[index] - contact_reference[index] for index in range(3)]
             if relative is not None and contact_reference is not None else None)
@@ -630,8 +739,10 @@ def main():
                 force or now - pending_poses[0]['received'] >= TELEMETRY_SYNC_DELAY_SECONDS):
             process_pose(pending_poses.popleft())
 
-    node.create_subscription(PoseStamped, '/isaac_calibration_block_pose', on_pose, 10)
+    node.create_subscription(PoseStamped, args.pose_topic, on_pose, 10)
     node.create_subscription(JointState, '/isaac_joint_states', on_joints, qos_profile_sensor_data)
+    interrupted = False
+    monitor_error = None
     try:
         while rclpy.ok() and time.monotonic() - started < args.seconds:
             rclpy.spin_once(node, timeout_sec=0.1)
@@ -644,19 +755,41 @@ def main():
                 if event is not None:
                     publish_safety_event(event['code'], event)
     except KeyboardInterrupt:
-        pass
+        interrupted = True
     except RuntimeError as error:
         # rclpy can raise from take_message while the launch graph is tearing
         # down after a safety cancellation. Preserve the already captured
         # measurements and event instead of losing the experiment summary.
-        if rclpy.ok() and 'Unable to convert call argument' not in str(error):
-            raise
+        if rclpy.ok():
+            monitor_error = error
         node.get_logger().warn(f'Monitor stopped during ROS teardown: {error}')
+    except Exception as error:
+        monitor_error = error
     finally:
+        protect_monitor_finalization(args.supervised)
+        end_reason = monitor_end_reason(
+            args.supervised, interrupted, rclpy.ok(), time.monotonic() - started,
+            args.seconds, error=monitor_error is not None)
+        if end_reason == 'timeout':
+            publish_safety_event('MONITOR_TIMEOUT', {
+                'monitor_id': monitor_id, 'seconds': time.monotonic() - started,
+                'duration_seconds': args.seconds, 'phase': 'monitoring',
+            })
+            # Give reliable DDS publication bounded time to reach the bridge.
+            # Delivery is not guaranteed; the supervisor independently checks
+            # process liveness and requests its own safety stop.
+            drain_deadline = time.monotonic() + 0.3
+            try:
+                while rclpy.ok() and time.monotonic() < drain_deadline:
+                    rclpy.spin_once(node, timeout_sec=min(
+                        0.05, max(0.0, drain_deadline - time.monotonic())))
+            except (KeyboardInterrupt, RuntimeError):
+                pass
         process_pending(force=True)
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+    ended_at_unix = time.time()
     del tf_listener
     final_position = samples[-1]['position_m'] if samples else None
     xy_error = math.dist(final_position[:2], args.target[:2]) if samples else None
@@ -683,6 +816,11 @@ def main():
     slip = slip_detector.event
     release = release_stability(samples, args.target)
     result = {
+        'monitoring': {
+            'monitor_id': monitor_id, 'started_at_unix': started_at_unix,
+            'ended_at_unix': ended_at_unix, 'end_reason': end_reason,
+            'supervised': args.supervised,
+        },
         'frame': 'base_footprint', 'unit': 'm', 'sample_count': len(samples),
         'target': args.target, 'final_position': final_position,
         'final_orientation_xyzw': q,
@@ -692,6 +830,8 @@ def main():
         'final_xy_error': xy_error, 'final_height_error': height_error,
         'long_axis_vertical_cosine': long_axis_vertical, 'fresh_feedback': fresh,
         'telemetry': {
+            'contact_reference_method': 'first_bilateral_loaded_3_samples',
+            'contact_reference_seconds': contact_reference_seconds,
             'tcp_fresh_sample_count': sum(
                 sample['tcp_measurement']['status'] == 'fresh' for sample in samples),
             'joint_fresh_sample_count': sum(
@@ -719,13 +859,12 @@ def main():
         'sim_fault_command_published': published_sim_fault is not None,
         'sim_fault_command': published_sim_fault,
         **release,
-        'placement_pass': (fresh and xy_error <= args.tolerance and
+        'placement_pass': (monitor_completion_allowed(args.supervised, end_reason) and
+                           fresh and xy_error <= args.tolerance and
                            height_error <= args.height_tolerance and upright),
     }
-    if args.output:
-        args.output.write_text(json.dumps({'summary': result, 'samples': samples}, indent=2) + '\n')
-    print(json.dumps(result), flush=True)
-    return 0 if result['placement_pass'] else 1
+    return write_monitor_result(
+        result, samples, args.output, monitor_error, previous_sigint_handler)
 
 
 if __name__ == '__main__':

@@ -106,7 +106,7 @@ class RobotProfilesTest(unittest.TestCase):
         self.assertEqual(0.050, params['object_size_z'])
         self.assertEqual(0.025, params['object_z'])
         self.assertEqual(0.025, params['place_z'])
-        self.assertAlmostEqual(0.010, params['gripper_close_min'], places=6)
+        self.assertAlmostEqual(0.000, params['gripper_close_min'], places=6)
         self.assertEqual(params['gripper_close_min'], params['gripper_close_max'])
         self.assertAlmostEqual(-0.015, params['grasp_offset_z'], places=6)
         self.assertEqual(0.04, params['lift_min_distance'])

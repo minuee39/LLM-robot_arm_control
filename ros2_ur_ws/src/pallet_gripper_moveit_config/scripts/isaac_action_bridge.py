@@ -25,6 +25,7 @@ JAWS = ['J8', 'J9']
 FEEDBACK_JOINTS = ARM + JAWS
 SAFETY_STOP_CODES = {
     'SLIP_DETECTED', 'BLOCK_DROP_DETECTED', 'TILT_DETECTED', 'TELEMETRY_STALE',
+    'MONITOR_TIMEOUT', 'MONITOR_LOST',
 }
 
 
@@ -66,7 +67,7 @@ class BilateralContact:
         self.since = None
 
     def update(self, positions, efforts, stamp):
-        if any(effort is None or effort < 1.0 for effort in efforts):
+        if any(effort is None or not math.isfinite(effort) or effort < 1.0 for effort in efforts):
             self.positions, self.since = None, None
             return False
         if (self.positions is None or
@@ -86,13 +87,37 @@ class StableTarget:
         self.last_stamp = None
 
     def update(self, within_tolerance, velocities, stamp):
-        if (not within_tolerance or any(value is None for value in velocities) or
+        if (not within_tolerance or any(value is None or not math.isfinite(value) for value in velocities) or
                 any(abs(value) > self.velocity_tolerance for value in velocities)):
             self.since, self.last_stamp = None, stamp
             return False
         if self.last_stamp is not None and stamp < self.last_stamp:
             self.since = None
         self.last_stamp = stamp
+        if self.since is None:
+            self.since = stamp
+            return False
+        return stamp - self.since >= self.duration - 1e-9
+
+
+class GoalDwell:
+    """Timed position-goal hold experiment; does not assert zero physical velocity."""
+
+    def __init__(self, duration):
+        self.duration = duration
+        self.since = None
+        self.last_stamp = None
+
+    def update(self, within_tolerance, stamp):
+        if self.last_stamp is not None and stamp <= self.last_stamp:
+            if stamp < self.last_stamp:
+                self.since = None
+                self.last_stamp = stamp
+            return False
+        self.last_stamp = stamp
+        if not within_tolerance:
+            self.since = None
+            return False
         if self.since is None:
             self.since = stamp
             return False
@@ -132,6 +157,19 @@ class Bridge(Node):
         self.have_feedback = False
         self.lock = threading.Lock()
         self.busy = set()
+        self.declare_parameter('arm_settle_seconds', 0.0)
+        self.arm_settle_seconds = float(self.get_parameter('arm_settle_seconds').value)
+        if not math.isfinite(self.arm_settle_seconds) or not 0 <= self.arm_settle_seconds <= 2:
+            raise ValueError('arm_settle_seconds must be finite and within [0, 2]')
+        # Simulation-only diagnostic: continuous low velocity at the goal.
+        self.arm_settle_velocity = 0.01
+        self.declare_parameter('arm_goal_dwell_seconds', 0.0)
+        self.arm_goal_dwell_seconds = float(self.get_parameter('arm_goal_dwell_seconds').value)
+        if (not math.isfinite(self.arm_goal_dwell_seconds) or
+                not 0 <= self.arm_goal_dwell_seconds <= 2):
+            raise ValueError('arm_goal_dwell_seconds must be finite and within [0, 2]')
+        if self.arm_goal_dwell_seconds > 0 and self.arm_settle_seconds > 0:
+            raise ValueError('Choose either timed goal dwell or velocity settling, not both')
         self.declare_parameter('safety_cancel_enabled', False)
         self.declare_parameter('safety_event_max_age_seconds', 2.0)
         self.safety_stop = SafetyStop(
@@ -307,6 +345,13 @@ class Bridge(Node):
                 self.stamp,
             )
 
+    def arm_feedback(self, names):
+        with self.lock:
+            if not self.have_feedback or time.monotonic() - self.stamp > 1:
+                raise RuntimeError('Isaac feedback timeout')
+            return ([self.positions[joint] for joint in names],
+                    [self.velocities.get(joint) for joint in names], self.stamp)
+
     def command(self, names, values):
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
@@ -360,14 +405,16 @@ class Bridge(Node):
             deadline = time.monotonic() + settle_timeout
             contact = BilateralContact()
             stable_target = StableTarget(
-                self.gripper_settle_seconds, self.gripper_settle_velocity)
+                self.gripper_settle_seconds if kind == 'gripper' else self.arm_settle_seconds,
+                self.gripper_settle_velocity if kind == 'gripper' else self.arm_settle_velocity)
+            goal_dwell = GoalDwell(self.arm_goal_dwell_seconds)
             while time.monotonic() < deadline:
                 if kind == 'gripper':
                     actual, efforts, velocities, feedback_stamp = self.gripper_feedback()
                     expected = [target[0], target[0]]
                     effort = min(efforts) if all(e is not None for e in efforts) else 0.0
                 else:
-                    actual = self.current(names)
+                    actual, velocities, feedback_stamp = self.arm_feedback(names)
                     expected = target
                 if self.safety_latched():
                     self.hold_measured_state()
@@ -383,13 +430,24 @@ class Bridge(Node):
                 tolerance = self.gripper_goal_tolerance if kind == 'gripper' else 0.01
                 within_tolerance = max(
                     abs(a - b) for a, b in zip(actual, expected)) <= tolerance
-                settled = (
-                    stable_target.update(within_tolerance, velocities, feedback_stamp)
-                    if kind == 'gripper' else within_tolerance)
+                if kind == 'gripper' or self.arm_settle_seconds > 0:
+                    settled = stable_target.update(within_tolerance, velocities, feedback_stamp)
+                elif self.arm_goal_dwell_seconds > 0:
+                    settled = goal_dwell.update(within_tolerance, feedback_stamp)
+                else:
+                    settled = within_tolerance
                 if settled:
                     if kind == 'gripper':
                         result.position, result.reached_goal = actual[0], True
                         result.effort = effort
+                    elif self.arm_settle_seconds > 0:
+                        self.get_logger().info(
+                            f'Isaac arm settled for {self.arm_settle_seconds:.2f} s '
+                            f'at <= {self.arm_settle_velocity:.3f} rad/s')
+                    elif self.arm_goal_dwell_seconds > 0:
+                        self.get_logger().info(
+                            f'Isaac arm goal held for {self.arm_goal_dwell_seconds:.2f} s '
+                            '(position tolerance only; not a velocity-settle assertion)')
                     goal.succeed()
                     return result
                 if kind == 'gripper' and closing:
@@ -407,9 +465,17 @@ class Bridge(Node):
                         goal.succeed()
                         return result
                 time.sleep(0.01)
-            raise RuntimeError(
-                f'Isaac target not reached within {settle_timeout:.1f} seconds'
-            )
+            if kind == 'arm' and self.arm_settle_seconds > 0:
+                raise RuntimeError(
+                    f'Isaac arm velocity-settle condition not met within {settle_timeout:.1f} seconds; '
+                    f'max_position_error_rad={max(abs(a-b) for a,b in zip(actual, expected)):.6f}, '
+                    f'velocities_rad_s={velocities}'
+                )
+            if kind == 'arm' and self.arm_goal_dwell_seconds > 0:
+                raise RuntimeError(
+                    f'Isaac arm position-goal dwell not met within {settle_timeout:.1f} seconds'
+                )
+            raise RuntimeError(f'Isaac target not reached within {settle_timeout:.1f} seconds')
         except Exception as exc:
             if kind == 'arm':
                 result.error_code = FollowJointTrajectory.Result.GOAL_TOLERANCE_VIOLATED

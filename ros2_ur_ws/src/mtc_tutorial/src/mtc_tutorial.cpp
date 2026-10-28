@@ -11,12 +11,16 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <moveit_msgs/msg/attached_collision_object.hpp>
+#include <moveit_msgs/msg/display_robot_state.hpp>
 #include <moveit_msgs/msg/object_color.hpp>
+#include <moveit_msgs/msg/orientation_constraint.hpp>
 #include <moveit_msgs/msg/planning_scene.hpp>
 #include <moveit_msgs/msg/planning_scene_components.hpp>
 #include <moveit_msgs/srv/apply_planning_scene.hpp>
 #include <moveit_msgs/srv/get_planning_scene.hpp>
+#include <moveit/collision_detection/collision_common.hpp>
 #include <moveit/planning_scene/planning_scene.h>
+#include <moveit/robot_state/conversions.hpp>
 #include <moveit/robot_trajectory/robot_trajectory.hpp>
 #include <moveit/task_constructor/cost_terms.h>
 #include <moveit/task_constructor/task.h>
@@ -36,6 +40,8 @@
 #include <tf2_eigen/tf2_eigen.h>
 #endif
 #include <unistd.h>
+#include <mtc_tutorial/pallet_obstacle_audit.hpp>
+#include <mtc_tutorial/pallet_release.hpp>
 
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("mtc_tutorial");
 namespace mtc = moveit::task_constructor;
@@ -77,6 +83,59 @@ void logTrajectorySegments(
   RCLCPP_INFO(
       LOGGER, "Trajectory segment %zu: '%s', %.3f s, %zu waypoint(s)", segment_index,
       stage_name.c_str(), duration, trajectory.getWayPointCount());
+}
+
+bool auditPalletObstacleSolution(
+    const mtc::SolutionBase& solution, const std::vector<std::string>& obstacle_ids,
+    const std::string& target_id, size_t& checked_scenes)
+{
+  if (const auto* sequence = dynamic_cast<const mtc::SolutionSequence*>(&solution))
+  {
+    for (const auto* child : sequence->solutions())
+    {
+      if (!auditPalletObstacleSolution(*child, obstacle_ids, target_id, checked_scenes))
+        return false;
+    }
+    return true;
+  }
+  if (const auto* wrapped = dynamic_cast<const mtc::WrappedSolution*>(&solution))
+    return auditPalletObstacleSolution(*wrapped->wrapped(), obstacle_ids, target_id, checked_scenes);
+  const auto* trajectory = dynamic_cast<const mtc::SubTrajectory*>(&solution);
+  if (!trajectory || !trajectory->trajectory() || !solution.creator())
+    return true;
+  const auto stage = solution.creator()->name();
+  if (stage != "lift object" && stage != "move above place" && stage != "lower object")
+    return true;
+  for (const auto* state : { solution.start(), solution.end() })
+  {
+    if (!state || !state->scene())
+      return false;
+    const auto& scene = state->scene();
+    const auto& matrix = scene->getAllowedCollisionMatrix();
+    auto names = scene->getRobotModel()->getLinkModelNames();
+    names.push_back(target_id);
+    for (const auto& id : obstacle_ids)
+    {
+      if (!scene->getWorld()->hasObject(id))
+      {
+        RCLCPP_ERROR(LOGGER, "Pallet obstacle %s missing from selected stage %s", id.c_str(), stage.c_str());
+        return false;
+      }
+      for (const auto& name : names)
+      {
+        if (!palletObstaclePairForbidden(matrix, id, name))
+        {
+          RCLCPP_ERROR(LOGGER, "Pallet obstacle contact allowed in stage %s: %s/%s",
+                       stage.c_str(), id.c_str(), name.c_str());
+          return false;
+        }
+      }
+    }
+    ++checked_scenes;
+    RCLCPP_INFO(LOGGER, "PALLET_OBSTACLE_SOLUTION_AUDIT stage=%s scene=%zu effective_pairs_forbidden=true",
+                stage.c_str(), checked_scenes);
+  }
+  return true;
 }
 
 template <typename ServiceT>
@@ -135,7 +194,9 @@ private:
   void declareParameters();
   moveit_msgs::msg::CollisionObject makeObject(double x, double y, double z) const;
   bool applyTouchCollisionAcm();
+  bool logRecoverySceneDiagnostics();
   moveit::core::MoveItErrorCode executeBlended(const mtc::SolutionBase& solution);
+  void publishCollisionState(const mtc::SolutionBase& solution);
 
   std::string objectId() const;
   std::string plannerId() const;
@@ -145,6 +206,8 @@ private:
 
   mtc::Task task_;
   rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<moveit_msgs::msg::DisplayRobotState>::SharedPtr collision_state_publisher_;
+  bool collision_state_published_{ false };
 };
 
 rclcpp::node_interfaces::NodeBaseInterface::SharedPtr MTCTaskNode::getNodeBaseInterface()
@@ -156,6 +219,8 @@ MTCTaskNode::MTCTaskNode(const rclcpp::NodeOptions& options)
   : node_{ std::make_shared<rclcpp::Node>("mtc_node_" + std::to_string(getpid()), options) }
 {
   declareParameters();
+  collision_state_publisher_ = node_->create_publisher<moveit_msgs::msg::DisplayRobotState>(
+      "/mtc_collision_state", rclcpp::QoS(1).transient_local().reliable());
 }
 
 void MTCTaskNode::declareParameters()
@@ -187,6 +252,14 @@ void MTCTaskNode::declareParameters()
   {
     node_->declare_parameter("planning_only", false);
   }
+  if (!node_->has_parameter("cartesian_transfer"))
+  {
+    node_->declare_parameter("cartesian_transfer", false);
+  }
+  if (!node_->has_parameter("upright_transfer"))
+  {
+    node_->declare_parameter("upright_transfer", false);
+  }
   const auto declare_string_if_missing = [this](
       const std::string& name, const std::string& default_value) {
     if (!node_->has_parameter(name))
@@ -210,6 +283,7 @@ void MTCTaskNode::declareParameters()
   declare_string_if_missing("hand_frame", "robotiq_grasping_frame");
   declare_string_if_missing("gripper_joint_name", "robotiq_finger_joint");
   declare_string_if_missing("open_pose_name", "open");
+  declare_if_missing("release_open_position", -1.0);
   declare_string_if_missing("home_pose_name", "ready");
   declare_string_if_missing("arm_controller_name", "ur_manipulator_controller");
   declare_string_if_missing("gripper_controller_name", "gripper_controller");
@@ -229,6 +303,11 @@ void MTCTaskNode::declareParameters()
         "robotiq_right_outer_knuckle",
       });
   declare_string_array_if_missing("forearm_collision_links", { "forearm_link" });
+  declare_string_array_if_missing("pallet_obstacle_ids", {});
+  if (!node_->has_parameter("pallet_obstacle_spheres"))
+  {
+    node_->declare_parameter<std::vector<double>>("pallet_obstacle_spheres", std::vector<double>{});
+  }
 
   declare_if_missing("object_x", -0.3);
   declare_if_missing("object_y", 0.3);
@@ -246,6 +325,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("place_x", 0.3);
   declare_if_missing("place_y", -0.3);
   declare_if_missing("place_z", 0.05);
+  declare_if_missing("place_yaw", 0.0);
 
   declare_if_missing("max_solutions", 1.0);
   declare_if_missing("max_solution_cost", 60.0);
@@ -260,6 +340,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("move_to_place_max_path_length", -1.0);
   declare_if_missing("transfer_min_clearance", -1.0);
   declare_if_missing("transfer_clearance_check_step", 0.02);
+  declare_if_missing("transfer_orientation_tolerance", M_PI / 36.0);
   declare_if_missing("return_home_timeout", 1.0);
   declare_if_missing("return_home_max_path_length", -1.0);
   declare_if_missing("arm_velocity_scaling", 0.5);
@@ -272,6 +353,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("gripper_close_max", 0.50);
   declare_if_missing("gripper_close_step", 0.08);
   declare_if_missing("recovery_retreat_distance", 0.15);
+  declare_if_missing("recovery_probe_distance", 0.005);
   declare_if_missing("recovery_retreat_timeout", 3.0);
   declare_if_missing("recovery_home_timeout", 5.0);
   declare_if_missing("recovery_direction_x", 0.0);
@@ -280,6 +362,7 @@ void MTCTaskNode::declareParameters()
   declare_if_missing("grasp_transform_roll", 0.0);
   declare_if_missing("grasp_transform_pitch", -M_PI / 2.0);
   declare_if_missing("grasp_transform_yaw", 0.0);
+  declare_if_missing("grasp_angle_delta", M_PI / 2.0);
   declare_if_missing("grasp_offset_x", 0.0);
   declare_if_missing("grasp_offset_y", 0.0);
   declare_if_missing("grasp_offset_z", 0.0);
@@ -328,6 +411,66 @@ std::vector<std::string> MTCTaskNode::stringArrayParam(const std::string& name) 
 bool MTCTaskNode::recoveryOnly() const
 {
   return node_->get_parameter("recovery_only").as_bool();
+}
+
+void MTCTaskNode::publishCollisionState(const mtc::SolutionBase& solution)
+{
+  if (collision_state_published_)
+  {
+    return;
+  }
+
+  const mtc::InterfaceState* interface_states[] = { solution.start(), solution.end() };
+  for (const auto* interface_state : interface_states)
+  {
+    if (!interface_state || !interface_state->scene())
+    {
+      continue;
+    }
+    const auto& scene = interface_state->scene();
+    const auto& robot_state = scene->getCurrentState();
+    collision_detection::CollisionRequest request;
+    request.contacts = true;
+    request.max_contacts = 100;
+    request.max_contacts_per_pair = 10;
+    collision_detection::CollisionResult result;
+    scene->checkSelfCollision(
+        request, result, robot_state, scene->getAllowedCollisionMatrix());
+    if (!result.collision)
+    {
+      continue;
+    }
+
+    moveit_msgs::msg::DisplayRobotState message;
+    moveit::core::robotStateToRobotStateMsg(robot_state, message.state, true);
+    std::vector<std::string> colliding_links;
+    for (const auto& [pair, contacts] : result.contacts)
+    {
+      (void)contacts;
+      colliding_links.push_back(pair.first);
+      colliding_links.push_back(pair.second);
+    }
+    std::sort(colliding_links.begin(), colliding_links.end());
+    colliding_links.erase(
+        std::unique(colliding_links.begin(), colliding_links.end()), colliding_links.end());
+    for (const auto& link : colliding_links)
+    {
+      moveit_msgs::msg::ObjectColor highlight;
+      highlight.id = link;
+      highlight.color.r = 1.0f;
+      highlight.color.g = 0.0f;
+      highlight.color.b = 0.0f;
+      highlight.color.a = 1.0f;
+      message.highlight_links.push_back(std::move(highlight));
+    }
+    collision_state_publisher_->publish(message);
+    collision_state_published_ = true;
+    RCLCPP_ERROR(
+        LOGGER,
+        "Published colliding IK posture to /mtc_collision_state for RViz (%zu highlighted links)",
+        colliding_links.size());
+    return;
+  }
 }
 
 moveit_msgs::msg::CollisionObject MTCTaskNode::makeObject(double x, double y, double z) const
@@ -449,6 +592,11 @@ bool MTCTaskNode::applyTouchCollisionAcm()
   addAcmName(matrix, object_id);
   setAcmDefault(matrix, object_id, true);
   const auto touch_links = stringArrayParam("touch_links");
+  const auto obstacle_ids = stringArrayParam("pallet_obstacle_ids");
+  for (const auto& id : obstacle_ids)
+  {
+    addAcmName(matrix, id);
+  }
   for (const auto& link : touch_links)
   {
     addAcmName(matrix, link);
@@ -458,6 +606,16 @@ bool MTCTaskNode::applyTouchCollisionAcm()
   for (const auto& link : touch_links)
   {
     setAcmPair(matrix, object_id, link, true);
+  }
+  // Previously picked objects can retain robot-contact permissions. A current
+  // obstacle must not inherit those permissions from a preceding MTC task.
+  for (const auto& id : obstacle_ids)
+  {
+    setAcmDefault(matrix, id, false);
+    for (const auto& other : matrix.entry_names)
+    {
+      setAcmPair(matrix, id, other, false);
+    }
   }
 
   moveit_msgs::msg::PlanningScene planning_scene;
@@ -478,6 +636,82 @@ bool MTCTaskNode::applyTouchCollisionAcm()
       LOGGER,
       "Allowed %s to touch robot links in MoveIt ACM",
       object_id.c_str());
+  return true;
+}
+
+bool MTCTaskNode::logRecoverySceneDiagnostics()
+{
+  constexpr auto service_timeout = std::chrono::seconds(10);
+  auto service_node = std::make_shared<rclcpp::Node>(
+      "mtc_recovery_scene_diagnostic_" + std::to_string(getpid()));
+  auto client = service_node->create_client<moveit_msgs::srv::GetPlanningScene>(
+      "/get_planning_scene");
+  if (!client->wait_for_service(service_timeout))
+  {
+    RCLCPP_ERROR(LOGGER, "RECOVERY_SCENE_DIAGNOSTIC service_unavailable=true");
+    return false;
+  }
+
+  auto request = std::make_shared<moveit_msgs::srv::GetPlanningScene::Request>();
+  request->components.components =
+      moveit_msgs::msg::PlanningSceneComponents::ROBOT_STATE |
+      moveit_msgs::msg::PlanningSceneComponents::ROBOT_STATE_ATTACHED_OBJECTS |
+      moveit_msgs::msg::PlanningSceneComponents::WORLD_OBJECT_GEOMETRY |
+      moveit_msgs::msg::PlanningSceneComponents::ALLOWED_COLLISION_MATRIX;
+  auto response = callPlanningSceneService<moveit_msgs::srv::GetPlanningScene>(
+      service_node, client, request, "Fetch recovery PlanningScene");
+  if (!response)
+  {
+    RCLCPP_ERROR(LOGGER, "RECOVERY_SCENE_DIAGNOSTIC fetch_failed=true");
+    return false;
+  }
+
+  planning_scene::PlanningScene scene(task_.getRobotModel());
+  if (!scene.setPlanningSceneMsg(response->scene))
+  {
+    RCLCPP_ERROR(LOGGER, "RECOVERY_SCENE_DIAGNOSTIC scene_decode_failed=true");
+    return false;
+  }
+
+  collision_detection::CollisionRequest collision_request;
+  collision_request.group_name = stringParam("arm_group_name");
+  collision_request.contacts = true;
+  collision_request.max_contacts = 100;
+  collision_request.max_contacts_per_pair = 4;
+  collision_detection::CollisionResult collision_result;
+  scene.checkCollision(collision_request, collision_result);
+
+  std::ostringstream attached;
+  const auto& attached_objects = response->scene.robot_state.attached_collision_objects;
+  for (size_t index = 0; index < attached_objects.size(); ++index)
+  {
+    if (index > 0)
+    {
+      attached << ",";
+    }
+    attached << attached_objects[index].object.id << "@" << attached_objects[index].link_name;
+  }
+
+  std::ostringstream contacts;
+  size_t contact_index = 0;
+  for (const auto& [pair, _] : collision_result.contacts)
+  {
+    if (contact_index++ > 0)
+    {
+      contacts << ",";
+    }
+    contacts << pair.first << ":" << pair.second;
+  }
+
+  RCLCPP_INFO_STREAM(
+      LOGGER,
+      "RECOVERY_SCENE_DIAGNOSTIC attached_count=" << attached_objects.size()
+          << " attached=" << (attached.str().empty() ? "none" : attached.str())
+          << " world_count=" << response->scene.world.collision_objects.size()
+          << " acm_entries=" << response->scene.allowed_collision_matrix.entry_names.size()
+          << " collision=" << (collision_result.collision ? "true" : "false")
+          << " contact_count=" << collision_result.contact_count
+          << " contact_pairs=" << (contacts.str().empty() ? "none" : contacts.str()));
   return true;
 }
 
@@ -669,6 +903,48 @@ bool MTCTaskNode::setupPlanningScene()
   }
 
   planning_scene.world.collision_objects.push_back(object);
+  const auto obstacle_ids = stringArrayParam("pallet_obstacle_ids");
+  const auto spheres = node_->get_parameter("pallet_obstacle_spheres").as_double_array();
+  if (obstacle_ids.size() > 2 || spheres.size() != obstacle_ids.size() * 4 ||
+      (!obstacle_ids.empty() && stringParam("planning_frame") != "base_footprint"))
+  {
+    RCLCPP_ERROR(LOGGER, "Invalid Pallet obstacle parameter shape or frame");
+    return false;
+  }
+  std::vector<std::string> seen_obstacles;
+  for (size_t i = 0; i < obstacle_ids.size(); ++i)
+  {
+    const auto& id = obstacle_ids[i];
+    const double x = spheres[4 * i], y = spheres[4 * i + 1];
+    const double z = spheres[4 * i + 2], radius = spheres[4 * i + 3];
+    if ((id != "red_block" && id != "green_block" && id != "blue_block") || id == object_id ||
+        std::find(seen_obstacles.begin(), seen_obstacles.end(), id) != seen_obstacles.end() ||
+        !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z) || !std::isfinite(radius) ||
+        std::abs(x) > 0.85 || std::abs(y) > 0.35 || z < 0.0 || z > 0.40 ||
+        radius <= 0.0 || radius > 0.15 || is_attached(id))
+    {
+      RCLCPP_ERROR(LOGGER, "Invalid or still-attached Pallet obstacle: %s", id.c_str());
+      return false;
+    }
+    seen_obstacles.push_back(id);
+    moveit_msgs::msg::CollisionObject obstacle;
+    obstacle.header.frame_id = "base_footprint";
+    obstacle.id = id;
+    obstacle.operation = obstacle.ADD;
+    shape_msgs::msg::SolidPrimitive sphere;
+    sphere.type = shape_msgs::msg::SolidPrimitive::SPHERE;
+    sphere.dimensions = { radius };
+    geometry_msgs::msg::Pose pose;
+    pose.position.x = x;
+    pose.position.y = y;
+    pose.position.z = z;
+    pose.orientation.w = 1.0;
+    obstacle.primitives.push_back(sphere);
+    obstacle.primitive_poses.push_back(pose);
+    planning_scene.world.collision_objects.push_back(obstacle);
+    RCLCPP_INFO(LOGGER, "PALLET_OBSTACLE_AUDIT id=%s radius_m=%.6f position_m=(%.6f,%.6f,%.6f)",
+                id.c_str(), radius, x, y, z);
+  }
   if (table_enabled)
   {
     planning_scene.world.collision_objects.push_back(table);
@@ -817,6 +1093,12 @@ moveit::core::MoveItErrorCode MTCTaskNode::executeBlended(const mtc::SolutionBas
 
 bool MTCTaskNode::doTask()
 {
+  if (!palletReleasePositionValid(param("release_open_position"), stringParam("gripper_joint_name"),
+                                 stringParam("planning_frame"), param("object_size_x"), param("object_size_y")))
+  {
+    RCLCPP_ERROR(LOGGER, "Invalid Pallet release opening: require positive block clearance and J8 bounds");
+    return false;
+  }
   const double place_ik_count = param("place_max_ik_solutions");
   const double place_ik_distance = param("place_ik_min_solution_distance");
   if (!std::isfinite(place_ik_count) || place_ik_count < 1.0 ||
@@ -827,6 +1109,15 @@ bool MTCTaskNode::doTask()
     return false;
   }
   task_ = recoveryOnly() ? createRecoveryTask() : createTask();
+  if (recoveryOnly() && !applyTouchCollisionAcm())
+  {
+    RCLCPP_ERROR(LOGGER, "Recovery touch ACM could not be restored; refusing motion");
+    return false;
+  }
+  if (recoveryOnly() && !logRecoverySceneDiagnostics())
+  {
+    RCLCPP_WARN(LOGGER, "Recovery scene diagnostics were unavailable; planning remains fail-closed");
+  }
 
   try
   {
@@ -880,6 +1171,17 @@ bool MTCTaskNode::doTask()
       solutions.begin(), solutions.end(),
       [](const auto& lhs, const auto& rhs) { return lhs->cost() < rhs->cost(); });
   const auto& best_solution = **best_solution_it;
+  const auto obstacle_ids = stringArrayParam("pallet_obstacle_ids");
+  if (!obstacle_ids.empty())
+  {
+    size_t checked_scenes = 0;
+    if (!auditPalletObstacleSolution(best_solution, obstacle_ids, objectId(), checked_scenes) ||
+        checked_scenes < 6)
+    {
+      RCLCPP_ERROR(LOGGER, "Selected Pallet obstacle scene/ACM audit failed; execution skipped");
+      return false;
+    }
+  }
 
   const double max_solution_cost = param("max_solution_cost");
   if (max_solution_cost >= 0.0 && best_solution.cost() > max_solution_cost)
@@ -1094,7 +1396,7 @@ mtc::Task MTCTaskNode::createTask()
   stage->setObject(object_id);
   // Evaluate both orthogonal block faces. The half-turn variants are retained
   // because they can lead to a substantially shorter arm IK branch.
-  stage->setAngleDelta(M_PI / 2.0);
+  stage->setAngleDelta(param("grasp_angle_delta"));
   stage->setMonitoredStage(open_hand_stage_ptr);
 
   // Compute IK
@@ -1115,6 +1417,11 @@ mtc::Task MTCTaskNode::createTask()
   auto stage =
       std::make_unique<mtc::stages::ModifyPlanningScene>("allow pick object robot contact");
   stage->allowCollisions(object_id, true);
+  const auto obstacle_ids = stringArrayParam("pallet_obstacle_ids");
+  if (!obstacle_ids.empty())
+  {
+    stage->allowCollisions(object_id, obstacle_ids, false);
+  }
   grasp->insert(std::move(stage));
 }
 
@@ -1165,10 +1472,52 @@ mtc::Task MTCTaskNode::createTask()
 }
 
 {
+  const bool cartesian_transfer = node_->get_parameter("cartesian_transfer").as_bool();
+  mtc::solvers::PlannerInterfacePtr transfer_planner = sampling_planner;
+  if (cartesian_transfer)
+  {
+    auto straight_line_planner = std::make_shared<mtc::solvers::CartesianPath>();
+    straight_line_planner->setIKFrame(hand_frame);
+    straight_line_planner->setMaxVelocityScalingFactor(param("cartesian_velocity_scaling"));
+    straight_line_planner->setMaxAccelerationScalingFactor(param("cartesian_acceleration_scaling"));
+    straight_line_planner->setStepSize(.01);
+    straight_line_planner->setMinFraction(1.0);
+    transfer_planner = straight_line_planner;
+    RCLCPP_INFO(
+        LOGGER,
+        "Using straight Cartesian transfer for the loaded move to place; IK frame: %s",
+        hand_frame.c_str());
+  }
   auto stage_move_to_place = std::make_unique<mtc::stages::Connect>(
       "move above place",
-      mtc::stages::Connect::GroupPlannerVector{ { arm_group_name, sampling_planner } });
+      mtc::stages::Connect::GroupPlannerVector{ { arm_group_name, transfer_planner } });
   stage_move_to_place->setTimeout(param("move_to_place_timeout"));
+  if (node_->get_parameter("upright_transfer").as_bool())
+  {
+    const Eigen::Matrix3d desired_hand_rotation =
+        Eigen::AngleAxisd(param("place_yaw"), Eigen::Vector3d::UnitZ()).toRotationMatrix() *
+        grasp_frame_transform.linear().transpose();
+    const Eigen::Quaterniond desired_hand_orientation(desired_hand_rotation);
+    moveit_msgs::msg::OrientationConstraint constraint;
+    constraint.header.frame_id = planning_frame;
+    constraint.link_name = hand_frame;
+    constraint.orientation.x = desired_hand_orientation.x();
+    constraint.orientation.y = desired_hand_orientation.y();
+    constraint.orientation.z = desired_hand_orientation.z();
+    constraint.orientation.w = desired_hand_orientation.w();
+    constraint.absolute_x_axis_tolerance = param("transfer_orientation_tolerance");
+    constraint.absolute_y_axis_tolerance = param("transfer_orientation_tolerance");
+    constraint.absolute_z_axis_tolerance = M_PI;
+    constraint.weight = 1.0;
+    moveit_msgs::msg::Constraints constraints;
+    constraints.name = "upright_loaded_transfer";
+    constraints.orientation_constraints.push_back(std::move(constraint));
+    stage_move_to_place->setPathConstraints(std::move(constraints));
+    RCLCPP_INFO(
+        LOGGER,
+        "Constraining loaded transfer roll/pitch to %.1f degrees; yaw remains free",
+        param("transfer_orientation_tolerance") * 180.0 / M_PI);
+  }
   const double transfer_min_clearance = param("transfer_min_clearance");
   const double transfer_clearance_check_step = param("transfer_clearance_check_step");
   std::vector<Eigen::Vector3d> bottom_corners_in_hand;
@@ -1284,17 +1633,20 @@ mtc::Task MTCTaskNode::createTask()
   target_pose_msg.pose.position.y = param("place_y");
   target_pose_msg.pose.position.z =
       param("place_z") + std::max(0.0, param("lower_max_distance"));
-  target_pose_msg.pose.orientation.w = 1.0;
+  const double place_half_yaw = 0.5 * param("place_yaw");
+  target_pose_msg.pose.orientation.z = std::sin(place_half_yaw);
+  target_pose_msg.pose.orientation.w = std::cos(place_half_yaw);
   stage->setPose(target_pose_msg);
   stage->setMonitoredStage(attach_object_stage);  // Hook into attach_object_stage
 
   // Compute IK
     auto wrapper =
         std::make_unique<mtc::stages::ComputeIK>("place pose IK", std::move(stage));
-    wrapper->addSolutionCallback([](const mtc::SolutionBase& solution) {
+    wrapper->addSolutionCallback([this](const mtc::SolutionBase& solution) {
       if (solution.isFailure())
       {
         RCLCPP_WARN(LOGGER, "MTC place IK failure: %s", solution.comment().c_str());
+        publishCollisionState(solution);
       }
     });
   wrapper->setMaxIKSolutions(static_cast<unsigned int>(param("place_max_ik_solutions")));
@@ -1329,7 +1681,61 @@ if (param("lower_max_distance") > 0.0)
 {
   auto stage = std::make_unique<mtc::stages::MoveTo>("open hand", gripper_interpolation_planner);
   stage->setGroup(hand_group_name);
-  stage->setGoal(open_pose_name);
+  const double release_open_position = param("release_open_position");
+  if (release_open_position == -1.0)
+    stage->setGoal(open_pose_name);
+  else
+  {
+    stage->setGoal(std::map<std::string, double>{{stringParam("gripper_joint_name"), release_open_position}});
+    RCLCPP_INFO(LOGGER, "PALLET_RELEASE_OPEN_POSITION_M %.6f (pre-grasp named opening unchanged)",
+                release_open_position);
+  }
+  if (!stringArrayParam("pallet_obstacle_ids").empty())
+  {
+    stage->addSolutionCallback([hand_group_name, object_id](const mtc::SolutionBase& solution) {
+      if (!solution.isFailure())
+        return;
+      const auto* state = solution.end();
+      if (!state || !state->scene())
+      {
+        RCLCPP_WARN(LOGGER, "PALLET_OPEN_HAND_FAILURE target=%s goal_scene_unavailable comment=%s",
+                    object_id.c_str(), solution.comment().c_str());
+        return;
+      }
+      collision_detection::CollisionRequest request;
+      request.group_name = hand_group_name;
+      request.contacts = true;
+      request.max_contacts = 100;
+      request.max_contacts_per_pair = 10;
+      collision_detection::CollisionResult result;
+      const auto& scene = state->scene();
+      scene->checkCollision(request, result, scene->getCurrentState(), scene->getAllowedCollisionMatrix());
+      RCLCPP_WARN(LOGGER, "PALLET_OPEN_HAND_FAILURE target=%s collision=%s pairs=%zu comment=%s",
+                  object_id.c_str(), result.collision ? "true" : "false",
+                  result.contacts.size(), solution.comment().c_str());
+      for (const auto& [pair, contacts] : result.contacts)
+      {
+        double max_depth = 0.0;
+        for (const auto& contact : contacts)
+          max_depth = std::max(max_depth, contact.depth);
+        RCLCPP_WARN(LOGGER, "PALLET_OPEN_HAND_CONTACT target=%s pair=%s/%s contacts=%zu max_depth_m=%.6f",
+                    object_id.c_str(), pair.first.c_str(), pair.second.c_str(), contacts.size(), max_depth);
+      }
+      // Diagnostic state copies only: never change the planned goal or command hardware.
+      for (const double opening : {0.016, 0.018, 0.020, 0.025, 0.0335})
+      {
+        moveit::core::RobotState candidate(scene->getCurrentState());
+        candidate.setVariablePosition("J8", opening);
+        candidate.setVariablePosition("J9", opening);
+        candidate.update();
+        collision_detection::CollisionResult candidate_result;
+        scene->checkCollision(request, candidate_result, candidate, scene->getAllowedCollisionMatrix());
+        RCLCPP_WARN(LOGGER, "PALLET_RELEASE_SWEEP target=%s one_jaw_m=%.4f collision=%s pairs=%zu",
+                    object_id.c_str(), opening, candidate_result.collision ? "true" : "false",
+                    candidate_result.contacts.size());
+      }
+    });
+  }
   place->insert(std::move(stage));
 }
 
@@ -1425,16 +1831,39 @@ mtc::Task MTCTaskNode::createRecoveryTask()
   auto cartesian_planner = std::make_shared<mtc::solvers::CartesianPath>();
   cartesian_planner->setMaxVelocityScalingFactor(0.1);
   cartesian_planner->setMaxAccelerationScalingFactor(0.1);
-  cartesian_planner->setStepSize(0.01);
+  const double retreat_distance = param("recovery_retreat_distance");
+  const double probe_distance = param("recovery_probe_distance");
+  if (!std::isfinite(retreat_distance) || !std::isfinite(probe_distance) ||
+      retreat_distance <= 0.0 || probe_distance <= 0.0 || probe_distance > retreat_distance)
   {
+    throw std::runtime_error(
+        "Recovery distances must be finite and satisfy 0 < probe <= retreat");
+  }
+  cartesian_planner->setStepSize(std::min(0.0025, probe_distance / 2.0));
+
+  std::vector<double> retreat_targets;
+  for (double target = probe_distance; target < retreat_distance; target *= 2.0)
+  {
+    retreat_targets.push_back(target);
+  }
+  if (retreat_targets.empty() || retreat_targets.back() < retreat_distance - 1e-9)
+  {
+    retreat_targets.push_back(retreat_distance);
+  }
+
+  double previous_target = 0.0;
+  for (const double target : retreat_targets)
+  {
+    const double increment = target - previous_target;
     auto stage =
         std::make_unique<mtc::stages::MoveRelative>(
-            "recovery retreat " + recovery_candidate_id, cartesian_planner);
+            "recovery retreat " + recovery_candidate_id + " to " +
+                std::to_string(target) + " m",
+            cartesian_planner);
     stage->properties().configureInitFrom(mtc::Stage::PARENT, { "group" });
     stage->properties().set("link", hand_frame);
     stage->properties().set("timeout", param("recovery_retreat_timeout"));
-    const double retreat_distance = param("recovery_retreat_distance");
-    stage->setMinMaxDistance(retreat_distance, retreat_distance);
+    stage->setMinMaxDistance(increment, increment);
     stage->setIKFrame(hand_frame);
 
     geometry_msgs::msg::Vector3Stamped direction;
@@ -1444,6 +1873,7 @@ mtc::Task MTCTaskNode::createRecoveryTask()
     direction.vector.z = direction_z / direction_norm;
     stage->setDirection(direction);
     sequence->insert(std::move(stage));
+    previous_target = target;
   }
 
   auto gripper_planner = std::make_shared<mtc::solvers::JointInterpolationPlanner>();
@@ -1477,7 +1907,8 @@ mtc::Task MTCTaskNode::createRecoveryTask()
       "Configured recovery candidate=" << recovery_candidate_id << " direction="
           << planning_frame << "[" << direction_x / direction_norm << ","
           << direction_y / direction_norm << "," << direction_z / direction_norm << "] distance="
-          << param("recovery_retreat_distance") << " m -> " << open_pose_name << " -> "
+          << retreat_distance << " m probe=" << probe_distance << " m stages="
+          << retreat_targets.size() << " -> " << open_pose_name << " -> "
           << home_pose_name);
   return task;
 }

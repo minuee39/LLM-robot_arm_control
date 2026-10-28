@@ -7,6 +7,7 @@ Panels:
         - /Status1
         - /Motion Planning Tasks1
         - /PlanningScene1
+        - /Block Detection RGB1
       Splitter Ratio: 0.5
   - Class: rviz_common/Selection
     Name: Selection
@@ -107,6 +108,38 @@ Visualization Manager:
         Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
+      Value: true
+    - Attached Body Color: 150; 50; 150
+      Class: moveit_rviz_plugin/RobotState
+      Collision Enabled: true
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: Colliding IK Posture
+      Robot Alpha: 0.75
+      Robot Description: robot_description
+      Robot State Topic: /mtc_collision_state
+      Show All Links: true
+      Show Highlights: true
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Block Detection RGB
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /yolo/annotated
       Value: true
   Enabled: true
   Global Options:

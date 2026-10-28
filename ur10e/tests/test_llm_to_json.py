@@ -115,3 +115,18 @@ def test_parse_user_command_uses_selected_provider(monkeypatch, provider):
     assert called
     assert command["pick_object"] == "red_block"
     assert command["target_object"] == "blue_block"
+
+
+def test_llm_schema_rejects_extra_execution_fields(monkeypatch):
+    monkeypatch.setattr(
+        llm_to_json,
+        "_parse_with_gemini",
+        lambda unused_prompt: (
+            '{"action":"pick_place","pick_object":"red_block",'
+            '"target_object":"blue_block","relation":"near",'
+            '"confidence":1.0,"speed":1.0}'
+        ),
+    )
+    with pytest.raises(ValueError, match="unsupported fields"):
+        llm_to_json.parse_user_command_with_llm(
+            "빨간 블록을 파란 블록 옆에", build_scene_objects(), provider="gemini")

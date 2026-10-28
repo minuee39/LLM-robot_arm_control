@@ -11,8 +11,8 @@ tracking_error_grace_s: 0.50
 goal_tolerance_rad: 0.05
 settle_timeout_s: 2.0
 
-# Confirmed arm mapping: j1..j5 use CAN IDs 1..5. IDs 6 and 7 are reserved
-# for the future gripper. Support the arm and still verify directions, zero
+# Confirmed physical arm mapping: j1..j6 use CAN IDs 1..6; gripper is ID 7.
+# Gripper is controlled separately from the arm trajectory. Verify directions, zero
 # offsets, ratios, limits, current limits, and E-stop before commissioning.
 joints:
   j1: {motor_id: 1, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 3.14, max_velocity_rad_s: 0.35, max_acceleration_rad_s2: 0.50, current_limit_a: 1.0}
@@ -20,3 +20,4 @@ joints:
   j3: {motor_id: 3, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 0.802851, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.50, current_limit_a: 0.8}
   j4: {motor_id: 4, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 3.14, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.75, current_limit_a: 0.8}
   j5: {motor_id: 5, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -0.785398, upper_rad: 2.548181, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.75, current_limit_a: 0.8}
+  j6: {motor_id: 6, direction: 1, motor_zero_rad: 0.0, transmission_ratio: 1.0, lower_rad: -3.14, upper_rad: 3.14, max_velocity_rad_s: 0.30, max_acceleration_rad_s2: 0.75, current_limit_a: 0.8}

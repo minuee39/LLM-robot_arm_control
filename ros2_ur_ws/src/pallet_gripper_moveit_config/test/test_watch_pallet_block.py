@@ -1,18 +1,111 @@
 from pathlib import Path
 import math
+import json
+import subprocess
 import sys
+import tempfile
 import unittest
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(PROJECT_ROOT / 'ros2_ur_ws/scripts'))
 from watch_pallet_block import (
-    closest_joint_feedback, jaw_contact_state, rotate_vector_inverse,
+    arm_measurement, ContactReference, closest_joint_feedback, jaw_contact_state, rotate_vector_inverse,
+    monitor_completion_allowed, monitor_end_reason,
     release_stability, RuntimeFaultDetector, SlipDetector, slip_event,
     tcp_relative_position)
 
 
 class WatchPalletBlockTest(unittest.TestCase):
+    def test_supervised_serialization_survives_sigint_and_preserves_error(self):
+        # Inject a real SIGINT inside json.dumps in an isolated process, not
+        # into the test runner. Exercise both normal failure and saved error.
+        script_dir = str(PROJECT_ROOT / 'ros2_ur_ws/scripts')
+        for has_error in (False, True):
+            with tempfile.TemporaryDirectory() as temporary:
+                output = Path(temporary) / 'motion.json'
+                script = f'''
+import json, os, signal, sys
+from pathlib import Path
+sys.path.insert(0, {script_dir!r})
+from watch_pallet_block import protect_monitor_finalization, write_monitor_result
+original_handler = signal.getsignal(signal.SIGINT)
+original_dumps = json.dumps
+def interrupted_dumps(*args, **kwargs):
+    os.kill(os.getpid(), signal.SIGINT)
+    return original_dumps(*args, **kwargs)
+json.dumps = interrupted_dumps
+protect_monitor_finalization(True)
+error = RuntimeError('original monitor error') if {has_error!r} else None
+try:
+    code = write_monitor_result({{'placement_pass': False}}, [{{'seconds': 300}}],
+                               Path({str(output)!r}), error, original_handler)
+except RuntimeError as caught:
+    assert error is caught
+    code = 1
+assert signal.getsignal(signal.SIGINT) == original_handler
+raise SystemExit(code)
+'''
+                completed = subprocess.run([sys.executable, '-c', script],
+                                           capture_output=True, text=True, timeout=10)
+                self.assertEqual(completed.returncode, 1, completed.stderr)
+                payload = json.loads(output.read_text())
+                self.assertFalse(payload['summary']['placement_pass'])
+                self.assertEqual(payload['samples'], [{'seconds': 300}])
+
+    def test_monitor_duration_only_normal_without_supervision(self):
+        self.assertEqual(monitor_end_reason(False, False, True, 300, 300),
+                         'duration_complete')
+        self.assertEqual(monitor_end_reason(True, False, True, 300, 300), 'timeout')
+        self.assertTrue(monitor_completion_allowed(False, 'duration_complete'))
+        self.assertFalse(monitor_completion_allowed(True, 'timeout'))
+
+    def test_monitor_supervisor_stop_requires_interruption(self):
+        self.assertEqual(monitor_end_reason(True, True, True, 1, 300), 'supervisor_stop')
+        self.assertEqual(monitor_end_reason(False, True, True, 1, 300), 'interrupted')
+        self.assertTrue(monitor_completion_allowed(True, 'supervisor_stop'))
+        self.assertFalse(monitor_completion_allowed(True, 'duration_complete'))
+
+    def test_monitor_shutdown_and_error_fail_closed(self):
+        self.assertEqual(monitor_end_reason(True, False, False, 1, 300), 'ros_shutdown')
+        self.assertEqual(monitor_end_reason(True, False, True, 1, 300, error=True), 'error')
+        self.assertEqual(monitor_end_reason(True, False, True, 1, 300), 'error')
+        for reason in ('error', 'ros_shutdown', 'interrupted', 'timeout'):
+            self.assertFalse(monitor_completion_allowed(True, reason))
+
+    def test_contact_reference_captures_moving_loaded_jaws(self):
+        detector = ContactReference()
+        self.assertIsNone(detector.update(1, [0, 0, 0], [1, 2, 3], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(2, [1, 0, 0], [1, 2, 3], 'bilateral_loaded'))
+        # Gap above 0.5 seconds breaks confirmation.
+        self.assertIsNone(detector.update(2.1, [2, 0, 0], [1, 2, 3], 'bilateral_loaded'))
+        reference = detector.update(2.2, [3, 0, 0], [1, 2, 3], 'bilateral_loaded')
+        self.assertEqual(reference['seconds'], 2)
+        self.assertEqual(reference['relative'], [1, 0, 0])
+        self.assertEqual(detector.update(3, [99, 0, 0], [0, 0, 0], 'not_loaded'), reference)
+
+    def test_contact_reference_does_not_confirm_duplicates_or_bad_feedback(self):
+        detector = ContactReference()
+        self.assertIsNone(detector.update(1, [0, 0, 0], [0, 0, 0], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(1, [0, 0, 0], [0, 0, 0], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(1.1, None, [0, 0, 0], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(1.2, [float('nan'), 0, 0], [0, 0, 0], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(1.3, [0, 0, 0], [0, 0, 0], 'not_loaded'))
+        self.assertIsNone(detector.update(1.4, [0, 0, 0], [0, 0, 0], 'bilateral_loaded'))
+        self.assertIsNone(detector.update(1.5, [0, 0, 0], [0, 0, 0], 'bilateral_loaded'))
+        self.assertEqual(detector.update(1.6, [0, 0, 0], [0, 0, 0], 'bilateral_loaded')['seconds'], 1.4)
+
+    def test_arm_snapshot_requires_all_finite_positions(self):
+        positions = {f'J{i}': i*0.1 for i in range(1, 7)}
+        result = arm_measurement(positions, {}, {'J1': float('nan')})
+        self.assertEqual(len(result), 6)
+        self.assertEqual(result['J1']['position_rad'], 0.1)
+        self.assertIsNone(result['J1']['velocity_rad_s'])
+        self.assertIsNone(result['J1']['effort_nm'])
+        self.assertEqual(arm_measurement(dict(positions, J3=float('nan')), {}, {}), {})
+        del positions['J6']
+        self.assertEqual(arm_measurement(positions, {}, {}), {})
+
     @staticmethod
     def fault_sample(seconds, position, state='bilateral_loaded',
                      orientation=(0.0, 0.0, 0.0, 1.0),
@@ -171,10 +264,35 @@ class WatchPalletBlockTest(unittest.TestCase):
         self.assertIsNone(detector.pose_stream_watchdog(1.0, 2.0, 0.75))
         detector.update(self.fault_sample(2.0, [-0.3, 0.3, 0.060]))
         self.assertIsNone(detector.pose_stream_watchdog(2.5, 0.5, 0.75))
+        self.assertIsNone(detector.pose_stream_watchdog(2.76, 0.76, 0.75))
         event = detector.pose_stream_watchdog(3.0, 1.0, 0.75)
         self.assertEqual('TELEMETRY_STALE', event['code'])
         self.assertEqual(['block_pose_stream'], event['stale_measurements'])
         self.assertEqual(0.75, event['timeout_seconds'])
+        self.assertEqual(2, event['confirm_samples'])
+
+    def test_pose_stream_watchdog_resets_after_one_transient_gap(self):
+        detector = RuntimeFaultDetector(
+            [0.3, -0.3, 0.025], [0.03, 0.03, 0.05], confirm_samples=3)
+        detector.update(self.fault_sample(1.0, [-0.3, 0.3, 0.060]))
+        self.assertIsNone(detector.pose_stream_watchdog(1.76, 0.76, 0.75))
+        self.assertIsNone(detector.pose_stream_watchdog(1.86, 0.10, 0.75))
+        self.assertIsNone(detector.pose_stream_watchdog(2.62, 0.76, 0.75))
+        self.assertIsNone(detector.pose_stream_watchdog(2.72, 0.86, 0.75))
+        event = detector.pose_stream_watchdog(2.82, 0.96, 0.75)
+        self.assertEqual('TELEMETRY_STALE', event['code'])
+        self.assertEqual(3, event['confirm_samples'])
+
+    def test_pose_stream_watchdog_requires_elapsed_confirmation_time(self):
+        detector = RuntimeFaultDetector(
+            [0.3, -0.3, 0.025], [0.03, 0.03, 0.05], confirm_samples=3)
+        detector.update(self.fault_sample(1.0, [-0.3, 0.3, 0.060]))
+        for seconds in (1.76, 1.78, 1.80):
+            self.assertIsNone(detector.pose_stream_watchdog(
+                seconds, seconds - 1.0, 0.75))
+        event = detector.pose_stream_watchdog(1.91, 0.91, 0.75)
+        self.assertEqual('TELEMETRY_STALE', event['code'])
+        self.assertAlmostEqual(1.75, event['first_exceeded_seconds'])
 
     def test_pose_stream_watchdog_stays_disarmed_after_release(self):
         detector = RuntimeFaultDetector(

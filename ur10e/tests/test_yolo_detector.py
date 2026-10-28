@@ -48,6 +48,16 @@ class FakeSegmentationModel(FakeModel):
         return [result]
 
 
+class RecordingModel(FakeModel):
+    def __init__(self):
+        super().__init__()
+        self.input_pixel = None
+
+    def __call__(self, image, conf, verbose):
+        self.input_pixel = image[0, 0].tolist()
+        return super().__call__(image, conf, verbose)
+
+
 def test_yolo_detector_combines_box_with_color_name():
     image = np.zeros((20, 30, 3), dtype=np.uint8)
     image[4:14, 5:15] = [255, 0, 0]
@@ -62,6 +72,16 @@ def test_yolo_detector_combines_box_with_color_name():
     assert detections[0].center_pixel == (10, 9)
     assert detections[0].color == "red"
     assert detections[0].class_name == "unknown"
+
+
+def test_yolo_detector_converts_rgb_camera_frame_to_bgr_for_ultralytics():
+    image = np.zeros((20, 30, 3), dtype=np.uint8)
+    image[0, 0] = [10, 20, 30]
+    model = RecordingModel()
+
+    YoloDetector(model=model).detect(image)
+
+    assert model.input_pixel == [30, 20, 10]
 
 
 def test_yolo_detector_model_mode_uses_model_class():

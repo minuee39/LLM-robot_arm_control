@@ -16,19 +16,65 @@ parser.add_argument('--calibration-block', action='store_true')
 parser.add_argument('--block-center-xy', nargs=2, type=float, metavar=('X', 'Y'))
 parser.add_argument('--block-size', nargs=3, type=float, metavar=('X', 'Y', 'Z'))
 parser.add_argument('--block-mass-kg', type=float)
+parser.add_argument('--block-contact-offset-m', type=float, default=-1.0,
+                    help='Experimental block contact offset; -1 keeps Isaac default')
+parser.add_argument('--block-static-friction', type=float, default=-1.0,
+                    help='Experimental static friction; -1 keeps Isaac default')
+parser.add_argument('--jaw-friction', type=float, default=-1.0,
+                    help='Experimental explicit jaw static/dynamic friction; -1 preserves binding')
+parser.add_argument('--contact-geometry-log', choices=('true', 'false'), default='false',
+                    help='Log actual jaw collider poses and red block geometry at 1 Hz')
+parser.add_argument('--solver-velocity-iterations', type=int, default=-1,
+                    help='Experimental articulation velocity iterations; -1 preserves default')
+parser.add_argument('--external-forces-every-iteration',
+                    choices=('default', 'true', 'false'), default='default',
+                    help='Experimental TGS force application; default preserves scene setting')
+parser.add_argument(
+    '--block-layout', choices=('single', 'three'), default='single',
+    help='Spawn the primary red block only, or red/green/blue blocks.',
+)
 parser.add_argument(
     '--fault-injection-enabled', choices=('true', 'false'), default='false',
     help='Enable the test-only /pallet/sim_fault_commands endpoint',
 )
 parser.add_argument('--rgbd-camera', action='store_true', help='Publish simulated RGB, depth, and CameraInfo topics')
+parser.add_argument('--rgbd-clock', choices=('simulation', 'system'), default='simulation',
+                    help='RGB/depth/CameraInfo header clock; legacy simulation time by default')
+parser.add_argument('--rgbd-resolution', choices=('640x480', '1280x960'), default='640x480',
+                    help='Optional RGB-D render resolution; default preserves legacy images')
+parser.add_argument('--camera-view', choices=('source', 'workcell'), default='source',
+                    help='Fixed RGB-D view: legacy source row or source plus placement workspace')
 parser.add_argument('--camera-calibration-file', default='/tmp/pallet_camera_calibration.json')
 parser.add_argument('--no-cup', action='store_true')
 parser.add_argument('--seconds', type=float, default=0)
+parser.add_argument('--diagnostic-block-pose', nargs=4, action='append',
+                    metavar=('OBJECT', 'X_M', 'Y_M', 'YAW_RAD'),
+                    help='Bounded simulation-only static fixture; never forwarded to vision.')
 parser.add_argument(
     '--disable-gravity', action='store_true',
     help='Diagnostic mode only: disable gravity on the articulation',
 )
 args = parser.parse_args()
+if args.contact_geometry_log == 'true' and not args.calibration_block:
+    parser.error('--contact-geometry-log true requires --calibration-block')
+if args.diagnostic_block_pose and not (
+        args.calibration_block and args.block_layout == 'three' and args.rgbd_camera
+        and math.isfinite(args.seconds) and 0 < args.seconds <= 120
+        and args.fault_injection_enabled == 'false'):
+    parser.error('--diagnostic-block-pose requires three calibration blocks, RGB-D, seconds in (0,120] and no fault injection')
+if args.solver_velocity_iterations != -1 and not 1 <= args.solver_velocity_iterations <= 64:
+    parser.error('--solver-velocity-iterations must be -1 or within [1, 64]')
+if (not math.isfinite(args.block_contact_offset_m) or
+        (args.block_contact_offset_m != -1.0 and
+         not 0.0 < args.block_contact_offset_m <= 0.01)):
+    parser.error('--block-contact-offset-m must be -1 or within (0, 0.01]')
+if (not math.isfinite(args.block_static_friction) or
+        (args.block_static_friction != -1.0 and
+         not 0.0 <= args.block_static_friction <= 2.0)):
+    parser.error('--block-static-friction must be -1 or within [0, 2]')
+if (not math.isfinite(args.jaw_friction) or
+        (args.jaw_friction != -1.0 and not 0.0 <= args.jaw_friction <= 2.0)):
+    parser.error('--jaw-friction must be -1 or within [0, 2]')
 fault_injection_enabled = args.fault_injection_enabled == 'true'
 root = Path(__file__).resolve().parents[1]
 source = root.parent / 'pallet_gripper/urdf/pallet_gripper.urdf'
@@ -37,13 +83,14 @@ home = yaml.safe_load((root / 'config/initial_positions.yaml').read_text())['ini
 physics = yaml.safe_load((root / 'config/isaac_physics.yaml').read_text())
 workcell = yaml.safe_load((root / 'config/workcell.yaml').read_text())
 from workcell_scenario import (
-    block_scenario, gripper_effort_limit, gripper_symmetry_config,
-    symmetric_jaw_targets,
+    block_scenario, diagnostic_block_poses, gripper_effort_limit, gripper_symmetry_config,
+    joint_state_snapshot, rgbd_camera_offsets, rgbd_camera_resolution, symmetric_jaw_targets,
 )
 try:
     workcell['block'] = block_scenario(
         workcell, args.block_center_xy, args.block_size, args.block_mass_kg,
     )
+    fixture_poses = diagnostic_block_poses(args.diagnostic_block_pose, workcell)
 except ValueError as error:
     parser.error(str(error))
 tree = ET.parse(source)
@@ -98,7 +145,7 @@ try:
     import omni.usd
     import omni.graph.core as og
     import usdrt.Sdf
-    from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux, UsdPhysics
+    from pxr import Gf, PhysxSchema, Sdf, Usd, UsdGeom, UsdLux, UsdPhysics, UsdShade
     from isaacsim.core.api import World
     from isaacsim.core.api.objects import DynamicCuboid, DynamicCylinder, FixedCuboid
     from isaacsim.core.prims import SingleArticulation
@@ -115,8 +162,11 @@ try:
         camera = UsdGeom.Camera.Define(stage, camera_path)
         camera.GetFocalLengthAttr().Set(24.0)
         camera.GetClippingRangeAttr().Set(Gf.Vec2f(0.01, 10.0))
-        eye = np.asarray(base_position) + np.array([-0.55, 0.65, 0.85])
-        target = np.asarray(base_position) + np.array([-0.30, 0.30, 0.025])
+        eye_offset, target_offset = rgbd_camera_offsets(args.camera_view)
+        eye = np.asarray(base_position) + np.asarray(eye_offset)
+        target = np.asarray(base_position) + np.asarray(target_offset)
+        print(f'PALLET_RGBD_VIEW view={args.camera_view} eye_base_m={eye_offset} '
+              f'target_base_m={target_offset}', flush=True)
         camera_to_world = Gf.Matrix4d().SetLookAt(
             Gf.Vec3d(*eye), Gf.Vec3d(*target), Gf.Vec3d(0.0, 0.0, 1.0)
         ).GetInverse()
@@ -133,6 +183,9 @@ try:
         return camera_path, optical_to_base
 
     def create_rgbd_graph(camera_path):
+        width, height = rgbd_camera_resolution(args.rgbd_resolution)
+        print(f'PALLET_RGBD_RESOLUTION width={width} height={height}', flush=True)
+        print(f'PALLET_RGBD_CLOCK mode={args.rgbd_clock}', flush=True)
         og.Controller.edit(
             {'graph_path': '/PalletCameraGraph', 'evaluator_name': 'execution'},
             {
@@ -145,8 +198,8 @@ try:
                 ],
                 og.Controller.Keys.SET_VALUES: [
                     ('RenderProduct.inputs:cameraPrim', [usdrt.Sdf.Path(camera_path)]),
-                    ('RenderProduct.inputs:width', 640),
-                    ('RenderProduct.inputs:height', 480),
+                    ('RenderProduct.inputs:width', width),
+                    ('RenderProduct.inputs:height', height),
                     ('Rgb.inputs:type', 'rgb'),
                     ('Rgb.inputs:topicName', '/sim_camera/rgb'),
                     ('Rgb.inputs:frameId', 'pallet_camera_optical_frame'),
@@ -155,6 +208,9 @@ try:
                     ('Depth.inputs:frameId', 'pallet_camera_optical_frame'),
                     ('Info.inputs:topicName', '/sim_camera/camera_info'),
                     ('Info.inputs:frameId', 'pallet_camera_optical_frame'),
+                    ('Rgb.inputs:useSystemTime', args.rgbd_clock == 'system'),
+                    ('Depth.inputs:useSystemTime', args.rgbd_clock == 'system'),
+                    ('Info.inputs:useSystemTime', args.rgbd_clock == 'system'),
                 ],
                 og.Controller.Keys.CONNECT: [
                     ('Tick.outputs:tick', 'RenderProduct.inputs:execIn'),
@@ -191,6 +247,21 @@ try:
         rendering_dt=1/60,
     )
     world.get_physics_context().set_gravity(float(physics['gravity_m_s2']))
+    scene_prim = omni.usd.get_context().get_stage().GetPrimAtPath(
+        world.get_physics_context().prim_path)
+    scene_api = PhysxSchema.PhysxSceneAPI.Apply(scene_prim)
+    original_external_forces = scene_api.GetEnableExternalForcesEveryIterationAttr().Get()
+    if args.external_forces_every_iteration != 'default':
+        requested_external_forces = args.external_forces_every_iteration == 'true'
+        scene_api.CreateEnableExternalForcesEveryIterationAttr().Set(requested_external_forces)
+        if scene_api.GetEnableExternalForcesEveryIterationAttr().Get() != requested_external_forces:
+            raise RuntimeError('External forces every iteration override not applied')
+    print('PALLET_SCENE_SOLVER_AUDIT ' + json.dumps({
+        'scene': str(scene_prim.GetPath()),
+        'solver_type': scene_api.GetSolverTypeAttr().Get(),
+        'external_forces_every_iteration': scene_api.GetEnableExternalForcesEveryIterationAttr().Get(),
+        'original_external_forces_every_iteration': original_external_forces,
+    }), flush=True)
     world.scene.add_default_ground_plane(z_position=-0.005)
     ok, cfg = omni.kit.commands.execute('URDFCreateImportConfig')
     if not ok:
@@ -284,6 +355,7 @@ try:
             table_top_z + block_size[2] / 2.0 + 0.003,
         ])
         calibration_block = None
+        block_objects = {}
         if args.calibration_block:
             calibration_block = world.scene.add(DynamicCuboid(
                 prim_path='/World/CalibrationBlock', name='calibration_block',
@@ -291,6 +363,33 @@ try:
                 mass=float(block_spec['mass_kg']),
                 color=np.array([0.85, 0.12, 0.12]),
             ))
+            block_objects['red_block'] = calibration_block
+            if args.block_layout == 'three':
+                additional_blocks = {
+                    'green_block': (-0.08, np.array([0.12, 0.75, 0.18])),
+                    'blue_block': (-0.16, np.array([0.05, 0.05, 0.95])),
+                }
+                for block_name, (y_offset, color) in additional_blocks.items():
+                    position = np.array([
+                        block_position[0], block_position[1] + y_offset,
+                        block_position[2],
+                    ])
+                    block_objects[block_name] = world.scene.add(DynamicCuboid(
+                        prim_path=f'/World/{block_name}', name=block_name,
+                        position=position, scale=block_size,
+                        mass=float(block_spec['mass_kg']), color=color,
+                    ))
+            for name, (x, y, yaw) in fixture_poses.items():
+                block_objects[name].set_default_state(
+                    position=np.array([table_center[0]+x, table_center[1]+y, block_position[2]]),
+                    orientation=np.array([math.cos(yaw/2), 0., 0., math.sin(yaw/2)]),
+                )
+                block_objects[name].set_world_pose(
+                    position=np.array([table_center[0]+x, table_center[1]+y, block_position[2]]),
+                    orientation=np.array([math.cos(yaw/2), 0., 0., math.sin(yaw/2)]),
+                )
+            if fixture_poses:
+                print('PALLET_DIAGNOSTIC_BLOCK_POSES '+json.dumps(fixture_poses, sort_keys=True), flush=True)
         cup_spec = workcell['cup']
         cup_height = float(cup_spec['height'])
         cup_radius = float(cup_spec['radius'])
@@ -343,8 +442,85 @@ try:
                 drive.CreateMaxForceAttr(limits[name]['effort'])
                 drive.CreateStiffnessAttr(float(physics['joints'][profile_name]['stiffness']))
                 drive.CreateDampingAttr(float(physics['joints'][profile_name]['damping']))
+        if args.block_contact_offset_m != -1.0:
+            for block_object in block_objects.values():
+                block_object.set_contact_offset(args.block_contact_offset_m)
+        if args.block_static_friction != -1.0:
+            for block_object in block_objects.values():
+                block_prim = stage.GetPrimAtPath(block_object.prim_path)
+                material, _ = UsdShade.MaterialBindingAPI(block_prim).ComputeBoundMaterial('physics')
+                if not material:
+                    raise RuntimeError(f'Block physics material missing: {block_object.prim_path}')
+                UsdPhysics.MaterialAPI(material.GetPrim()).CreateStaticFrictionAttr(
+                    args.block_static_friction)
+        jaw_material = None
+        # The importer returns the articulation root joint, not the link parent.
+        robot_link_root = str(stage.GetPrimAtPath(prim).GetParent().GetPath())
+        if args.jaw_friction != -1.0:
+            jaw_material = UsdShade.Material.Define(stage, '/World/Physics_Materials/jaw_experiment')
+            jaw_physics = UsdPhysics.MaterialAPI.Apply(jaw_material.GetPrim())
+            jaw_physics.CreateStaticFrictionAttr(args.jaw_friction)
+            jaw_physics.CreateDynamicFrictionAttr(args.jaw_friction)
+            jaw_physics.CreateRestitutionAttr(0.0)
+            for jaw in ('J8', 'J9'):
+                jaw_prim = stage.GetPrimAtPath(f'{robot_link_root}/{jaw}')
+                if not jaw_prim.IsValid():
+                    raise RuntimeError(f'Jaw prim missing: {robot_link_root}/{jaw}')
+                UsdShade.MaterialBindingAPI.Apply(jaw_prim).Bind(
+                    jaw_material, UsdShade.Tokens.strongerThanDescendants, 'physics')
+        audited_jaws = set()
+        jaw_colliders = []
+        # Read the composed physics binding at each collider, including inherited
+        # materials. Missing bindings remain explicit rather than guessed values.
+        for collider in stage.Traverse(Usd.TraverseInstanceProxies()):
+            collider_path = str(collider.GetPath())
+            if not collider.HasAPI(UsdPhysics.CollisionAPI):
+                continue
+            if not (any(f'/{jaw}/' in collider_path for jaw in ('J8', 'J9')) or
+                    collider_path in {'/World/CalibrationBlock', '/World/red_block',
+                                      '/World/green_block', '/World/blue_block'}):
+                continue
+            material, _ = UsdShade.MaterialBindingAPI(collider).ComputeBoundMaterial('physics')
+            if collider_path.startswith(f'{robot_link_root}/') and any(
+                    f'/{jaw}/' in collider_path for jaw in ('J8', 'J9')):
+                jaw_colliders.append(collider)
+            if jaw_material is not None and collider_path.startswith(f'{robot_link_root}/'):
+                for jaw in ('J8', 'J9'):
+                    if f'/{jaw}/' in collider_path:
+                        if not material or material.GetPath() != jaw_material.GetPath():
+                            raise RuntimeError(f'Jaw material binding not applied: {collider_path}')
+                        audited_jaws.add(jaw)
+            material_prim = material.GetPrim() if material else None
+            def material_value(name):
+                if material_prim is None:
+                    return None
+                return material_prim.GetAttribute(name).Get()
+            print('PALLET_CONTACT_AUDIT ' + json.dumps({
+                'collider': collider_path,
+                'material': str(material.GetPath()) if material else None,
+                'static_friction': material_value('physics:staticFriction'),
+                'dynamic_friction': material_value('physics:dynamicFriction'),
+                'restitution': material_value('physics:restitution'),
+                'contact_offset_m': collider.GetAttribute('physxCollision:contactOffset').Get(),
+                'rest_offset_m': collider.GetAttribute('physxCollision:restOffset').Get(),
+            }), flush=True)
+        if jaw_material is not None and audited_jaws != {'J8', 'J9'}:
+            raise RuntimeError('Both jaw colliders must be audited before motion')
+        if args.contact_geometry_log == 'true' and len(jaw_colliders) != 2:
+            raise RuntimeError('Geometry logging requires exactly two jaw colliders')
         robot = world.scene.add(SingleArticulation(prim_path=prim, name='pallet_gripper'))
         world.reset()
+        original_velocity_iterations = int(robot.get_solver_velocity_iteration_count())
+        if args.solver_velocity_iterations != -1:
+            robot.set_solver_velocity_iteration_count(args.solver_velocity_iterations)
+            if int(robot.get_solver_velocity_iteration_count()) != args.solver_velocity_iterations:
+                raise RuntimeError('Articulation velocity iteration override not applied')
+        print('PALLET_SOLVER_AUDIT ' + json.dumps({
+            'articulation': prim,
+            'position_iterations': int(robot.get_solver_position_iteration_count()),
+            'velocity_iterations': int(robot.get_solver_velocity_iteration_count()),
+            'original_velocity_iterations': original_velocity_iterations,
+        }), flush=True)
         # Mount the fixed robot base at the exact center of the tabletop.
         table_mount_position = np.array([
             table_center[0], table_center[1], table_top_z,
@@ -395,7 +571,41 @@ try:
         for _ in range(settle_steps):
             controller.apply_action(ArticulationAction(joint_positions=target))
             world.step(render=not args.headless or args.rgbd_camera)
-        settled_position = np.asarray(robot.get_joint_positions(), dtype=float)
+        if block_objects:
+            settled_blocks = {}
+            for block_name, block_object in block_objects.items():
+                block_world_position, block_world_orientation = block_object.get_world_pose()
+                settled_blocks[block_name] = (
+                    np.asarray(block_world_position, dtype=float) - table_mount_position
+                ).round(6).tolist()
+                if block_name in fixture_poses:
+                    x, y, yaw = fixture_poses[block_name]
+                    expected_position = np.array([x, y, block_size[2]/2])
+                    observed_position = np.asarray(block_world_position)-table_mount_position
+                    expected_orientation = np.array([math.cos(yaw/2), 0., 0., math.sin(yaw/2)])
+                    observed_orientation = np.asarray(block_world_orientation)
+                    dot = abs(float(expected_orientation @ observed_orientation/np.linalg.norm(observed_orientation)))
+                    if (np.linalg.norm(observed_position-expected_position) > .0001
+                            or 2*math.acos(min(1., dot)) > .001):
+                        raise RuntimeError(f'Diagnostic fixture changed during reset/settling: {block_name}')
+            print(
+                'PALLET_BLOCK_LAYOUT_READY base_positions_m='
+                f'{json.dumps(settled_blocks, sort_keys=True)}',
+                flush=True,
+            )
+        settled_snapshot = joint_state_snapshot(
+            robot.get_joint_positions(),
+            robot.get_joint_velocities(),
+            robot.get_measured_joint_efforts(),
+            len(dof_names),
+        )
+        if settled_snapshot is None:
+            raise RuntimeError('Articulation feedback unavailable after startup settling')
+        settled_position = np.asarray(settled_snapshot[0], dtype=float)
+        last_joint_position = settled_position.copy()
+        last_joint_velocity = np.asarray(settled_snapshot[1], dtype=float)
+        last_joint_effort = np.abs(np.asarray(settled_snapshot[2], dtype=float))
+        max_measured_effort = np.maximum(max_measured_effort, last_joint_effort)
         home_error = np.abs(settled_position - target)
         tolerances = np.array([
             float(physics['home_tolerance_gripper_m'] if n in {'J8', 'J9'}
@@ -421,6 +631,10 @@ try:
             node.create_publisher(PoseStamped, '/isaac_calibration_block_pose', 10)
             if calibration_block is not None else None
         )
+        block_pose_pubs = {
+            name: node.create_publisher(PoseStamped, f'/isaac_{name}_pose', 10)
+            for name in block_objects
+        }
         sim_fault_state = {
             'handled_ids': set(),
             'suppress_block_pose_until': 0.0,
@@ -485,7 +699,10 @@ try:
                 jaw_control['symmetric'] = True
             elif 'J9' in msg.name:
                 jaw_control['symmetric'] = False
-        node.create_subscription(JointState, '/isaac_joint_commands', command, 10)
+        if not fixture_poses:
+            node.create_subscription(JointState, '/isaac_joint_commands', command, 10)
+        else:
+            print('PALLET_DIAGNOSTIC_COMMANDS_DISABLED', flush=True)
         gravity = 0.0 if args.disable_gravity else float(physics['gravity_m_s2'])
         print(
             f'PALLET_ISAAC_READY joints={controlled_names} '
@@ -496,69 +713,131 @@ try:
         started = time.monotonic()
         last_gripper_diagnostic = 0.0
         last_block_pose_publish = 0.0
+        last_geometry_log = 0.0
         while app.is_running() and (not args.seconds or time.monotonic() - started < args.seconds):
             tick = time.monotonic()
             rclpy.spin_once(node, timeout_sec=0)
             applied_target = target.copy()
-            observed_before_step = np.asarray(robot.get_joint_positions(), dtype=float)
             if jaw_control['symmetric']:
                 j8_index = dof_names.index('J8')
                 j9_index = dof_names.index('J9')
                 applied_target[j8_index], applied_target[j9_index] = symmetric_jaw_targets(
                     float(target[j8_index]),
-                    float(observed_before_step[j8_index]),
-                    float(observed_before_step[j9_index]),
+                    float(last_joint_position[j8_index]),
+                    float(last_joint_position[j9_index]),
                     float(limits['J8']['lower']), float(limits['J8']['upper']),
                     symmetry_gain, symmetry_max_correction,
                 )
             controller.apply_action(ArticulationAction(joint_positions=applied_target))
             world.step(render=not args.headless or args.rgbd_camera)
+            snapshot = joint_state_snapshot(
+                robot.get_joint_positions(),
+                robot.get_joint_velocities(),
+                robot.get_measured_joint_efforts(),
+                len(dof_names),
+            )
+            if snapshot is None:
+                print(
+                    'PALLET_ISAAC_FEEDBACK_STOPPED reason=articulation_unavailable',
+                    flush=True,
+                )
+                break
+            last_joint_position = np.asarray(snapshot[0], dtype=float)
+            last_joint_velocity = np.asarray(snapshot[1], dtype=float)
+            last_joint_effort = np.abs(np.asarray(snapshot[2], dtype=float))
+            if args.contact_geometry_log == 'true' and time.monotonic() - last_geometry_log >= 1.0:
+                block = block_objects.get('red_block')
+                if block is None:
+                    raise RuntimeError('Contact geometry logging requires red block')
+                block_position, block_orientation = block.get_world_pose()
+                pads = []
+                for collider in jaw_colliders:
+                    transform = UsdGeom.Xformable(collider).ComputeLocalToWorldTransform(
+                        Usd.TimeCode.Default())
+                    center = np.asarray(transform.Transform(Gf.Vec3d(0, 0, 0)))
+                    vectors = [np.asarray(transform.TransformDir(Gf.Vec3d(*axis)))
+                               for axis in ((1, 0, 0), (0, 1, 0), (0, 0, 1))]
+                    scales = np.asarray([np.linalg.norm(v) for v in vectors])
+                    if not np.all(np.isfinite(scales)) or np.any(scales <= 0):
+                        raise RuntimeError('Invalid pad geometry transform')
+                    axes = [v / scale for v, scale in zip(vectors, scales)]
+                    cube = UsdGeom.Cube(collider)
+                    if not cube:
+                        raise RuntimeError('Contact geometry logger expects box pads')
+                    pads.append({
+                        'collider': str(collider.GetPath()),
+                        'center_base_m': (center - table_mount_position).tolist(),
+                        'axes_base': [v.tolist() for v in axes],
+                        'size_m': (scales * float(cube.GetSizeAttr().Get())).tolist(),
+                        'block_center_pad_m': [float(np.dot(block_position - center, v))
+                                               for v in axes],
+                    })
+                print('PALLET_CONTACT_GEOMETRY ' + json.dumps({
+                    'seconds': time.monotonic() - started,
+                    'unix_seconds': time.time(), 'frame': 'base_footprint', 'unit': 'm',
+                    'simulation_time_seconds': float(world.current_time),
+                    'physics_step_index': int(world.current_time_step_index),
+                    'physics_dt_seconds': float(world.get_physics_dt()),
+                    'rendering_dt_seconds': float(world.get_rendering_dt()),
+                    'block_position_m': (block_position - table_mount_position).tolist(),
+                    'block_orientation_wxyz': np.asarray(block_orientation).tolist(),
+                    'blocks': {
+                        name: {
+                            'position_m': (np.asarray(pose[0]) - table_mount_position).tolist(),
+                            'orientation_wxyz': np.asarray(pose[1]).tolist(),
+                        }
+                        for name, obj in block_objects.items()
+                        for pose in (obj.get_world_pose(),)
+                    },
+                    'jaw_position_m': {name: float(last_joint_position[dof_names.index(name)])
+                                       for name in ('J8', 'J9')},
+                    'pads': pads,
+                }), flush=True)
+                last_geometry_log = time.monotonic()
             if (block_pose_pub is not None and
                     time.monotonic() >= sim_fault_state['suppress_block_pose_until'] and
                     time.monotonic() - last_block_pose_publish >= 0.1):
-                block_world_position, block_wxyz = calibration_block.get_world_pose()
-                block_pose = PoseStamped()
-                block_pose.header.stamp = node.get_clock().now().to_msg()
-                block_pose.header.frame_id = 'base_footprint'
-                block_base_position = np.asarray(block_world_position) - table_mount_position
-                block_pose.pose.position.x = float(block_base_position[0])
-                block_pose.pose.position.y = float(block_base_position[1])
-                block_pose.pose.position.z = float(block_base_position[2])
-                block_pose.pose.orientation.x = float(block_wxyz[1])
-                block_pose.pose.orientation.y = float(block_wxyz[2])
-                block_pose.pose.orientation.z = float(block_wxyz[3])
-                block_pose.pose.orientation.w = float(block_wxyz[0])
-                block_pose_pub.publish(block_pose)
+                stamp = node.get_clock().now().to_msg()
+                for block_name, block_object in block_objects.items():
+                    block_world_position, block_wxyz = block_object.get_world_pose()
+                    block_pose = PoseStamped()
+                    block_pose.header.stamp = stamp
+                    block_pose.header.frame_id = 'base_footprint'
+                    block_base_position = np.asarray(block_world_position) - table_mount_position
+                    block_pose.pose.position.x = float(block_base_position[0])
+                    block_pose.pose.position.y = float(block_base_position[1])
+                    block_pose.pose.position.z = float(block_base_position[2])
+                    block_pose.pose.orientation.x = float(block_wxyz[1])
+                    block_pose.pose.orientation.y = float(block_wxyz[2])
+                    block_pose.pose.orientation.z = float(block_wxyz[3])
+                    block_pose.pose.orientation.w = float(block_wxyz[0])
+                    block_pose_pubs[block_name].publish(block_pose)
+                    if block_name == 'red_block':
+                        block_pose_pub.publish(block_pose)
                 last_block_pose_publish = time.monotonic()
-            measured_effort = np.abs(np.asarray(robot.get_measured_joint_efforts(), dtype=float))
-            max_measured_effort = np.maximum(max_measured_effort, measured_effort)
+            max_measured_effort = np.maximum(max_measured_effort, last_joint_effort)
             if (abs(float(target[dof_names.index('J8')]) -
-                    float(robot.get_joint_positions()[dof_names.index('J8')])) > 0.002
+                    float(last_joint_position[dof_names.index('J8')])) > 0.002
                     and time.monotonic() - last_gripper_diagnostic > 1.0):
-                observed = robot.get_joint_positions()
                 print(
                     'PALLET_GRIPPER_TRACKING '
                     f"target_m={[float(target[dof_names.index(n)]) for n in ('J8', 'J9')]} "
                     f"applied_target_m={[float(applied_target[dof_names.index(n)]) for n in ('J8', 'J9')]} "
-                    f"actual_m={[float(observed[dof_names.index(n)]) for n in ('J8', 'J9')]} "
-                    f"effort={[float(measured_effort[dof_names.index(n)]) for n in ('J8', 'J9')]}",
+                    f"actual_m={[float(last_joint_position[dof_names.index(n)]) for n in ('J8', 'J9')]} "
+                    f"effort={[float(last_joint_effort[dof_names.index(n)]) for n in ('J8', 'J9')]}",
                     flush=True,
                 )
                 last_gripper_diagnostic = time.monotonic()
             msg = JointState()
             msg.header.stamp = node.get_clock().now().to_msg()
             msg.name = dof_names
-            msg.position = [float(v) for v in robot.get_joint_positions()]
-            msg.velocity = [float(v) for v in robot.get_joint_velocities()]
-            msg.effort = [float(v) for v in np.asarray(
-                robot.get_measured_joint_efforts(), dtype=float
-            )]
+            msg.position = [float(v) for v in last_joint_position]
+            msg.velocity = [float(v) for v in last_joint_velocity]
+            msg.effort = [float(v) for v in last_joint_effort]
             pub.publish(msg)
             time.sleep(max(0, 1/240 - (time.monotonic() - tick)))
-        final_position = np.asarray(robot.get_joint_positions(), dtype=float)
-        final_velocity = np.asarray(robot.get_joint_velocities(), dtype=float)
-        final_position = final_position[controlled_indices]
-        final_velocity = final_velocity[controlled_indices]
+        final_position = last_joint_position[controlled_indices]
+        final_velocity = last_joint_velocity[controlled_indices]
         controlled_target = target[controlled_indices]
         controlled_effort = max_measured_effort[controlled_indices]
         controlled_rated_effort = rated_effort[controlled_indices]

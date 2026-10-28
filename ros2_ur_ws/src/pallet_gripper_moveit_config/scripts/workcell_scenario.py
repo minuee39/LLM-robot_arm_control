@@ -3,6 +3,64 @@
 import math
 
 
+def diagnostic_block_poses(entries, workcell):
+    """Explicit simulation fixtures in base metres/radians; never estimator input."""
+    result = {}
+    if entries is None:
+        return result
+    sx, sy, _ = workcell['block']['size']
+    tx, ty, _ = workcell['table']['size']
+    for entry in entries:
+        if len(entry) != 4:
+            raise ValueError('diagnostic block pose requires OBJECT X Y YAW')
+        name, *raw = entry
+        if name not in {'red_block', 'green_block', 'blue_block'} or name in result:
+            raise ValueError('diagnostic block pose requires unique known object')
+        if any(isinstance(value, bool) for value in raw):
+            raise ValueError('diagnostic block pose must be finite metres/radians')
+        try:
+            x, y, yaw = map(float, raw)
+        except (TypeError, ValueError) as error:
+            raise ValueError('diagnostic block pose must be finite metres/radians') from error
+        if not all(math.isfinite(v) for v in (x, y, yaw)) or not -math.pi <= yaw <= math.pi:
+            raise ValueError('diagnostic block pose must be finite with yaw within [-pi, pi]')
+        ex = (abs(math.cos(yaw))*sx + abs(math.sin(yaw))*sy)/2
+        ey = (abs(math.sin(yaw))*sx + abs(math.cos(yaw))*sy)/2
+        if abs(x)+ex >= tx/2 or abs(y)+ey >= ty/2:
+            raise ValueError('diagnostic block pose must fit within tabletop')
+        result[name] = (x, y, yaw)
+    return result
+
+
+def rgbd_camera_resolution(mode='640x480'):
+    modes = {'640x480': (640, 480), '1280x960': (1280, 960)}
+    if mode not in modes:
+        raise ValueError('unsupported RGB-D resolution')
+    return modes[mode]
+
+
+def rgbd_camera_offsets(view='source'):
+    """Fixed optical view offsets in base metres; source preserves legacy pose."""
+    if view == 'source':
+        return (-0.55, 0.65, 0.85), (-0.32, 0.18, 0.025)
+    if view == 'workcell':
+        return (-0.15, 0.45, 1.10), (-0.02, -0.09, 0.025)
+    raise ValueError('camera view must be source or workcell')
+
+
+def joint_state_snapshot(position, velocity, effort, expected_count):
+    """Return a complete articulation snapshot, or None when feedback is unavailable."""
+    readings = (position, velocity, effort)
+    if any(reading is None for reading in readings):
+        return None
+    try:
+        if any(len(reading) != expected_count for reading in readings):
+            return None
+    except TypeError:
+        return None
+    return readings
+
+
 def gripper_effort_limit(physics):
     """Return the Isaac-only force ceiling for each prismatic jaw."""
     value = physics.get('gripper_effort_limit_n_per_finger')

@@ -36,7 +36,17 @@ def generate_launch_description():
         '--block-center-xy', LaunchConfiguration('block_x'), LaunchConfiguration('block_y'),
         '--block-size', LaunchConfiguration('block_size_x'), LaunchConfiguration('block_size_y'),
         LaunchConfiguration('block_size_z'), '--block-mass-kg', LaunchConfiguration('block_mass_kg'),
+        '--block-layout', LaunchConfiguration('block_layout'),
+        '--block-contact-offset-m', LaunchConfiguration('block_contact_offset_m'),
+        '--block-static-friction', LaunchConfiguration('block_static_friction'),
+        '--jaw-friction', LaunchConfiguration('jaw_friction'),
+        '--contact-geometry-log', LaunchConfiguration('contact_geometry_log'),
+        '--solver-velocity-iterations', LaunchConfiguration('solver_velocity_iterations'),
+        '--external-forces-every-iteration', LaunchConfiguration('external_forces_every_iteration'),
         '--fault-injection-enabled', fault_injection_enabled,
+        '--camera-view', LaunchConfiguration('camera_view'),
+        '--rgbd-resolution', LaunchConfiguration('rgbd_resolution'),
+        '--rgbd-clock', LaunchConfiguration('rgbd_clock'),
     ]
 
     def include(name):
@@ -151,6 +161,18 @@ def generate_launch_description():
         DeclareLaunchArgument('block_size_y', default_value='0.030'),
         DeclareLaunchArgument('block_size_z', default_value='0.050'),
         DeclareLaunchArgument('block_mass_kg', default_value='0.05'),
+        DeclareLaunchArgument('block_contact_offset_m', default_value='-1.0'),
+        DeclareLaunchArgument('block_static_friction', default_value='-1.0'),
+        DeclareLaunchArgument('jaw_friction', default_value='-1.0'),
+        DeclareLaunchArgument('contact_geometry_log', default_value='false'),
+        DeclareLaunchArgument('arm_settle_seconds', default_value='0.0'),
+        DeclareLaunchArgument('arm_goal_dwell_seconds', default_value='0.0'),
+        DeclareLaunchArgument('solver_velocity_iterations', default_value='-1'),
+        DeclareLaunchArgument('external_forces_every_iteration', default_value='default'),
+        DeclareLaunchArgument('block_layout', default_value='single'),
+        DeclareLaunchArgument('camera_view', default_value='source', choices=['source', 'workcell']),
+        DeclareLaunchArgument('rgbd_resolution', default_value='640x480', choices=['640x480', '1280x960']),
+        DeclareLaunchArgument('rgbd_clock', default_value='simulation', choices=['simulation', 'system']),
         RegisterEventHandler(OnProcessExit(
             target_action=isaac_gate,
             on_exit=continue_or_stop([
@@ -164,6 +186,10 @@ def generate_launch_description():
                     parameters=[{
                         'safety_cancel_enabled': ParameterValue(
                             safety_cancel_enabled, value_type=bool),
+                        'arm_settle_seconds': ParameterValue(
+                            LaunchConfiguration('arm_settle_seconds'), value_type=float),
+                        'arm_goal_dwell_seconds': ParameterValue(
+                            LaunchConfiguration('arm_goal_dwell_seconds'), value_type=float),
                     }],
                 ),
                 move_group,

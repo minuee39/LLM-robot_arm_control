@@ -202,7 +202,7 @@ ros2 topic echo /sim_camera/camera_info --once
 bash ur10e/scripts/run_yolo_camera_node.sh --show
 ```
 
-기본 모델은 `runs/detect/train/weights/best.pt`입니다. 다른 모델이나 confidence threshold를 사용할 수도 있습니다.
+기본 모델은 `runs/detect/train/weights/best.pt`이며, YOLO가 `block` 영역을 검출한 뒤 해당 bounding box 내부를 HSV로 분할해 `red_block`, `green_block`, `blue_block`으로 구별합니다. 다른 모델이나 confidence threshold를 사용할 수도 있습니다.
 
 ```bash
 bash ur10e/scripts/run_yolo_camera_node.sh \

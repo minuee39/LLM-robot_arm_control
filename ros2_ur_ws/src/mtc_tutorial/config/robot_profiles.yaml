@@ -84,11 +84,10 @@ profiles:
       # The MTC node filters this empty-string sentinel back to an empty list.
       forearm_collision_links:
         - ""
-      # J8 is one-jaw travel in metres. The 30 mm block touches flat pads at
-      # 0.015 m. Command 0.010 m to add 5 mm of per-jaw preload in the PhysX
-      # proxy; measured effort remains below the simulated 10 N joint limit.
-      gripper_close_min: 0.010
-      gripper_close_max: 0.010
+      # J8 is one-jaw travel in metres. Command the validated lower limit to
+      # maximize preload on the 30 mm block; Isaac still caps each jaw at 60 N.
+      gripper_close_min: 0.000
+      gripper_close_max: 0.000
       gripper_close_step: 0.005
       object_x: -0.30
       object_y: 0.30
@@ -151,5 +150,6 @@ profiles:
       # Safety recovery uses the same bounded vertical clearance motion that is
       # already feasible for normal lift/retreat in this compact workspace.
       recovery_retreat_distance: 0.04
+      recovery_probe_distance: 0.005
       recovery_retreat_timeout: 5.0
       recovery_home_timeout: 10.0

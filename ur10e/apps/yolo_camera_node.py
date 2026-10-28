@@ -43,8 +43,8 @@ from vision.scene_objects import (
 from vision.yolo_detector import LABEL_MODES, YoloDetector
 
 
-DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "yolo26n.pt"
-DEFAULT_LABEL_MODE = "model"
+DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "runs/detect/train/weights/best.pt"
+DEFAULT_LABEL_MODE = "color"
 DEFAULT_CLASSES = ""
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
 DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
@@ -85,6 +85,10 @@ class YoloCameraNode(Node):
         detector_backend: str = "yolo",
         pallet_table_z: float = 0.0,
         pallet_block_clearance: float = 0.003,
+        pallet_table_size_xy: tuple[float, float] = (1.80, 0.75),
+        pallet_table_center_xy: tuple[float, float] = (0.0, 0.0),
+        pallet_table_edge_clearance: float = 0.0,
+        debug_image_file: str | Path | None = None,
     ) -> None:
         super().__init__("yolo_camera_node")
         if sync_queue_size <= 0:
@@ -151,6 +155,12 @@ class YoloCameraNode(Node):
             raise ValueError("Pallet table height and block clearance must be finite")
         self.pallet_table_z = float(pallet_table_z)
         self.pallet_block_clearance = float(pallet_block_clearance)
+        self.pallet_table_size_xy = tuple(float(value) for value in pallet_table_size_xy)
+        self.pallet_table_center_xy = tuple(float(value) for value in pallet_table_center_xy)
+        self.pallet_table_edge_clearance = float(pallet_table_edge_clearance)
+        self.debug_image_file = (
+            Path(debug_image_file).expanduser() if debug_image_file else None
+        )
         if vision_scene_file is None:
             vision_scene_file = {
                 "world": DEFAULT_VISION_SCENE_FILE,
@@ -406,15 +416,18 @@ class YoloCameraNode(Node):
         self.last_valid_depth_count = 0
         intrinsics = self.camera_info.k
 
-        best_by_name = {}
-        for detection in detections:
+        # A workcell may contain large surfaces with the same hue as a block
+        # (for example the green table insert).  Evaluate every component in
+        # confidence order and retain the first candidate that also passes the
+        # calibrated depth/work-surface checks.  Collapsing by color before
+        # geometry validation would discard the real block whenever a larger
+        # false-positive component had higher confidence.
+        accepted_names = set()
+        for detection in sorted(detections, key=lambda item: item.confidence, reverse=True):
             if self.label_mode == "color" and detection.name not in EXPECTED_BLOCK_NAMES:
                 continue
-            previous = best_by_name.get(detection.name)
-            if previous is None or detection.confidence > previous.confidence:
-                best_by_name[detection.name] = detection
-
-        for detection in best_by_name.values():
+            if detection.name in accepted_names:
+                continue
             u, v = detection.center_pixel
             depth = (
                 median_depth_in_mask(self.depth_image, detection.mask)
@@ -451,6 +464,9 @@ class YoloCameraNode(Node):
                                     self.pallet_block_size,
                                     table_z=self.pallet_table_z,
                                     clearance=self.pallet_block_clearance,
+                                    table_size_xy=self.pallet_table_size_xy,
+                                    table_center_xy=self.pallet_table_center_xy,
+                                    edge_clearance=self.pallet_table_edge_clearance,
                                 )
                             else:
                                 output_position = surface_point_to_box_center(
@@ -476,6 +492,12 @@ class YoloCameraNode(Node):
                     self.get_logger().debug(f"Ignoring off-table color candidate: {error}")
                 except ValueError as error:
                     self.get_logger().warning(f"Invalid camera intrinsics/depth: {error}")
+
+            # In Pallet mode the annotated image is an operator-facing view of
+            # actionable detections. Do not draw candidates rejected by depth,
+            # tabletop height, or table XY footprint checks.
+            if self.coordinate_mode == "pallet" and output_position is None:
+                continue
 
             label = f"{detection.name} {detection.confidence:.2f} center=({u},{v})"
             if camera_position is None:
@@ -515,6 +537,7 @@ class YoloCameraNode(Node):
                     detection.confidence,
                     output_position,
                 )
+                accepted_names.add(detection.name)
 
             self.draw_detection(
                 annotated,
@@ -528,6 +551,14 @@ class YoloCameraNode(Node):
             annotated_msg = self.bridge.cv2_to_imgmsg(annotated, encoding="bgr8")
             annotated_msg.header = rgb_msg.header
             self.annotated_pub.publish(annotated_msg)
+            if self.debug_image_file is not None:
+                self.debug_image_file.parent.mkdir(parents=True, exist_ok=True)
+                temporary_path = self.debug_image_file.with_name(
+                    f".{self.debug_image_file.name}.tmp.png"
+                )
+                if not cv2.imwrite(str(temporary_path), annotated):
+                    raise OSError(f"Could not write {temporary_path}")
+                temporary_path.replace(self.debug_image_file)
         except Exception as error:
             self.get_logger().error(f"Annotated image publish failed: {error}")
 
@@ -644,6 +675,13 @@ def main() -> None:
     )
     parser.add_argument("--pallet-table-z", type=float, default=0.0)
     parser.add_argument("--pallet-block-clearance", type=float, default=0.003)
+    parser.add_argument("--pallet-table-size", default="1.80,0.75")
+    parser.add_argument("--pallet-table-center", default="0.0,0.0")
+    parser.add_argument("--pallet-table-edge-clearance", type=float, default=0.0)
+    parser.add_argument(
+        "--debug-image-file",
+        help="Continuously replace this file with the latest annotated RGB frame.",
+    )
     parser.add_argument("--sync-queue-size", type=int, default=10)
     parser.add_argument("--sync-slop", type=float, default=0.05)
     parser.add_argument("--stability-window", type=int, default=10)
@@ -664,8 +702,14 @@ def main() -> None:
         parser.error("Pallet mode requires --scene-state-file with optical_to_base_footprint")
     try:
         pallet_block_size = tuple(float(value.strip()) for value in args.pallet_block_size.split(","))
+        pallet_table_size_xy = tuple(
+            float(value.strip()) for value in args.pallet_table_size.split(","))
+        pallet_table_center_xy = tuple(
+            float(value.strip()) for value in args.pallet_table_center.split(","))
     except ValueError as error:
-        parser.error(f"invalid --pallet-block-size: {error}")
+        parser.error(f"invalid Pallet geometry option: {error}")
+    if len(pallet_table_size_xy) != 2 or len(pallet_table_center_xy) != 2:
+        parser.error("--pallet-table-size and --pallet-table-center require two comma-separated values")
 
     rclpy.init(args=ros_args)
     node = YoloCameraNode(
@@ -695,6 +739,10 @@ def main() -> None:
         detector_backend=args.detector,
         pallet_table_z=args.pallet_table_z,
         pallet_block_clearance=args.pallet_block_clearance,
+        pallet_table_size_xy=pallet_table_size_xy,
+        pallet_table_center_xy=pallet_table_center_xy,
+        pallet_table_edge_clearance=args.pallet_table_edge_clearance,
+        debug_image_file=args.debug_image_file,
     )
     try:
         rclpy.spin(node)

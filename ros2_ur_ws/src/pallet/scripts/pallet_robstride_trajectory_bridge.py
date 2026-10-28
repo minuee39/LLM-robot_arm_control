@@ -32,7 +32,7 @@ ACTION_NAME = "/pallet_arm_controller/follow_joint_trajectory"
 class PalletRobStrideTrajectoryBridge(Node):
     def __init__(self) -> None:
         super().__init__("pallet_robstride_trajectory_bridge")
-        default_config = get_package_share_directory("pallet") + "/config/robstride_hardware.yaml" # hardware YAML 경로 생성
+        default_config = get_package_share_directory("pallet") + "/config/robstride_hardware_legacy_5axis.yaml" # hardware YAML 경로 생성
         self.declare_parameter("config_file", default_config) # ROS2 Parameter 선언. 
         self.declare_parameter("can_interface", "") # Can 인터페이스를 parameter로 
         self.declare_parameter("dry_run", True)

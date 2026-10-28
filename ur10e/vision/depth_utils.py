@@ -149,6 +149,9 @@ def pallet_table_block_center(
     table_z=0.0,
     clearance=0.003,
     surface_tolerance=0.02,
+    table_size_xy=(1.80, 0.75),
+    table_center_xy=(0.0, 0.0),
+    edge_clearance=0.0,
 ):
     """Locate a single tabletop block in base_footprint metres.
 
@@ -157,12 +160,25 @@ def pallet_table_block_center(
     """
     surface = np.asarray(surface_point, dtype=float)
     size = np.asarray(box_size, dtype=float)
+    table_size = np.asarray(table_size_xy, dtype=float)
+    table_center = np.asarray(table_center_xy, dtype=float)
     if not np.isfinite(table_z) or not np.isfinite(clearance) or clearance < 0:
         raise ValueError("table_z and clearance must be finite; clearance must be non-negative")
     if not np.isfinite(surface_tolerance) or surface_tolerance < 0:
         raise ValueError("surface_tolerance must be finite and non-negative")
+    if (table_size.shape != (2,) or table_center.shape != (2,)
+            or not np.all(np.isfinite(table_size)) or np.any(table_size <= 0)
+            or not np.all(np.isfinite(table_center))):
+        raise ValueError("table_size_xy and table_center_xy must contain finite XY values")
+    if not np.isfinite(edge_clearance) or edge_clearance < 0:
+        raise ValueError("edge_clearance must be finite and non-negative")
     center = surface_point_to_box_center(surface, camera_origin, size)
     if not table_z - surface_tolerance <= surface[2] <= table_z + size[2] + clearance + surface_tolerance:
         raise OffTableCandidateError("detected surface is outside the Pallet tabletop block height")
+    available_half_extent = table_size / 2.0 - size[:2] / 2.0 - edge_clearance
+    if np.any(available_half_extent <= 0.0):
+        raise ValueError("table XY bounds are too small for the block and edge clearance")
+    if np.any(np.abs(center[:2] - table_center) > available_half_extent):
+        raise OffTableCandidateError("detected block footprint is outside the Pallet table XY bounds")
     center[2] = table_z + size[2] / 2.0 + clearance
     return center

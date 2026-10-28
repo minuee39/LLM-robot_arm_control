@@ -34,16 +34,24 @@ fi
 
 if ! has_arg "--show-args" "$@"; then
   printf '\n[CHECK] MoveIt execution server'
+  server_ready=false
+  consecutive_ready=0
   for _ in {1..30}; do
     if ros2 action list 2>/dev/null | grep -qx "/execute_task_solution"; then
-      printf ' : READY\n'
-      break
+      consecutive_ready=$((consecutive_ready + 1))
+      if [ "${consecutive_ready}" -ge 2 ]; then
+        server_ready=true
+        printf ' : READY\n'
+        break
+      fi
+    else
+      consecutive_ready=0
     fi
     printf '.'
     sleep 1
   done
 
-  if ! ros2 action list 2>/dev/null | grep -qx "/execute_task_solution"; then
+  if [ "${server_ready}" != true ]; then
     echo "ERROR: /execute_task_solution action server is not available."
     echo "Start this in another terminal first:"
     echo "  /home/minwoo/Development/LLM/ur10e/scripts/run_mtc_isaac_demo.sh"
@@ -51,7 +59,9 @@ if ! has_arg "--show-args" "$@"; then
   fi
 fi
 
-launch_log="$(mktemp /tmp/mtc_pick_place_launch.XXXXXX.log)"
+launch_log_dir="${MTC_LAUNCH_LOG_DIR:-/tmp}"
+mkdir -p -- "${launch_log_dir}"
+launch_log="$(mktemp "${launch_log_dir}/mtc_pick_place_launch.XXXXXX.log")"
 set +e
 ros2 launch mtc_tutorial pick_place_demo.launch.py "$@" 2>&1 \
   | tee "${launch_log}" \

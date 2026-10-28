@@ -53,6 +53,14 @@ def test_parse_red_to_blue_near_with_user_wording():
     assert command["relation"] == "near"
 
 
+def test_parse_green_object_to_blue_object_near():
+    command = parse_user_command("초록 물체를 파란 물체 옆에 둬")
+
+    assert command["pick_object"] == "green_block"
+    assert command["target_object"] == "blue_block"
+    assert command["relation"] == "near"
+
+
 def test_parse_command_with_particle_typo_and_split_color():
     command = parse_user_command("빨간블럭을를 파 란 블럭 위에 둬")
 

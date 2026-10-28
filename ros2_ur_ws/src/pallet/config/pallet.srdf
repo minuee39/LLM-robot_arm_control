@@ -1,15 +1,14 @@
-<?xml version="1.0"?>
-<!-- Home copied from pallet_gripper_moveit_config. No controller binding. -->
+<?xml version='1.0' encoding='utf-8'?>
 <robot name="pallet">
-  <group name="pallet_arm"><chain base_link="base_link" tip_link="gripper"/></group>
-  <group name="gripper"><joint name="g_r"/></group>
+  <group name="pallet_arm"><chain base_link="base_link" tip_link="gripper" /></group>
+  <group name="gripper"><joint name="g_r" /></group>
   <group_state name="home" group="pallet_arm">
-    <joint name="J1" value="0"/>
-    <joint name="J2" value="0"/>
-    <joint name="J3" value="-1.4875"/>
-    <joint name="J4" value="2.4875"/>
-    <joint name="J5" value="-0.4875"/>
-    <joint name="J6" value="0"/>
+    <joint name="J1" value="0" />
+    <joint name="J2" value="0" />
+    <joint name="J3" value="0" />
+    <joint name="J4" value="0" />
+    <joint name="J5" value="0" />
+    <joint name="J6" value="0" />
   </group_state>
-  <group_state name="open" group="gripper"><joint name="g_r" value="0"/></group_state>
+  <group_state name="open" group="gripper"><joint name="g_r" value="0" /></group_state>
 </robot>

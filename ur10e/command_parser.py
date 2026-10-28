@@ -24,6 +24,9 @@ def build_camera_relation_offsets(
     camera_eye=SIM_CAMERA_EYE,
     camera_target=SIM_CAMERA_TARGET,
     camera_up=SIM_CAMERA_UP,
+    *,
+    near_distance=NEAR_RELATION_DISTANCE,
+    near_side_only=False,
 ) -> dict[str, np.ndarray]:
     """Build table-plane relations as seen from the active scene camera."""
     eye = np.asarray(camera_eye, dtype=float)
@@ -44,8 +47,12 @@ def build_camera_relation_offsets(
         "front_of": toward_camera * RELATION_DISTANCE,
         "behind": -toward_camera * RELATION_DISTANCE,
         "near": (
-            screen_left * NEAR_RELATION_DISTANCE
-            + toward_camera * NEAR_RELATION_DISTANCE
+            screen_left * float(near_distance)
+            if near_side_only
+            else (
+                screen_left * float(near_distance)
+                + toward_camera * float(near_distance)
+            )
         ),
     }
 
@@ -66,6 +73,8 @@ OBJECT_ALIASES = {
     "파란블록": "blue_block",
     "파란색 블럭": "blue_block",
     "파란색 블록": "blue_block",
+    "파란 물체": "blue_block",
+    "파란색 물체": "blue_block",
     "blue block": "blue_block",
     "blue_block": "blue_block",
     "blue": "blue_block",
@@ -76,6 +85,8 @@ OBJECT_ALIASES = {
     "빨간블록": "red_block",
     "빨간색 블럭": "red_block",
     "빨간색 블록": "red_block",
+    "빨간 물체": "red_block",
+    "빨간색 물체": "red_block",
     "red block": "red_block",
     "red_block": "red_block",
     "red": "red_block",
@@ -86,6 +97,8 @@ OBJECT_ALIASES = {
     "초록블록": "green_block",
     "초록색 블럭": "green_block",
     "초록색 블록": "green_block",
+    "초록 물체": "green_block",
+    "초록색 물체": "green_block",
     "green block": "green_block",
     "green_block": "green_block",
     "green": "green_block",

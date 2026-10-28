@@ -1,44 +1,60 @@
 # llm_to_json.py
 
 import json
+import math
 import os
 import urllib.request
 import urllib.error
 from typing import Literal, Optional
 
 import numpy as np
-from pydantic import BaseModel, Field, ValidationError, field_validator
 
 
-class PickPlaceAction(BaseModel):
-    action: Literal["pick_place"]
-    pick_object: str
-    target_object: str
-    relation: Literal[
-        "on",
-        "left_of",
-        "right_of",
-        "front_of",
-        "behind",
-        "near",
-    ]
+RELATIONS = {"on", "left_of", "right_of", "front_of", "behind", "near"}
 
-    offset_m: Optional[list[float]] = None
-    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
-    @field_validator("offset_m")
-    @classmethod
-    def validate_offset(cls, value):
-        if value is None:
-            return value
+def validate_pick_place_action(raw_json: object) -> dict:
+    """Validate untrusted LLM JSON without an optional runtime dependency."""
+    if not isinstance(raw_json, dict):
+        raise ValueError("LLM JSON action must be an object")
+    allowed = {
+        "action", "pick_object", "target_object", "relation", "offset_m", "confidence",
+    }
+    if not {"action", "pick_object", "target_object", "relation"} <= set(raw_json):
+        raise ValueError("LLM JSON is missing required pick/place fields")
+    if set(raw_json) - allowed:
+        raise ValueError("LLM JSON contains unsupported fields")
+    if raw_json["action"] != "pick_place":
+        raise ValueError("LLM JSON action must be pick_place")
+    if not isinstance(raw_json["pick_object"], str) or not raw_json["pick_object"]:
+        raise ValueError("pick_object must be a nonempty string")
+    if not isinstance(raw_json["target_object"], str) or not raw_json["target_object"]:
+        raise ValueError("target_object must be a nonempty string")
+    if raw_json["relation"] not in RELATIONS:
+        raise ValueError("unsupported pick/place relation")
 
-        if len(value) != 3:
-            raise ValueError("offset_m must contain exactly 3 values: [x, y, z].")
+    confidence = raw_json.get("confidence", 1.0)
+    if (isinstance(confidence, bool) or not isinstance(confidence, (int, float))
+            or not math.isfinite(confidence) or not 0.0 <= confidence <= 1.0):
+        raise ValueError("confidence must be a finite number between 0 and 1")
 
-        if any(abs(v) > 0.5 for v in value):
-            raise ValueError("offset_m value is too large for safe execution.")
-
-        return value
+    validated = {
+        "action": "pick_place",
+        "pick_object": raw_json["pick_object"],
+        "target_object": raw_json["target_object"],
+        "relation": raw_json["relation"],
+        "confidence": float(confidence),
+    }
+    if "offset_m" in raw_json and raw_json["offset_m"] is not None:
+        offset = raw_json["offset_m"]
+        if (not isinstance(offset, list) or len(offset) != 3
+                or any(isinstance(value, bool) or not isinstance(value, (int, float))
+                       or not math.isfinite(value) for value in offset)):
+            raise ValueError("offset_m must contain exactly three finite numbers")
+        if any(abs(value) > 0.5 for value in offset):
+            raise ValueError("offset_m value is too large for safe execution")
+        validated["offset_m"] = [float(value) for value in offset]
+    return validated
 
 
 LLMProvider = Literal["gemini", "chatgpt"]
@@ -327,11 +343,9 @@ def parse_user_command_with_llm(
         raise ValueError(f"LLM 응답을 JSON으로 파싱하지 못했습니다: {response_text}") from error
 
     try:
-        parsed = PickPlaceAction.model_validate(raw_json)
-    except ValidationError as error:
-        raise ValueError(f"LLM JSON schema 검증 실패: {raw_json}") from error
-
-    return parsed.model_dump(exclude_none=True)
+        return validate_pick_place_action(raw_json)
+    except ValueError as error:
+        raise ValueError(f"LLM JSON schema 검증 실패: {raw_json}: {error}") from error
 
 
 def _parse_with_gemini(prompt: str) -> str:

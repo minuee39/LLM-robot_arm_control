@@ -1,4 +1,6 @@
 from pathlib import Path
+import json
+import math
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -10,6 +12,7 @@ import yaml
 
 
 FLOAT_DEFAULTS = {
+    'release_open_position': -1.0,
     'object_x': -0.30,
     'object_y': 0.30,
     'object_z': 0.05,
@@ -25,6 +28,7 @@ FLOAT_DEFAULTS = {
     'place_x': 0.30,
     'place_y': -0.30,
     'place_z': 0.05,
+    'place_yaw': 0.0,
     'max_solutions': 1.0,
     'max_solution_cost': 60.0,
     'task_timeout': -1.0,
@@ -36,6 +40,7 @@ FLOAT_DEFAULTS = {
     'move_to_place_max_path_length': -1.0,
     'transfer_min_clearance': -1.0,
     'transfer_clearance_check_step': 0.02,
+    'transfer_orientation_tolerance': 0.08726646259971647,
     'return_home_timeout': 1.0,
     'return_home_max_path_length': -1.0,
     'arm_velocity_scaling': 0.5,
@@ -47,7 +52,13 @@ FLOAT_DEFAULTS = {
     'gripper_close_min': 0.02,
     'gripper_close_max': 0.50,
     'gripper_close_step': 0.08,
+    'grasp_angle_delta': 1.5707963267948966,
+    'lift_min_distance': 0.10,
+    'lift_max_distance': 0.18,
+    'lower_min_distance': 0.10,
+    'lower_max_distance': 0.15,
     'recovery_retreat_distance': 0.15,
+    'recovery_probe_distance': 0.005,
     'recovery_retreat_timeout': 3.0,
     'recovery_home_timeout': 5.0,
     'recovery_direction_x': 0.0,
@@ -74,6 +85,50 @@ def _as_bool(value):
     raise ValueError(f'Expected a boolean value, got {value!r}')
 
 
+def _configure_totg(moveit_config, raw, profile_name):
+    """Opt-in Pallet planning comparison; preserve all collision checks."""
+    if raw == 'default':
+        return
+    value = float(raw)
+    if profile_name != 'pallet_gripper' or not math.isfinite(value) or not 0 < value <= 0.1:
+        raise ValueError('TOTG tolerance override requires Pallet and finite (0, 0.1] rad')
+    pipeline = moveit_config['ompl']
+    if 'default_planning_response_adapters/ValidateSolution' not in pipeline.get('response_adapters', []):
+        raise ValueError('TOTG comparison requires ValidateSolution collision checking')
+    pipeline.setdefault('totg', {})['path_tolerance'] = value
+    print('PALLET_PLANNING_AUDIT ' + json.dumps({
+        'pipeline': 'ompl', 'totg_path_tolerance_rad': value,
+        'validate_solution_enabled': True,
+    }), flush=True)
+
+
+def _pallet_obstacle_parameters(raw, profile_name, object_id):
+    """Unknown block orientation is enclosed by a sphere, not invented as upright."""
+    items = json.loads(raw)
+    if not isinstance(items, list) or len(items) > 2:
+        raise ValueError('Pallet obstacles require a list of at most two blocks')
+    if not items:
+        return {}
+    if profile_name != 'pallet_gripper':
+        raise ValueError('Scene obstacles require the Pallet profile')
+    ids, spheres = [], []
+    for item in items:
+        if not isinstance(item, dict) or set(item) != {'id', 'position_m', 'radius_m'}:
+            raise ValueError('Invalid Pallet obstacle fields')
+        name, xyz, radius = item['id'], item['position_m'], item['radius_m']
+        if name not in {'red_block', 'green_block', 'blue_block'} or name == object_id or name in ids:
+            raise ValueError('Obstacle must be a unique non-picked Pallet block')
+        if (not isinstance(xyz, list) or len(xyz) != 3 or
+                any(type(v) not in (int, float) or not math.isfinite(v) for v in xyz) or
+                not (-0.85 <= xyz[0] <= 0.85 and -0.35 <= xyz[1] <= 0.35 and 0 <= xyz[2] <= 0.40)):
+            raise ValueError('Invalid Pallet obstacle position in base_footprint/metres')
+        if type(radius) not in (int, float) or not math.isfinite(radius) or not 0 < radius <= 0.15:
+            raise ValueError('Invalid Pallet obstacle enclosing radius')
+        ids.append(name)
+        spheres.extend(float(v) for v in [*xyz, radius])
+    return {'pallet_obstacle_ids': ids, 'pallet_obstacle_spheres': spheres}
+
+
 def _launch_setup(context):
     profile_name = LaunchConfiguration('robot_profile').perform(context)
     profiles = _profiles()
@@ -96,6 +151,8 @@ def _launch_setup(context):
         .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl'])
         .to_dict()
     )
+    _configure_totg(moveit_config, LaunchConfiguration('totg_path_tolerance').perform(context),
+                    profile_name)
 
     parameters = dict(profile.get('mtc_parameters', {}))
     for name, shared_default in FLOAT_DEFAULTS.items():
@@ -118,9 +175,19 @@ def _launch_setup(context):
             'planning_only': _as_bool(
                 LaunchConfiguration('planning_only').perform(context)
             ),
+            'cartesian_transfer': _as_bool(
+                LaunchConfiguration('cartesian_transfer').perform(context)
+            ),
+            'upright_transfer': _as_bool(
+                LaunchConfiguration('upright_transfer').perform(context)
+            ),
             'robot_profile': profile_name,
         }
     )
+
+    parameters.update(_pallet_obstacle_parameters(
+        LaunchConfiguration('pallet_scene_obstacles').perform(context),
+        profile_name, parameters['object_id']))
 
     return [
         Node(
@@ -140,6 +207,10 @@ def generate_launch_description():
             description='Robot profile from config/robot_profiles.yaml.',
         ),
         DeclareLaunchArgument('object_id', default_value='red_block'),
+        DeclareLaunchArgument('pallet_scene_obstacles', default_value='[]',
+                              description='Opt-in non-picked block enclosing spheres in base_footprint/m.'),
+        DeclareLaunchArgument('totg_path_tolerance', default_value='default',
+                              description='Pallet-only TOTG path deviation experiment in rad; default preserves config.'),
         DeclareLaunchArgument(
             'execution_mode',
             default_value='standard',
@@ -156,6 +227,16 @@ def generate_launch_description():
             'planning_only',
             default_value='false',
             description='Plan and report the task without executing a trajectory.',
+        ),
+        DeclareLaunchArgument(
+            'cartesian_transfer',
+            default_value='false',
+            description='Keep the loaded move-to-place segment on a straight Cartesian path.',
+        ),
+        DeclareLaunchArgument(
+            'upright_transfer',
+            default_value='false',
+            description='Constrain loaded-transfer roll/pitch while allowing yaw.',
         ),
     ]
     arguments.extend(

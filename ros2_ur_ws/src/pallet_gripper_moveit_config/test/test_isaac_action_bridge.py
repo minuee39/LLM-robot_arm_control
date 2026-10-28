@@ -6,10 +6,38 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from isaac_action_bridge import SAFETY_STOP_CODES, SafetyStop, StableTarget
+from isaac_action_bridge import BilateralContact, GoalDwell, SAFETY_STOP_CODES, SafetyStop, StableTarget
 
 
 class StableTargetTest(unittest.TestCase):
+    def test_nonfinite_velocity_or_effort_cannot_complete_settle_or_contact(self):
+        for value in (float('nan'), float('inf'), -float('inf')):
+            with self.subTest(value=value):
+                target = StableTarget(duration=0.4, velocity_tolerance=0.001)
+                self.assertFalse(target.update(True, [0.0, value], 1.0))
+                self.assertFalse(target.update(True, [0.0, value], 2.0))
+                contact = BilateralContact()
+                self.assertFalse(contact.update([0.015, 0.015], [2, value], 1.0))
+                self.assertFalse(contact.update([0.015, 0.015], [2, value], 2.0))
+
+    def test_timed_goal_dwell_preserves_position_tolerance_and_distinct_feedback(self):
+        dwell = GoalDwell(1.0)
+        self.assertFalse(dwell.update(True, 1.0))
+        self.assertFalse(dwell.update(True, 1.0))
+        self.assertFalse(dwell.update(False, 1.5))
+        self.assertFalse(dwell.update(True, 1.6))
+        self.assertFalse(dwell.update(True, 2.5))
+        self.assertTrue(dwell.update(True, 2.6))
+
+    def test_arm_settle_requires_distinct_six_joint_low_speed_feedback(self):
+        target = StableTarget(duration=1.0, velocity_tolerance=0.01)
+        self.assertFalse(target.update(True, [0.0]*6, 1.0))
+        self.assertFalse(target.update(True, [0.0]*6, 1.0))
+        self.assertFalse(target.update(True, [0.0]*5 + [0.02], 1.5))
+        self.assertFalse(target.update(True, [0.0]*6, 1.6))
+        self.assertFalse(target.update(True, [0.0]*6, 2.5))
+        self.assertTrue(target.update(True, [0.0]*6, 2.6))
+
     def test_requires_continuous_low_velocity_feedback(self):
         target = StableTarget(duration=0.4, velocity_tolerance=0.001)
         self.assertFalse(target.update(True, [0.0002, -0.0002], 1.0))

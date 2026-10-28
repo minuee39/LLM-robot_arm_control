@@ -9,7 +9,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from workcell_scenario import (
-    block_scenario, gripper_effort_limit, gripper_symmetry_config,
+    block_scenario, diagnostic_block_poses, gripper_effort_limit, gripper_symmetry_config, joint_state_snapshot,
     symmetric_jaw_targets,
 )
 
@@ -20,6 +20,27 @@ class BlockScenarioTest(unittest.TestCase):
         cls.workcell = yaml.safe_load((ROOT / 'config/workcell.yaml').read_text())
         cls.physics = yaml.safe_load((ROOT / 'config/isaac_physics.yaml').read_text())
 
+    def test_diagnostic_fixture_defaults_and_target_poses(self):
+        self.assertEqual({}, diagnostic_block_poses(None, self.workcell))
+        poses = diagnostic_block_poses([
+            ['red_block', '.24', '-.28', '0'],
+            ['green_block', '.28', '-.24', '1.5707963267948966'],
+            ['blue_block', '.28', '-.28', '0'],
+        ], self.workcell)
+        self.assertEqual((.24, -.28, 0), poses['red_block'])
+        self.assertAlmostEqual(1.5707963267948966, poses['green_block'][2])
+
+    def test_diagnostic_fixture_rejects_invalid_objects_numbers_and_edges(self):
+        for entries in (
+            [['unknown', 0, 0, 0]], [['red_block', 0, 0, 0]]*2,
+            [['red_block', 0, 0]], [['red_block', True, 0, 0]],
+            [['red_block', 'nan', 0, 0]], [['red_block', 0, 'bad', 0]],
+            [['red_block', 0, 0, 4]], [['red_block', .9, 0, 0]],
+            [['red_block', 0, .36, .7853981633974483]],
+        ):
+            with self.subTest(entries=entries), self.assertRaises(ValueError):
+                diagnostic_block_poses(entries, self.workcell)
+
     def test_defaults_and_overrides_do_not_mutate_source(self):
         original = self.workcell['block'].copy()
         self.assertEqual(original, block_scenario(self.workcell))
@@ -28,6 +49,25 @@ class BlockScenarioTest(unittest.TestCase):
         self.assertEqual([0.03, 0.025, 0.05], result['size'])
         self.assertEqual(0.08, result['mass_kg'])
         self.assertEqual(original, self.workcell['block'])
+
+    def test_joint_state_snapshot_requires_complete_feedback(self):
+        position = [0.1, 0.2]
+        velocity = [0.0, 0.0]
+        effort = [1.0, 2.0]
+        self.assertEqual(
+            (position, velocity, effort),
+            joint_state_snapshot(position, velocity, effort, 2),
+        )
+        for readings in (
+            (None, velocity, effort),
+            (position, None, effort),
+            (position, velocity, None),
+            (position[:1], velocity, effort),
+            (position, velocity[:1], effort),
+            (position, velocity, effort[:1]),
+        ):
+            with self.subTest(readings=readings):
+                self.assertIsNone(joint_state_snapshot(*readings, expected_count=2))
 
     def test_rejects_unreachable_physical_scenarios(self):
         for kwargs in (

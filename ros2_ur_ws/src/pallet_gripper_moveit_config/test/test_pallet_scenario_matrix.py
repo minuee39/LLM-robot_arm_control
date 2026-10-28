@@ -2,17 +2,58 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(PROJECT_ROOT / 'ros2_ur_ws/scripts'))
 from run_pallet_scenario_matrix import (
     classify_failure, execution_seconds, parse_recovery_diagnostics,
-    recovery_candidates, scenario_commands, summarize_matrix, summarize_runs,
-    task_completed, validate_scenario)
+    recovery_candidates, refresh_report, require_gpu_available, scenario_commands,
+    summarize_matrix, summarize_runs,
+    task_completed, validate_resume_scenarios, validate_scenario)
 
 
 class PalletScenarioMatrixTest(unittest.TestCase):
+    def test_resume_rejects_changed_scenario_parameters(self):
+        scenario = validate_scenario('bounded', {
+            'center_xy': [-0.32, 0.26], 'size': [0.03, 0.03, 0.05],
+            'mass_kg': 0.5, 'arm_velocity_scaling': 0.5})
+        recorded = {'scenario': dict(scenario), 'repetition': 1, 'passed': True}
+        validate_resume_scenarios([recorded], [scenario])
+        changed = dict(scenario, arm_velocity_scaling=0.35)
+        with self.assertRaisesRegex(ValueError, 'differs from its recorded run'):
+            validate_resume_scenarios([recorded], [changed])
+
+    def test_report_aggregates_refresh_after_failed_run(self):
+        report = {'runs': [
+            {'scenario': {'name': 'bounded'}, 'repetition': 1, 'passed': True},
+            {'scenario': {'name': 'bounded'}, 'repetition': 2, 'passed': False,
+             'error': 'simulation exited with code 0'},
+        ], 'passed': True, 'statistics': {'bounded': {'run_count': 1}}}
+        refresh_report(report)
+        self.assertFalse(report['passed'])
+        self.assertEqual(2, report['statistics']['bounded']['run_count'])
+        self.assertEqual(1, report['overall']['failure_count'])
+
+    def test_gpu_preflight_rejects_unavailable_driver(self):
+        with patch('run_pallet_scenario_matrix.subprocess.run') as run:
+            run.return_value.returncode = 1
+            with self.assertRaisesRegex(RuntimeError, 'GPU is unavailable to this process'):
+                require_gpu_available()
+            run.return_value.returncode = 0
+            require_gpu_available()
+
+    def test_planning_budgets_are_validated_and_forwarded(self):
+        raw = {'center_xy': [-0.32, 0.26], 'size': [0.03, 0.03, 0.05],
+               'mass_kg': 0.5, 'move_to_place_timeout': 2.0}
+        scenario = validate_scenario('bounded', raw)
+        _, _, task = scenario_commands(scenario, Path('/tmp/motion.json'), 180)
+        self.assertIn('move_to_place_timeout:=2.000000', task)
+        for value in (0, -1, float('nan'), 301):
+            with self.assertRaises(ValueError):
+                validate_scenario('invalid', dict(raw, task_timeout=value))
+
     def test_commands_keep_isaac_monitor_and_mtc_geometry_consistent(self):
         scenario = validate_scenario('narrow', {
             'center_xy': [-0.27, 0.28],
@@ -21,6 +62,7 @@ class PalletScenarioMatrixTest(unittest.TestCase):
             'gripper_close_position': 0.002,
             'arm_velocity_scaling': 0.2,
             'arm_acceleration_scaling': 0.1,
+            'grasp_angle_delta': 6.283185307179586,
         })
         with tempfile.TemporaryDirectory() as directory:
             simulation, monitor, task = scenario_commands(
@@ -35,6 +77,7 @@ class PalletScenarioMatrixTest(unittest.TestCase):
         self.assertIn('gripper_close_max:=0.002000', task)
         self.assertIn('arm_velocity_scaling:=0.200000', task)
         self.assertIn('arm_acceleration_scaling:=0.100000', task)
+        self.assertIn('grasp_angle_delta:=6.283185307', task)
         self.assertIn('0.025000', monitor)
         self.assertIn('--slip-threshold', monitor)
         self.assertIn('0.005000', monitor)
@@ -43,8 +86,10 @@ class PalletScenarioMatrixTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as directory:
             gui_simulation, _, _ = scenario_commands(
-                scenario, Path(directory) / 'motion.json', 180, headless=False)
+                scenario, Path(directory) / 'motion.json', 180,
+                headless=False, use_rviz=True)
         self.assertIn('headless:=false', gui_simulation)
+        self.assertIn('use_rviz:=true', gui_simulation)
 
         with tempfile.TemporaryDirectory() as directory:
             event_file = Path(directory) / 'event.json'
@@ -93,6 +138,10 @@ class PalletScenarioMatrixTest(unittest.TestCase):
             with self.subTest(scaling=scaling), self.assertRaises(ValueError):
                 validate_scenario(
                     'bad_scaling', dict(valid, arm_velocity_scaling=scaling))
+        for angle in (0.0, 2 * 3.141592653589793 + 0.1, float('inf')):
+            with self.subTest(angle=angle), self.assertRaises(ValueError):
+                validate_scenario(
+                    'bad_grasp_angle', dict(valid, grasp_angle_delta=angle))
         for change in (
             {'center_xy': [-0.3]}, {'center_xy': [-0.3, 0.37]},
             {'size': [0.03, 0.067, 0.05]}, {'mass_kg': 0},
@@ -200,8 +249,12 @@ class PalletScenarioMatrixTest(unittest.TestCase):
     def test_recovery_diagnostics_classify_safe_cartesian_refusal(self):
         diagnostics = parse_recovery_diagnostics(
             'vertical',
+            '[INFO] RECOVERY_SCENE_DIAGNOSTIC attached_count=1 '
+            'attached=red_block@robotiq_grasping_frame world_count=1 '
+            'acm_entries=23 collision=true contact_count=2 '
+            'contact_pairs=red_block:table,J3:J5\n'
             '[ERROR] Task planning failed after 1.137 s\n'
-            'recovery retreat vertical (0/1): CartesianPath: '
+            'recovery retreat vertical to 0.005000 m (0/1): CartesianPath: '
             'min_fraction not met. Achieved: 0.000000\n',
             1)
         self.assertEqual('cartesian_path_incomplete',
@@ -209,6 +262,25 @@ class PalletScenarioMatrixTest(unittest.TestCase):
         self.assertEqual(1.137, diagnostics['planning_seconds'])
         self.assertTrue(diagnostics['safe_refusal'])
         self.assertFalse(diagnostics['execution_started'])
+        self.assertEqual(0.005, diagnostics['failed_retreat_target_m'])
+        self.assertEqual(1, diagnostics['scene_diagnostic']['attached_count'])
+        self.assertTrue(diagnostics['scene_diagnostic']['collision'])
+        self.assertEqual(
+            ['red_block:table', 'J3:J5'],
+            diagnostics['scene_diagnostic']['contact_pairs'])
+
+    def test_successful_recovery_diagnostic_is_not_a_collision_failure(self):
+        diagnostics = parse_recovery_diagnostics(
+            'lateral_right',
+            '[INFO] RECOVERY_SCENE_DIAGNOSTIC attached_count=1 '
+            'attached=red_block@tcp world_count=2 acm_entries=11 '
+            'collision=false contact_count=0 contact_pairs=none\n'
+            '[INFO] Executing lowest-cost solution\n'
+            '[INFO] Task execution completed in 3.2 s\n',
+            0)
+        self.assertTrue(diagnostics['task_completed'])
+        self.assertIsNone(diagnostics['failure_classification'])
+        self.assertFalse(diagnostics['scene_diagnostic']['collision'])
 
 
 if __name__ == '__main__':

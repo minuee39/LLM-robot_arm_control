@@ -48,10 +48,16 @@ class JointConfig:
     current_limit_a: float
 
     def motor_from_joint(self, joint_rad: float) -> float:
-        return self.motor_zero_rad + self.direction * joint_rad * self.transmission_ratio
+        motor_rad = self.motor_zero_rad + self.direction * joint_rad * self.transmission_ratio
+        if not math.isfinite(motor_rad):
+            raise RuntimeError(f"{self.name} motor command is not finite")
+        return motor_rad
 
     def joint_from_motor(self, motor_rad: float) -> float:
-        return self.direction * (motor_rad - self.motor_zero_rad) / self.transmission_ratio
+        joint_rad = self.direction * (motor_rad - self.motor_zero_rad) / self.transmission_ratio
+        if not math.isfinite(joint_rad):
+            raise RuntimeError(f"{self.name} measured joint position is not finite")
+        return joint_rad
 
 
 @dataclass(frozen=True)
@@ -77,6 +83,19 @@ def _finite_positive(value: Any, field: str) -> float:
     return number
 
 
+def _finite_float(value: Any, field: str) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise ConfigurationError(f"{field} must be finite")
+    return number
+
+
+def _integer_in_range(value: Any, field: str, lower: int, upper: int) -> int:
+    if type(value) is not int or not lower <= value <= upper:
+        raise ConfigurationError(f"{field} must be an integer within {lower}..{upper}")
+    return value
+
+
 def load_hardware_config(path: str | Path, *, require_commissioned: bool) -> HardwareConfig:
     with Path(path).open("r", encoding="utf-8") as stream:
         document = yaml.safe_load(stream)
@@ -97,14 +116,12 @@ def load_hardware_config(path: str | Path, *, require_commissioned: bool) -> Har
     for name, raw in raw_joints.items():
         if not isinstance(name, str) or not isinstance(raw, Mapping):
             raise ConfigurationError("each joint entry must be a named mapping")
-        motor_id = int(raw.get("motor_id", 0))
-        if not 1 <= motor_id <= 255:
-            raise ConfigurationError(f"{name}.motor_id must be in 1..255")
+        motor_id = _integer_in_range(raw.get("motor_id"), f"{name}.motor_id", 1, 255)
         if motor_id in motor_ids:
             raise ConfigurationError(f"duplicate motor_id: {motor_id}")
         motor_ids.add(motor_id)
-        direction = int(raw.get("direction", 0))
-        if direction not in (-1, 1):
+        direction = raw.get("direction")
+        if type(direction) is not int or direction not in (-1, 1):
             raise ConfigurationError(f"{name}.direction must be -1 or 1")
         lower = float(raw["lower_rad"])
         upper = float(raw["upper_rad"])
@@ -115,7 +132,7 @@ def load_hardware_config(path: str | Path, *, require_commissioned: bool) -> Har
                 name=name,
                 motor_id=motor_id,
                 direction=direction,
-                motor_zero_rad=float(raw["motor_zero_rad"]),
+                motor_zero_rad=_finite_float(raw["motor_zero_rad"], f"{name}.motor_zero_rad"),
                 transmission_ratio=_finite_positive(raw.get("transmission_ratio", 1.0), f"{name}.transmission_ratio"),
                 lower_rad=lower,
                 upper_rad=upper,
@@ -127,7 +144,7 @@ def load_hardware_config(path: str | Path, *, require_commissioned: bool) -> Har
     return HardwareConfig(
         commissioned=commissioned,
         interface=str(document.get("interface", "can0")),
-        host_id=int(document.get("host_id", 0xFD)),
+        host_id=_integer_in_range(document.get("host_id", 0xFD), "host_id", 1, 255),
         command_period_s=_finite_positive(document.get("command_period_s", 0.02), "command_period_s"),
         feedback_period_s=_finite_positive(document.get("feedback_period_s", 0.05), "feedback_period_s"),
         feedback_timeout_s=_finite_positive(document.get("feedback_timeout_s", 0.1), "feedback_timeout_s"),
@@ -253,7 +270,10 @@ class RobStrideBus:
             motor_id = (message.arbitration_id >> 8) & 0xFF
             data = bytes(message.data)
             if comm_type == TYPE_READ_PARAM and motor_id in requested and len(data) == 8 and data[:2] == expected_index:
-                positions[motor_id] = struct.unpack("<f", data[4:8])[0]
+                position = struct.unpack("<f", data[4:8])[0]
+                if not math.isfinite(position):
+                    raise RuntimeError(f"non-finite position feedback from motor {motor_id}")
+                positions[motor_id] = position
         return positions
 
     def close(self) -> None:

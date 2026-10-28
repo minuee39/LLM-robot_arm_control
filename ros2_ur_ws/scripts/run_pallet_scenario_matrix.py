@@ -26,7 +26,10 @@ sys.path.insert(0, str(PALLET_CONFIG / 'scripts'))
 from workcell_scenario import block_scenario
 
 WORKCELL = yaml.safe_load((PALLET_CONFIG / 'config/workcell.yaml').read_text(encoding='utf-8'))
-READY_TEXT = 'Pallet workcell ready for direct-pose MTC execution.'
+# The launch-level workcell message can appear while Isaac Sim is still loading
+# extensions.  Wait for the simulator endpoint itself to create its ROS node,
+# publishers and subscriptions before starting MTC execution.
+READY_TEXT = 'PALLET_ISAAC_READY joints='
 TASK_COMPLETED_TEXT = 'Task execution completed'
 
 DEFAULT_SCENARIOS = {
@@ -70,11 +73,26 @@ def validate_scenario(name, raw):
         if not math.isfinite(value) or not 0.0 < value <= 1.0:
             raise ValueError(f'{name}: {parameter} must be within (0, 1]')
         result[parameter] = value
+    grasp_angle_delta = raw.get('grasp_angle_delta')
+    if grasp_angle_delta is not None:
+        grasp_angle_delta = float(grasp_angle_delta)
+        if (not math.isfinite(grasp_angle_delta) or
+                not 0.0 < grasp_angle_delta <= 2.0 * math.pi):
+            raise ValueError(f'{name}: grasp_angle_delta must be within (0, 2*pi]')
+        result['grasp_angle_delta'] = grasp_angle_delta
+    for parameter in ('move_to_pick_timeout', 'move_to_place_timeout',
+                      'return_home_timeout', 'task_timeout'):
+        if parameter in raw:
+            value = float(raw[parameter])
+            if not math.isfinite(value) or not 0 < value <= 300:
+                raise ValueError(f'{name}: {parameter} must be within (0, 300] seconds')
+            result[parameter] = value
     return result
 
 
 def scenario_commands(scenario, result_file, monitor_seconds, slip_threshold=0.005,
                       slip_confirm_samples=3, headless=True,
+                      use_rviz=False,
                       safety_cancel_enabled=False,
                       inject_safety_event_after_contact=-1.0,
                       event_file=None, inject_safety_code='SLIP_DETECTED',
@@ -89,7 +107,8 @@ def scenario_commands(scenario, result_file, monitor_seconds, slip_threshold=0.0
     target = [0.30, -0.30, size[2] / 2]
     simulation = [
         'ros2', 'launch', 'mtc_tutorial', 'pallet_mtc_isaac_demo.launch.py',
-        f'headless:={str(headless).lower()}', 'use_rviz:=false', 'startup_timeout:=180',
+        f'headless:={str(headless).lower()}',
+        f'use_rviz:={str(use_rviz).lower()}', 'startup_timeout:=180',
         f'block_x:={center[0]:.6f}', f'block_y:={center[1]:.6f}',
         f'block_size_x:={size[0]:.6f}', f'block_size_y:={size[1]:.6f}',
         f'block_size_z:={size[2]:.6f}', f'block_mass_kg:={scenario["mass_kg"]:.6f}',
@@ -137,6 +156,12 @@ def scenario_commands(scenario, result_file, monitor_seconds, slip_threshold=0.0
             f'gripper_close_max:={close:.6f}',
         ])
     for parameter in SCENARIO_SCALING_PARAMETERS:
+        if parameter in scenario:
+            task.append(f'{parameter}:={scenario[parameter]:.6f}')
+    if 'grasp_angle_delta' in scenario:
+        task.append(f'grasp_angle_delta:={scenario["grasp_angle_delta"]:.9f}')
+    for parameter in ('move_to_pick_timeout', 'move_to_place_timeout',
+                      'return_home_timeout', 'task_timeout'):
         if parameter in scenario:
             task.append(f'{parameter}:={scenario[parameter]:.6f}')
     return simulation, monitor, task
@@ -239,14 +264,14 @@ def classify_failure(run):
         return 'task_timeout'
     if not run.get('process_cleanup_ok', True):
         return 'process_cleanup'
+    if summary.get('slip_detected') is True:
+        return 'slip'
     if summary.get('safety_event_published') is True and not run.get('safety_stop_expected'):
         return 'safety_false_positive'
     if not run.get('task_execution_completed'):
         return 'planning_or_execution'
     if not summary:
         return 'monitor_result_missing'
-    if summary.get('slip_detected') is True:
-        return 'slip'
     if summary.get('release_detected') is not True:
         return 'release_not_detected'
     if summary.get('post_release_recontact_detected') is True:
@@ -364,6 +389,44 @@ def summarize_matrix(runs):
     }
 
 
+def refresh_report(report, dry_run=False):
+    """Keep aggregate results consistent with runs after every repetition."""
+    runs = report['runs']
+    report['passed'] = bool(runs) and all(
+        run.get('passed', run.get('status') == 'dry_run') for run in runs)
+    if not dry_run:
+        report['statistics'] = summarize_runs(runs)
+        report['overall'] = summarize_matrix(runs)
+
+
+def require_gpu_available():
+    """Fail before another expensive Isaac startup when its GPU is unavailable."""
+    try:
+        result = subprocess.run(
+            ['nvidia-smi', '-L'], stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL, timeout=10, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError('NVIDIA GPU preflight failed; Isaac run not started') from exc
+    if result.returncode != 0:
+        raise RuntimeError(
+            'NVIDIA GPU is unavailable to this process (device access or driver); '
+            'Isaac run not started')
+
+
+def validate_resume_scenarios(runs, scenarios):
+    """Never reuse a passed repetition for different physical run parameters."""
+    requested = {scenario['name']: scenario for scenario in scenarios}
+    for run in runs:
+        previous = run.get('scenario')
+        if not isinstance(previous, dict):
+            continue
+        name = previous.get('name')
+        if name in requested and previous != requested[name]:
+            raise ValueError(
+                f'--resume scenario {name} differs from its recorded run; '
+                'use a new output directory')
+
+
 def recovery_candidates(scenario, requested=None):
     """Return bounded base-frame retreat candidates in deterministic order."""
     source = scenario['center_xy']
@@ -388,7 +451,8 @@ def parse_recovery_diagnostics(candidate, text, returncode):
     detail_lines = []
     for raw_line in text.splitlines():
         line = re.sub(r'^\[[^]]+\]\s*', '', raw_line).strip()
-        if ('adapter' not in line.lower() and any(token in line.lower() for token in (
+        if ('RECOVERY_SCENE_DIAGNOSTIC' not in line and
+                'adapter' not in line.lower() and any(token in line.lower() for token in (
                 'min_fraction not met', 'collision', 'joint bound',
                 'joint limit', 'invalid start state'))):
             detail_lines.append(line)
@@ -403,6 +467,25 @@ def parse_recovery_diagnostics(candidate, text, returncode):
         classification = 'planning_failed_unknown'
     else:
         classification = None
+    scene_match = re.search(
+        r'RECOVERY_SCENE_DIAGNOSTIC attached_count=(\d+) attached=(\S+) '
+        r'world_count=(\d+) acm_entries=(\d+) collision=(true|false) '
+        r'contact_count=(\d+) contact_pairs=(\S+)', text)
+    failed_stage_match = re.search(
+        r'recovery retreat [^\n]*? to ([0-9.]+) m', '\n'.join(detail_lines))
+    scene_diagnostic = None
+    if scene_match:
+        scene_diagnostic = {
+            'attached_count': int(scene_match.group(1)),
+            'attached': scene_match.group(2).split(',') if scene_match.group(2) != 'none' else [],
+            'world_count': int(scene_match.group(3)),
+            'acm_entries': int(scene_match.group(4)),
+            'collision': scene_match.group(5) == 'true',
+            'contact_count': int(scene_match.group(6)),
+            'contact_pairs': (
+                scene_match.group(7).split(',')
+                if scene_match.group(7) != 'none' else []),
+        }
     return {
         'candidate': candidate,
         'returncode': returncode,
@@ -414,6 +497,9 @@ def parse_recovery_diagnostics(candidate, text, returncode):
             'Executing lowest-cost solution' not in text),
         'failure_classification': classification,
         'failure_evidence': detail_lines,
+        'failed_retreat_target_m': (
+            float(failed_stage_match.group(1)) if failed_stage_match else None),
+        'scene_diagnostic': scene_diagnostic,
     }
 
 
@@ -426,7 +512,8 @@ def run_once(scenario, run_dir, args):
     monitor_log = run_dir / 'monitor.log'
     simulation_command, monitor_command, task_command = scenario_commands(
         scenario, result_path, args.monitor_seconds, args.slip_threshold,
-        args.slip_confirm_samples, args.headless, args.safety_cancel_enabled,
+        args.slip_confirm_samples, args.headless, args.use_rviz,
+        args.safety_cancel_enabled,
         args.inject_safety_event_after_contact, event_path,
         args.inject_safety_code, args.drop_clearance_threshold,
         args.tilt_threshold_deg, args.fault_confirm_samples,
@@ -639,6 +726,9 @@ def parse_args():
     parser.add_argument('--task-timeout', type=float, default=150)
     parser.add_argument('--monitor-seconds', type=float, default=180)
     parser.add_argument('--settle-seconds', type=float, default=3)
+    parser.add_argument(
+        '--inter-run-cooldown', type=float, default=5.0,
+        help='seconds to wait after cleanup before starting the next Isaac process')
     parser.add_argument('--min-clearance', type=float, default=0.020)
     parser.add_argument('--slip-threshold', type=float, default=0.005)
     parser.add_argument('--slip-confirm-samples', type=int, default=3)
@@ -669,6 +759,9 @@ def parse_args():
     parser.add_argument(
         '--gui', action='store_false', dest='headless',
         help='show the Isaac Sim GUI for each repetition')
+    parser.add_argument(
+        '--rviz', action='store_true', dest='use_rviz',
+        help='show RViz together with Isaac Sim (normally used with --gui)')
     parser.set_defaults(headless=True)
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()
@@ -677,6 +770,9 @@ def parse_args():
     for name in ('startup_timeout', 'task_timeout', 'monitor_seconds', 'settle_seconds'):
         if not math.isfinite(getattr(args, name)) or getattr(args, name) <= 0:
             parser.error(f'--{name.replace("_", "-")} must be finite and positive')
+    if (not math.isfinite(args.inter_run_cooldown) or
+            args.inter_run_cooldown < 0):
+        parser.error('--inter-run-cooldown must be finite and non-negative')
     if not math.isfinite(args.min_clearance) or args.min_clearance < 0:
         parser.error('--min-clearance must be finite and non-negative')
     if not math.isfinite(args.slip_threshold) or not 0 < args.slip_threshold < 1:
@@ -724,7 +820,7 @@ def main():
             f'available: {", ".join(sorted(raw_scenarios))}')
     scenarios = [validate_scenario(name, raw_scenarios[name]) for name in names]
     stamp = dt.datetime.now().strftime('%Y%m%d-%H%M%S')
-    output_dir = args.output_dir or Path('/tmp') / f'pallet-scenario-matrix-{stamp}'
+    output_dir = (args.output_dir or Path('/tmp') / f'pallet-scenario-matrix-{stamp}').resolve()
     report_path = output_dir / 'report.json'
     if args.resume:
         if not report_path.exists():
@@ -732,10 +828,13 @@ def main():
         report = json.loads(report_path.read_text(encoding='utf-8'))
         if not isinstance(report.get('runs'), list):
             raise ValueError(f'invalid resume report: {report_path}')
+        validate_resume_scenarios(report['runs'], scenarios)
         report['resumed_at'] = dt.datetime.now(dt.timezone.utc).isoformat()
     else:
         output_dir.mkdir(parents=True, exist_ok=False)
         report = {'created_at': dt.datetime.now(dt.timezone.utc).isoformat(), 'runs': []}
+    refresh_report(report, args.dry_run)
+    write_json_atomic(report_path, report)
     existing_runs = {
         (run.get('scenario', {}).get('name'), run.get('repetition')): index
         for index, run in enumerate(report['runs'])
@@ -749,6 +848,8 @@ def main():
                     f'Skipping passed {scenario["name"]} repetition {repetition}/{args.repeat}',
                     flush=True)
                 continue
+            if not args.dry_run:
+                require_gpu_available()
             base_run_dir = output_dir / f'{scenario["name"]}-{repetition:02d}'
             run_dir = base_run_dir
             retry = 1
@@ -783,16 +884,16 @@ def main():
                     'logs': previous.get('logs'),
                 }]
                 report['runs'][existing_index] = result
+            refresh_report(report, args.dry_run)
             write_json_atomic(report_path, report)
             print(json.dumps({
                 'scenario': scenario['name'], 'repetition': repetition,
                 'status': result.get('status'), 'passed': result.get('passed'),
                 'error': result.get('error'),
             }), flush=True)
-    report['passed'] = all(run.get('passed', run.get('status') == 'dry_run') for run in report['runs'])
-    if not args.dry_run:
-        report['statistics'] = summarize_runs(report['runs'])
-        report['overall'] = summarize_matrix(report['runs'])
+            if not args.dry_run and args.inter_run_cooldown > 0:
+                time.sleep(args.inter_run_cooldown)
+    refresh_report(report, args.dry_run)
     write_json_atomic(report_path, report)
     print(f'Report: {report_path}', flush=True)
     return 0 if report['passed'] else 1
