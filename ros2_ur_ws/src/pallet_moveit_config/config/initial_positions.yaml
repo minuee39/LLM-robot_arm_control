@@ -1,8 +1,8 @@
-# Default initial positions for pallet's ros2_control fake system
-
 initial_positions:
-  j1: 0
-  j2: 0
-  j3: 0
-  j4: 0
-  j5: 0
+  J1: 0
+  J2: 0
+  J3: 0
+  J4: 0
+  J5: 0
+  J6: 0
+  g_r: 0
