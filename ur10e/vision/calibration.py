@@ -55,3 +55,14 @@ def optical_camera_to_world_transform(eye, target, up=(0.0, 0.0, 1.0)):
     transform[:3, 2] = forward
     transform[:3, 3] = eye
     return validate_rigid_transform(transform)
+
+
+def optical_transform_camera_geometry(transform_matrix):
+    """Return eye, target, and up in the transform's destination frame (metres)."""
+    transform = validate_rigid_transform(transform_matrix)
+    eye = transform[:3, 3]
+    return {
+        "eye": eye.tolist(),
+        "target": (eye + transform[:3, 2]).tolist(),
+        "up": (-transform[:3, 1]).tolist(),
+    }

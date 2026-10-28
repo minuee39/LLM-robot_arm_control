@@ -3,9 +3,10 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ISAAC_SIM_ROOT="${ISAAC_SIM_ROOT:-/home/minwoo/isaacsim}"
-ISAAC_ROS2_LIB="${ISAAC_SIM_ROOT}/exts/isaacsim.ros2.bridge/humble/lib"
+ISAAC_ROS_DISTRO="${ISAAC_ROS_DISTRO:-humble}"
+ISAAC_ROS2_LIB="${ISAAC_SIM_ROOT}/exts/isaacsim.ros2.bridge/${ISAAC_ROS_DISTRO}/lib"
 
-export ROS_DISTRO="${ROS_DISTRO:-humble}"
+export ROS_DISTRO="${ISAAC_ROS_DISTRO}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
 export LD_LIBRARY_PATH="${ISAAC_ROS2_LIB}:${LD_LIBRARY_PATH:-}"
 

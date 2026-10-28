@@ -6,9 +6,26 @@ import time
 from collections import deque
 
 from .base import Detection
+from .calibration import optical_transform_camera_geometry
 
 
 EXPECTED_BLOCK_NAMES = ("red_block", "green_block", "blue_block")
+
+
+def pallet_scene_from_detections(detections, optical_to_base_footprint, block_size):
+    """Create Pallet's measured scene contract from stable block centers."""
+    size = np.asarray(block_size, dtype=float)
+    if size.shape != (3,) or not np.all(np.isfinite(size)) or np.any(size <= 0):
+        raise ValueError("block_size must be three positive finite metre values")
+    camera = optical_transform_camera_geometry(optical_to_base_footprint)
+    objects = {
+        name: {**info, "size": size.tolist()}
+        for name, info in detections.items()
+        if name in EXPECTED_BLOCK_NAMES
+    }
+    if not objects:
+        raise ValueError("Pallet scene requires a stable color block")
+    return objects, camera
 
 
 class TimedDetectionStore:
@@ -178,6 +195,7 @@ def write_vision_scene(
     allowed_names=EXPECTED_BLOCK_NAMES,
     frame="world",
     unit="m",
+    camera=None,
 ):
     path = Path(path)
     if not objects:
@@ -199,6 +217,8 @@ def write_vision_scene(
         "unit": unit,
         "objects": objects,
     }
+    if camera is not None:
+        payload["camera"] = camera
     tmp_path = Path(f"{path}.tmp")
     with tmp_path.open("w", encoding="utf-8") as file:
         json.dump(payload, file, ensure_ascii=False, indent=2)

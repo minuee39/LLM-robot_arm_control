@@ -1,7 +1,12 @@
 import pytest
 import json
 
-from vision.scene_objects import StableDetectionStore, TimedDetectionStore, write_vision_scene
+from vision.scene_objects import (
+    StableDetectionStore,
+    TimedDetectionStore,
+    pallet_scene_from_detections,
+    write_vision_scene,
+)
 
 
 def test_detection_store_returns_all_blocks_in_stable_order():
@@ -179,3 +184,55 @@ def test_write_vision_scene_records_camera_frame(tmp_path):
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["frame"] == "camera_color_optical_frame"
     assert payload["unit"] == "mm"
+
+
+def test_write_vision_scene_records_pallet_camera_and_block_size(tmp_path):
+    path = tmp_path / "pallet_scene.json"
+    camera = {
+        "eye": [0.0, 0.0, 1.0],
+        "target": [0.0, 0.0, 0.0],
+        "up": [0.0, 1.0, 0.0],
+    }
+    write_vision_scene(
+        path,
+        {"red_block": {"position": [-0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05]}},
+        updated_at=123.5,
+        frame="base_footprint",
+        unit="m",
+        camera=camera,
+    )
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["frame"] == "base_footprint"
+    assert payload["camera"] == camera
+    assert payload["objects"]["red_block"]["size"] == [0.03, 0.03, 0.05]
+
+
+def test_pallet_scene_from_detections_filters_and_adds_frame_geometry():
+    transform = [
+        [1.0, 0.0, 0.0, 0.2],
+        [0.0, -1.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.8],
+        [0.0, 0.0, 0.0, 1.0],
+    ]
+    objects, camera = pallet_scene_from_detections(
+        {
+            "red_block": {"position": [-0.3, 0.3, 0.025], "confidence": 0.9},
+            "person": {"position": [0.0, 0.0, 0.5]},
+        },
+        transform,
+        [0.03, 0.03, 0.05],
+    )
+    assert list(objects) == ["red_block"]
+    assert objects["red_block"]["size"] == [0.03, 0.03, 0.05]
+    assert camera["eye"] == [0.2, 0.0, 0.8]
+    assert camera["target"] == pytest.approx([0.2, 0.0, -0.2])
+
+
+def test_pallet_scene_rejects_invalid_calibration():
+    with pytest.raises(ValueError, match="orthonormal"):
+        pallet_scene_from_detections(
+            {"red_block": {"position": [0.0, 0.0, 0.025]}},
+            [[2, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+            [0.03, 0.03, 0.05],
+        )

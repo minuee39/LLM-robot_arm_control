@@ -4,6 +4,8 @@ project(pallet)
 
 find_package(ament_cmake REQUIRED)
 
+install(FILES MASS_REVISED_MIGRATION.md DESTINATION share/${PROJECT_NAME})
+
 install(
   DIRECTORY config launch meshes scripts urdf
   DESTINATION share/${PROJECT_NAME}
@@ -13,12 +15,18 @@ install(
 install(
   PROGRAMS
     scripts/pallet_follow_joint_trajectory_bridge.py
+    scripts/pallet_robstride_trajectory_bridge.py
     scripts/pallet_isaac_gripperless_physics_test.py
     scripts/pallet_isaac_moveit_bridge.py
     scripts/pallet_planning_scene_floor.py
     scripts/robstride_can_id.py
     scripts/run_pallet_isaac_gripperless_physics_test.sh
     scripts/run_pallet_isaac_moveit_bridge.sh
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  FILES scripts/robstride_trajectory_core.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

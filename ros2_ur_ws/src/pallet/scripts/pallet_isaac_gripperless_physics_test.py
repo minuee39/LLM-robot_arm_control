@@ -24,16 +24,16 @@ SCRIPT_PATH = Path(__file__).resolve()
 
 def resolve_package_root() -> Path:
     source_root = SCRIPT_PATH.parents[1]
-    if (source_root / "urdf" / "pallet.urdf").is_file():
+    if (source_root / "urdf" / "pallet_gripperless.urdf").is_file():
         return source_root
     installed_root = SCRIPT_PATH.parents[2] / "share" / "pallet"
-    if (installed_root / "urdf" / "pallet.urdf").is_file():
+    if (installed_root / "urdf" / "pallet_gripperless.urdf").is_file():
         return installed_root
     raise FileNotFoundError("Could not locate the Pallet package urdf directory")
 
 
 PACKAGE_ROOT = resolve_package_root()
-DEFAULT_URDF = PACKAGE_ROOT / "urdf" / "pallet.urdf"
+DEFAULT_URDF = PACKAGE_ROOT / "urdf" / "pallet_gripperless.urdf"
 DEFAULT_CONFIG = PACKAGE_ROOT / "config" / "isaac_gripperless_physics_test.json"
 EXPECTED_JOINTS = ("j1", "j2", "j3", "j4", "j5")
 

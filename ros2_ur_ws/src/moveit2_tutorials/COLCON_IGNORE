@@ -1,0 +1,2 @@
+This upstream tutorial checkout targets ROS 2 Humble and is excluded from the
+Jazzy workspace build.

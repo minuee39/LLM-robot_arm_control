@@ -2,7 +2,7 @@
 set -euo pipefail
 
 set +u
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
