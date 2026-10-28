@@ -7,6 +7,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
 from launch_ros.parameter_descriptions import ParameterValue
 
 
@@ -31,6 +32,10 @@ def generate_launch_description() -> LaunchDescription:
             description="Explicitly allow final-target-only PP motion on live motors",
         ),
         DeclareLaunchArgument(
+            "add_floor", default_value="false",
+            description="Add a visible collision floor to the planning scene",
+        ),
+        DeclareLaunchArgument(
             "hardware_config",
             default_value=str(default_config),
             description="Commissioned RobStride joint mapping and safety limits",
@@ -53,6 +58,9 @@ def generate_launch_description() -> LaunchDescription:
             }],
         ),
         include_moveit_launch("move_group.launch.py"),
-        Node(package="pallet", executable="pallet_planning_scene_floor.py", output="screen"),
+        Node(
+            package="pallet", executable="pallet_planning_scene_floor.py",
+            output="screen", condition=IfCondition(LaunchConfiguration("add_floor")),
+        ),
         include_moveit_launch("moveit_rviz.launch.py"),
     ])
