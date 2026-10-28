@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "frame": "base_footprint",
+  "unit": "m",
+  "tasks": [
+    {"action": "pick_place", "pick_object": "red_block", "place_xyz": [0.24, -0.28, 0.025]}
+  ]
+}

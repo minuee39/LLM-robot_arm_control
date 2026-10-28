@@ -1,0 +1,48 @@
+{
+  "job_id": "palletize-1791198529",
+  "created_at": 1791198738.7291303,
+  "requested_count": 3,
+  "completed_count": 2,
+  "passed": false,
+  "runs": [
+    {
+      "object_id": "green_block",
+      "target": [
+        0.28,
+        -0.24,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 83.80119781999974,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/01-green_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/01-green_block-task.json"
+    },
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 108.59947135799985,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/02-red_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/02-red_block-task.json"
+    },
+    {
+      "object_id": "blue_block",
+      "target": [
+        0.28,
+        -0.28,
+        0.025
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 13.559707877000164,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/03-blue_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-v9-20261005/job/03-blue_block-task.json"
+    }
+  ]
+}

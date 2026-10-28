@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "frame": "base_footprint",
+  "unit": "m",
+  "tasks": [
+    {
+      "action": "pick_place",
+      "pick_object": "blue_block",
+      "target_object": "green_block",
+      "relation": "on",
+      "confidence": 1.0
+    }
+  ]
+}

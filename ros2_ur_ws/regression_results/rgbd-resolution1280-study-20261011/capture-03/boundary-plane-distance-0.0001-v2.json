@@ -1,0 +1,321 @@
+{
+  "diagnostic_only": true,
+  "collision_model_approved": false,
+  "frame": "base_footprint",
+  "unit": "m",
+  "exposure_stamps": {
+    "rgb_stamp": 49.425002577,
+    "depth_stamp": 49.425002577,
+    "stamp_clock": "ros_header"
+  },
+  "calibration_revision": "b147033fdffe36254e59fba90025d2ffd8972d1d9723105790009837ef0c75d7",
+  "extrinsic_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+  "pixel_center_offset_px": 0.5,
+  "current_motion_freshness": "not_evaluated_offline",
+  "saturation": 50,
+  "opening_kernel_size": 3,
+  "plane_limits": {
+    "distance_limit_m": 0.0001,
+    "max_tilt_rad": 0.3,
+    "min_inliers": 20,
+    "min_inlier_fraction": 0.15,
+    "min_minor_span_m": 0.008,
+    "trials": 2048
+  },
+  "boundary_limits": {
+    "expected_side_m": 0.03,
+    "max_size_error_m": 0.003,
+    "max_plane_residual_m": 0.0005,
+    "edge_band_m": 0.0015,
+    "min_edge_support": 6,
+    "min_edge_span_fraction": 0.6,
+    "max_hull_residual_m": 0.0015
+  },
+  "box_height_m": 0.05,
+  "uncertainty": "not_certified",
+  "detections": [
+    {
+      "object_id": "red_block",
+      "bbox": [
+        943,
+        751,
+        1001,
+        816
+      ],
+      "diagnostic_candidate": true,
+      "collision_model_approved": false,
+      "mask_pixels": 2914,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 2672,
+      "top_center_base_m": [
+        -0.31999825519856157,
+        0.10000034793490571,
+        0.050000005470778645
+      ],
+      "box_center_candidate_m": [
+        -0.3199983130730342,
+        0.10000018227202698,
+        0.02500000547139452
+      ],
+      "rotation_base": [
+        [
+          0.9999999417348647,
+          -0.0003413574491183472,
+          2.3149789056599753e-06
+        ],
+        [
+          0.0003413574337715254,
+          0.9999999417155941,
+          6.626515149148193e-06
+        ],
+        [
+          -2.3172407810406623e-06,
+          -6.6257245277949214e-06,
+          0.999999999975365
+        ]
+      ],
+      "normal_base": [
+        2.3149789056599753e-06,
+        6.626515149148193e-06,
+        0.999999999975365
+      ],
+      "yaw_mod_quarter_turn_rad": 0.00034135745574870313,
+      "observed_size_xy_m": [
+        0.029942531098522664,
+        0.030000293728673206
+      ],
+      "edge_support_counts": [
+        84,
+        83,
+        79,
+        86
+      ],
+      "hull_residual_max_m": 0.0007594247898501131,
+      "plane_residual_rms_m": 1.2261241687373534e-06
+    },
+    {
+      "object_id": "green_block",
+      "bbox": [
+        958,
+        651,
+        1014,
+        717
+      ],
+      "diagnostic_candidate": true,
+      "collision_model_approved": false,
+      "mask_pixels": 2808,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 2568,
+      "top_center_base_m": [
+        -0.3200086618778815,
+        0.020001195380441494,
+        0.049999948095863535
+      ],
+      "box_center_candidate_m": [
+        -0.32000905447407707,
+        0.020000623450962377,
+        0.02499994810548824
+      ],
+      "rotation_base": [
+        [
+          0.9999999709589481,
+          -0.00024049010851833396,
+          1.5703847822027903e-05
+        ],
+        [
+          0.00024048974922532572,
+          0.9999999708206571,
+          2.2877179164705348e-05
+        ],
+        [
+          -1.570934909909986e-05,
+          -2.2873401885903407e-05,
+          0.9999999996150117
+        ]
+      ],
+      "normal_base": [
+        1.5703847822027903e-05,
+        2.2877179164705348e-05,
+        0.9999999996150117
+      ],
+      "yaw_mod_quarter_turn_rad": 0.0002404901108661317,
+      "observed_size_xy_m": [
+        0.029944479071013136,
+        0.029997177465413763
+      ],
+      "edge_support_counts": [
+        76,
+        79,
+        74,
+        80
+      ],
+      "hull_residual_max_m": 0.0007097042775121633,
+      "plane_residual_rms_m": 2.719291895149692e-06
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        0,
+        543,
+        148
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 53762,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 52384,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        1136,
+        0,
+        1280,
+        299
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 37577,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 36695,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        66,
+        485,
+        181
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 11646,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 10450,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        504,
+        164,
+        648,
+        211
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 3302,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 2924,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        756,
+        211,
+        1118,
+        304
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 9070,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 8152,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        1131,
+        285,
+        1280,
+        336
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 3795,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 3399,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        971,
+        558,
+        1027,
+        623
+      ],
+      "diagnostic_candidate": true,
+      "collision_model_approved": false,
+      "mask_pixels": 2691,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 2453,
+      "top_center_base_m": [
+        -0.3200203597371812,
+        -0.0599788624949373,
+        0.049999958230805774
+      ],
+      "box_center_candidate_m": [
+        -0.32002023067017554,
+        -0.05997924464120879,
+        0.024999958234059653
+      ],
+      "rotation_base": [
+        [
+          0.999999999950395,
+          -8.518025260256772e-06,
+          -5.162680226514161e-06
+        ],
+        [
+          8.518104175335115e-06,
+          0.9999999998468924,
+          1.528585085953287e-05
+        ],
+        [
+          5.162550020459968e-06,
+          -1.528589483502261e-05,
+          0.9999999998698448
+        ]
+      ],
+      "normal_base": [
+        -5.162680226514161e-06,
+        1.528585085953287e-05,
+        0.9999999998698448
+      ],
+      "yaw_mod_quarter_turn_rad": 8.518025260473294e-06,
+      "observed_size_xy_m": [
+        0.0299488829152834,
+        0.029957928657028676
+      ],
+      "edge_support_counts": [
+        69,
+        68,
+        68,
+        72
+      ],
+      "hull_residual_max_m": 0.0007399107514045232,
+      "plane_residual_rms_m": 2.3121489533179544e-06
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        950,
+        36,
+        960
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 218,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 130,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    }
+  ],
+  "capture_path": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/rgbd-resolution1280-study-20261011/capture-03"
+}

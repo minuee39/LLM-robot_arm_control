@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "all_stop_confirmed": true,
+  "reason": "J2: velocity trip",
+  "max_cycle_ms": 77.25035000112257,
+  "last_errors_rad": {
+    "J1": 0.0004893040657043546,
+    "J2": 0.0009665850573219361,
+    "J3": 0.00027767732739448353,
+    "J4": 4.509627819061779e-05,
+    "J5": 5.386978387832836e-05,
+    "J6": 4.505157470703104e-05
+  },
+  "last_elapsed_s": 1.7782352669983084,
+  "log": "measurements/position/all_axes_plus001_20261027.jsonl"
+}

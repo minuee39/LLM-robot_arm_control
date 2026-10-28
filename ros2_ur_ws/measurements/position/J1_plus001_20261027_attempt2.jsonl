@@ -1,0 +1,11 @@
+{"event": "live_configuration", "joint": "J1", "limits": {"current_limit_a": null, "current_trip_a": 0.2, "velocity_rad_s": 0.1, "acceleration_rad_s2": 0.1, "travel_rad": 0.02, "goal_tolerance_rad": 0.001, "timeout_s": 4.0, "hold_s": 0.5, "period_s": 0.05, "feedback_timeout_s": 0.015, "watchdog_s": 0.25}}
+{"event": "current_limit_preserved", "observed_current_limit_a": 16.0, "measured_current_trip_a": 0.2}
+{"event": "profile_sent_write_only", "velocity_joint_rad_s": 0.1, "acceleration_joint_rad_s2": 0.1}
+{"event": "initial_reference_verified", "expected_motor_rad": -0.7827137112617493, "readback_motor_rad": -0.7827137112617493, "readback_error_rad": 0.0, "readback_tolerance_rad": 0.0002}
+{"event": "enabled", "joint": "J1", "motor_id": 1, "start_joint_rad": 0.7828671336174011, "target_joint_rad": 0.7928671336174011, "initial_hold_motor_rad": -0.7828671336174011, "target_motor_rad": -0.7928671336174011, "delta_joint_rad": 0.01}
+{"event": "sample", "elapsed_s": 0.012681410000368487, "joint_rad": 0.7829055190086365, "motor_rad": -0.7829055190086365, "current_a": 0.03897596895694733, "velocity_rad_s": -0.023373816162347794, "goal_error_rad": 0.009961614608764657}
+{"event": "sample", "elapsed_s": 0.05966934400021273, "joint_rad": 0.7830588817596436, "motor_rad": -0.7830588817596436, "current_a": -0.03190162405371666, "velocity_rad_s": -0.04728684946894646, "goal_error_rad": 0.009808251857757577}
+{"event": "sample", "elapsed_s": 0.1098632439998255, "joint_rad": 0.7830204963684082, "motor_rad": -0.7830204963684082, "current_a": -0.0021986784413456917, "velocity_rad_s": -0.008650638163089752, "goal_error_rad": 0.009846637248992929}
+{"event": "sample", "elapsed_s": 0.15985000799992122, "joint_rad": 0.7832123041152954, "motor_rad": -0.7832123041152954, "current_a": -0.05441851541399956, "velocity_rad_s": -0.03340291231870651, "goal_error_rad": 0.009654829502105722}
+{"event": "sample", "elapsed_s": 0.20994119700026204, "joint_rad": 0.7834423780441284, "motor_rad": -0.7834423780441284, "current_a": -0.05552903562784195, "velocity_rad_s": -0.00344841368496418, "goal_error_rad": 0.009424755573272714}
+{"event": "stop_confirmed"}

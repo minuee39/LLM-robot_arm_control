@@ -1,0 +1,36 @@
+{
+  "purpose": "ground_truth_used_after_estimation_for_evaluation_only",
+  "uncertainty": "not_certified",
+  "event_count": 15,
+  "three_stable_count": 12,
+  "exposure_span_s": 4.0023345947265625,
+  "objects": {
+    "red_block": {
+      "count": 12,
+      "maximum": {
+        "xy_error_m": 5.161608461236488e-05,
+        "z_error_m": 1.7061326705591906e-08,
+        "yaw_error_mod_quarter_turn_rad": 0.0030741325727259294,
+        "truth_gap_s": 0.3997042179107666
+      }
+    },
+    "green_block": {
+      "count": 12,
+      "maximum": {
+        "xy_error_m": 6.728760929123905e-05,
+        "z_error_m": 3.031496331393213e-08,
+        "yaw_error_mod_quarter_turn_rad": 0.001284360843972987,
+        "truth_gap_s": 0.3997042179107666
+      }
+    },
+    "blue_block": {
+      "count": 12,
+      "maximum": {
+        "xy_error_m": 6.81868741307081e-05,
+        "z_error_m": 5.841046365334668e-09,
+        "yaw_error_mod_quarter_turn_rad": 0.0006370131241588695,
+        "truth_gap_s": 0.3997042179107666
+      }
+    }
+  }
+}

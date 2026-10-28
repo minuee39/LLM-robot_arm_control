@@ -1,0 +1,480 @@
+{
+  "job_id": "palletize-1791641745",
+  "created_at": 1791641957.4871755,
+  "requested_count": 2,
+  "completed_count": 1,
+  "passed": false,
+  "failure_class": "planning_or_startup",
+  "motion_scaling": {
+    "arm_velocity": 0.2,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.2,
+    "cartesian_acceleration": 0.05
+  },
+  "planning_tuning": {
+    "totg_path_tolerance_rad": 0.01,
+    "scene_obstacles": true
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 174.39512066099996,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "62862c73e6e145738b77df5e85321cc6",
+          "started_at_unix": 1791641751.6109629,
+          "ended_at_unix": 1791641925.339625,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1455,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.23940370261669158,
+          -0.27987661957740784,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -1.1609911609866685e-07,
+          -4.975623824066133e-07,
+          0.7071662545204163,
+          0.7070474028587341
+        ],
+        "max_height": 0.12472635507583618,
+        "transfer_min_bottom_clearance": 0.09380367016831792,
+        "transfer_sample_count": 211,
+        "final_xy_error": 0.0006089279908326454,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999994779,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 57.180383143000654,
+          "tcp_fresh_sample_count": 1453,
+          "joint_fresh_sample_count": 1454,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0030923951541408723,
+        "max_loaded_jaw_asymmetry_m": 0.0010904408991336823,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 119.61328571100057,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.0,
+        "placement_pass": true
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/01-red_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "62862c73e6e145738b77df5e85321cc6",
+              "started_at_unix": 1791641751.6109629,
+              "ended_at_unix": 1791641925.339625,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 1455,
+            "target": [
+              0.24,
+              -0.28,
+              0.025
+            ],
+            "final_position": [
+              0.23940370261669158,
+              -0.27987661957740784,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -1.1609911609866685e-07,
+              -4.975623824066133e-07,
+              0.7071662545204163,
+              0.7070474028587341
+            ],
+            "max_height": 0.12472635507583618,
+            "transfer_min_bottom_clearance": 0.09380367016831792,
+            "transfer_sample_count": 211,
+            "final_xy_error": 0.0006089279908326454,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994779,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 57.180383143000654,
+              "tcp_fresh_sample_count": 1453,
+              "joint_fresh_sample_count": 1454,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.0030923951541408723,
+            "max_loaded_jaw_asymmetry_m": 0.0010904408991336823,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": true,
+            "release_seconds": 119.61328571100057,
+            "post_release_recontact_detected": false,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": 0.0,
+            "placement_pass": true
+          }
+        }
+      ]
+    },
+    {
+      "object_id": "green_block",
+      "target": [
+        0.28,
+        -0.24,
+        0.025
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 31.426131320000422,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "eaf5e33761394347b18ee3395b9b0b23",
+          "started_at_unix": 1791641948.2739167,
+          "ended_at_unix": 1791641957.3429124,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 54,
+        "target": [
+          0.28,
+          -0.24,
+          0.025
+        ],
+        "final_position": [
+          -0.3200000596046448,
+          0.020000025629997253,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -4.1809212802945694e-07,
+          -2.540613479595777e-07,
+          -1.679802750231829e-07,
+          1.0
+        ],
+        "max_height": 0.025000035762786865,
+        "transfer_min_bottom_clearance": null,
+        "transfer_sample_count": 0,
+        "final_xy_error": 0.6539113738521273,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999995213,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": null,
+          "tcp_fresh_sample_count": 49,
+          "joint_fresh_sample_count": 54,
+          "contact_reference_available": false
+        },
+        "max_contact_relative_displacement_m": null,
+        "max_loaded_jaw_asymmetry_m": null,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "7b292d5fffcd4b46a71c579364b39e15",
+              "started_at_unix": 1791641926.4444478,
+              "ended_at_unix": 1791641936.9933188,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 87,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000025629997253,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.354068323664251e-07,
+              -2.891708277275029e-07,
+              -1.6273905600883154e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113738521273,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994535,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 87,
+              "joint_fresh_sample_count": 87,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        },
+        {
+          "attempt": 2,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-02.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-02-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-02-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "91ac87f5f7f34ab98f8ff413afbc5385",
+              "started_at_unix": 1791641937.9632018,
+              "ended_at_unix": 1791641947.3188093,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 77,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000025629997253,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.030146669720125e-07,
+              -2.6987208912032656e-07,
+              -1.6710040995349118e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113738521273,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999995295,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 77,
+              "joint_fresh_sample_count": 77,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        },
+        {
+          "attempt": 3,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-open-hand-contact-audit-20261010/job/02-green_block-attempt-03-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "eaf5e33761394347b18ee3395b9b0b23",
+              "started_at_unix": 1791641948.2739167,
+              "ended_at_unix": 1791641957.3429124,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 54,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000025629997253,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.1809212802945694e-07,
+              -2.540613479595777e-07,
+              -1.679802750231829e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113738521273,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999995213,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 49,
+              "joint_fresh_sample_count": 54,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "actuation": false,
+  "samples": [
+    {
+      "motor_id": 1,
+      "current_a": 0.0,
+      "current_limit_a": 8.0,
+      "position_rad": -0.8072191476821899
+    },
+    {
+      "motor_id": 2,
+      "current_a": 0.0,
+      "current_limit_a": 28.5,
+      "position_rad": -0.004516707733273506
+    },
+    {
+      "motor_id": 3,
+      "current_a": 0.0,
+      "current_limit_a": 8.0,
+      "position_rad": -0.02972087822854519
+    },
+    {
+      "motor_id": 4,
+      "current_a": 0.0,
+      "current_limit_a": 5.5,
+      "position_rad": 0.07234451919794083
+    },
+    {
+      "motor_id": 5,
+      "current_a": 0.0,
+      "current_limit_a": 5.5,
+      "position_rad": -0.024395234882831573
+    },
+    {
+      "motor_id": 6,
+      "current_a": 0.0,
+      "current_limit_a": 5.5,
+      "position_rad": -0.007867813110351562
+    }
+  ]
+}

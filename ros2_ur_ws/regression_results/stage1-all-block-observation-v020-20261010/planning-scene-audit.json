@@ -1,0 +1,183 @@
+{
+  "read_only": true,
+  "observed_at_unix": 1791638718.733966,
+  "objects": [
+    {
+      "id": "floor_z_guard",
+      "frame": "base_footprint",
+      "dimensions": [
+        [
+          4.0,
+          4.0,
+          0.02
+        ]
+      ],
+      "poses": [
+        {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "red_block",
+      "frame": "base_footprint",
+      "dimensions": [
+        [
+          0.03,
+          0.03,
+          0.05
+        ]
+      ],
+      "poses": [
+        {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "work_table",
+      "frame": "base_footprint",
+      "dimensions": [
+        [
+          1.8,
+          0.75,
+          0.75
+        ]
+      ],
+      "poses": [
+        {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "workcell_table",
+      "frame": "base_footprint",
+      "dimensions": [
+        [
+          1.8,
+          0.75,
+          0.05
+        ],
+        [
+          0.05,
+          0.05,
+          0.7
+        ],
+        [
+          0.05,
+          0.05,
+          0.7
+        ],
+        [
+          0.05,
+          0.05,
+          0.7
+        ],
+        [
+          0.05,
+          0.05,
+          0.7
+        ]
+      ],
+      "poses": [
+        {
+          "position_m": [
+            -0.43,
+            0.0,
+            0.725
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "position_m": [
+            -1.305,
+            -0.35,
+            0.35
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "position_m": [
+            -1.305,
+            0.35,
+            0.35
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "position_m": [
+            0.445,
+            -0.35,
+            0.35
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "position_m": [
+            0.445,
+            0.35,
+            0.35
+          ],
+          "orientation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    }
+  ],
+  "attached_ids": []
+}

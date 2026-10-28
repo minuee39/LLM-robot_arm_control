@@ -1,0 +1,45 @@
+{
+  "status": "CAD_REFERENCE_ONLY_NOT_PHYSICAL_TCP",
+  "parent_frame": "gripper",
+  "child_frame": "cad_tcp_reference_unverified",
+  "model_joint_rad": {
+    "g_r": 0.0,
+    "g_l": 0.0
+  },
+  "physical_opening_mm": null,
+  "position_m": [
+    -8.810489925447612e-06,
+    0.12589581627400817,
+    2.126884194725158e-05
+  ],
+  "rpy_rad": [
+    -1.5707963267948966,
+    1.17809724509618,
+    0.0
+  ],
+  "approach_definition": "reference +Z is CAD move_gripper +Y; +X follows move_gripper +X",
+  "distal_edge_centers_in_move_gripper_m": [
+    [
+      -0.022623395324618274,
+      0.09601808427695407,
+      -1.9286938140322674e-09
+    ],
+    [
+      0.02257735237205673,
+      0.09593164337091767,
+      7.32944387474288e-10
+    ]
+  ],
+  "source_sha256": {
+    "urdf/pallet_with_gripper.urdf": "f5937514cb80a217ea9259edcc0394ebea4725e18dab0c2efbf4f696bd5768a9",
+    "meshes/mass_revised/gripper_r.STL": "58e6229c137d2327ddad33e048eea26f881a93bac5085c62c0015adc201f0c8a",
+    "meshes/mass_revised/gripper_l.STL": "9b0e8bc0c6b6185b51b0fced96169cc4351613c019941aefcb688dd1a2a58e74"
+  },
+  "method": "Transform both CAD STLs through visual and joint origins at model zero, midpoint of terminal +Y edge bounding centers.",
+  "limitations": [
+    "Not a contact-pad center measurement.",
+    "Actual motor 0rad=20mm does not establish model g_r=0.",
+    "Adaptive contact and screw motion are not modeled here.",
+    "Do not use as an automatically commissioned physical motion target."
+  ]
+}

@@ -1,0 +1,952 @@
+{
+  "created_at": "2026-10-01T10:10:32.471170+00:00",
+  "runs": [
+    {
+      "scenario": {
+        "name": "m500_base_w25_v20",
+        "center_xy": [
+          -0.27,
+          0.28
+        ],
+        "size": [
+          0.03,
+          0.025,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 15.436,
+      "task_execution_seconds": 172.583,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1266,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29757270991802215,
+          -0.2981710135936737,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          2.2892814399710915e-07,
+          -1.0703828934310877e-07,
+          1.0,
+          -9.977223089663312e-05
+        ],
+        "max_height": 0.06465750932693481,
+        "transfer_min_bottom_clearance": 0.02831347056201853,
+        "transfer_sample_count": 170,
+        "final_xy_error": 0.0030392315503420136,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999998723,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1218,
+          "joint_fresh_sample_count": 1266,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.005361534237091217,
+        "max_loaded_jaw_asymmetry_m": 0.002186792902648449,
+        "slip_threshold_m": 0.005,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 134.16150324599994,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 3.804224136291261e-05,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 260.44508564399985,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-01/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-01/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-01/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-01/recovery.log"
+      },
+      "repetition": 1,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w40_v20",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.04,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1,
+        "grasp_angle_delta": 6.283185307179586
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 2.733,
+      "task_execution_seconds": 174.391,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1213,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29742080748081207,
+          -0.29834166169166565,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          2.3062365350767777e-09,
+          4.115798901693779e-08,
+          -0.0003114106657449156,
+          -1.0
+        ],
+        "max_height": 0.06431996822357178,
+        "transfer_min_bottom_clearance": 0.02653199368101937,
+        "transfer_sample_count": 213,
+        "final_xy_error": 0.0030663202696267953,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999999966,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1181,
+          "joint_fresh_sample_count": 1213,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.006181022196290729,
+        "max_loaded_jaw_asymmetry_m": 0.0018311338499188423,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 123.01345865999974,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 4.596156827040686e-06,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 247.68271016399967,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-03/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-03/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-03/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-03/recovery.log"
+      },
+      "repetition": 1,
+      "failure_category": null,
+      "prior_attempts": [
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "slip",
+          "task_planning_seconds": 3.869,
+          "task_execution_seconds": 166.028,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01/recovery.log"
+          }
+        },
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "slip",
+          "task_planning_seconds": 12.248,
+          "task_execution_seconds": 165.03,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-01/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-01/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-01/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-01/recovery.log"
+          }
+        },
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "slip",
+          "task_planning_seconds": 8.69,
+          "task_execution_seconds": 165.13,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-02/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-02/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-02/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-01-retry-02/recovery.log"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "name": "m500_base_w25_v20",
+        "center_xy": [
+          -0.27,
+          0.28
+        ],
+        "size": [
+          0.03,
+          0.025,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1,
+        "grasp_angle_delta": 3.141592653589793
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 55.864,
+      "task_execution_seconds": 173.49,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1373,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2972161251306534,
+          -0.29787150025367737,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          2.148291571302252e-07,
+          -1.7603878177396837e-07,
+          1.0,
+          -8.451971370959654e-05
+        ],
+        "max_height": 0.06515783071517944,
+        "transfer_min_bottom_clearance": 0.028626941045304773,
+        "transfer_sample_count": 152,
+        "final_xy_error": 0.0035043502191240946,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999998457,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1361,
+          "joint_fresh_sample_count": 1373,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0029255806960440563,
+        "max_loaded_jaw_asymmetry_m": 0.002225959673523903,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 174.87608365599954,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 1.819162662271482e-06,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 276.33604934400046,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-03/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-03/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-03/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-03/recovery.log"
+      },
+      "repetition": 2,
+      "failure_category": null,
+      "prior_attempts": [
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "planning_or_execution",
+          "task_planning_seconds": 15.473,
+          "task_execution_seconds": null,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02/recovery.log"
+          }
+        },
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "planning_or_execution",
+          "task_planning_seconds": 1.309,
+          "task_execution_seconds": null,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-01/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-01/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-01/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-01/recovery.log"
+          }
+        },
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "planning_or_execution",
+          "task_planning_seconds": 25.281,
+          "task_execution_seconds": null,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-02/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-02/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-02/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-02-retry-02/recovery.log"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "name": "m500_base_w25_v20",
+        "center_xy": [
+          -0.27,
+          0.28
+        ],
+        "size": [
+          0.03,
+          0.025,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1,
+        "grasp_angle_delta": 6.283185307179586
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 13.303,
+      "task_execution_seconds": 167.914,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1082,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29721986532211303,
+          -0.29791170358657837,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -1.2639047142215531e-08,
+          -1.0343391920741851e-08,
+          -0.0002931878552772105,
+          -1.0
+        ],
+        "max_height": 0.06438899040222168,
+        "transfer_min_bottom_clearance": 0.028049556880685722,
+        "transfer_sample_count": 169,
+        "final_xy_error": 0.0034770865300563377,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999999994,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1068,
+          "joint_fresh_sample_count": 1082,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.003996926251375107,
+        "max_loaded_jaw_asymmetry_m": 0.001890098676085472,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 126.69905990700045,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.00010853863429246397,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 227.45091353899988,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-02/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-02/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-02/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-02/recovery.log"
+      },
+      "repetition": 3,
+      "failure_category": null,
+      "prior_attempts": [
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "slip",
+          "task_planning_seconds": 9.259,
+          "task_execution_seconds": 178.451,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03/recovery.log"
+          }
+        },
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "planning_or_execution",
+          "task_planning_seconds": 6.273,
+          "task_execution_seconds": null,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-01/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-01/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-01/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_base_w25_v20-03-retry-01/recovery.log"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w40_v20",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.04,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1,
+        "grasp_angle_delta": 6.283185307179586
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 24.108,
+      "task_execution_seconds": 175.467,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1202,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2973311173915863,
+          -0.2977553904056549,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -2.2002194510761797e-10,
+          2.831614409615213e-08,
+          -0.00019658630480989814,
+          -1.0
+        ],
+        "max_height": 0.06429308652877808,
+        "transfer_min_bottom_clearance": 0.026925063422867854,
+        "transfer_sample_count": 189,
+        "final_xy_error": 0.0034872921599027325,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999999984,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1189,
+          "joint_fresh_sample_count": 1202,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0033164263417098986,
+        "max_loaded_jaw_asymmetry_m": 0.0018604518845677376,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 144.84261994000008,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 7.890583452507094e-07,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 245.38150798200058,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-02/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-02/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-02/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-02/recovery.log"
+      },
+      "repetition": 2,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w40_v20",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.04,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.2,
+        "arm_acceleration_scaling": 0.1,
+        "cartesian_velocity_scaling": 0.15,
+        "cartesian_acceleration_scaling": 0.1,
+        "grasp_angle_delta": 6.283185307179586
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 3.196,
+      "task_execution_seconds": 175.469,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1081,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29732731759548187,
+          -0.29769840836524963,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -1.5976423739516576e-08,
+          6.6698526701713945e-09,
+          -0.00023808669357094914,
+          -1.0
+        ],
+        "max_height": 0.06465131044387817,
+        "transfer_min_bottom_clearance": 0.02711038866799447,
+        "transfer_sample_count": 189,
+        "final_xy_error": 0.0035271171356468425,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999999994,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1068,
+          "joint_fresh_sample_count": 1081,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.003028827861417168,
+        "max_loaded_jaw_asymmetry_m": 0.001819542609155178,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 124.22436725499938,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.23383267199677e-06,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 224.60497882299933,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03-retry-01/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03-retry-01/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03-retry-01/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03-retry-01/recovery.log"
+      },
+      "repetition": 3,
+      "failure_category": null,
+      "prior_attempts": [
+        {
+          "passed": false,
+          "error": "task, placement, transfer-clearance, slip, or release-stability requirement failed",
+          "failure_category": "planning_or_execution",
+          "task_planning_seconds": 1.702,
+          "task_execution_seconds": null,
+          "logs": {
+            "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03/simulation.log",
+            "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03/task.log",
+            "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03/monitor.log",
+            "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/pallet-regression-final-7-20261001/corrected-runs-31-36/m500_offset_w40_v20-03/recovery.log"
+          }
+        }
+      ]
+    }
+  ],
+  "passed": true,
+  "statistics": {
+    "m500_base_w25_v20": {
+      "run_count": 3,
+      "success_count": 3,
+      "failure_count": 0,
+      "success_rate": 1.0,
+      "elapsed_seconds": {
+        "count": 3,
+        "mean": 254.74401617566673,
+        "stddev": 20.360349873883262,
+        "min": 227.45091353899988,
+        "max": 276.33604934400046
+      },
+      "task_planning_seconds": {
+        "count": 3,
+        "mean": 28.200999999999997,
+        "stddev": 19.580068079554778,
+        "min": 13.303,
+        "max": 55.864
+      },
+      "task_execution_seconds": {
+        "count": 3,
+        "mean": 171.32899999999998,
+        "stddev": 2.442994201111969,
+        "min": 167.914,
+        "max": 173.49
+      },
+      "safety_false_positive_count": 0,
+      "process_cleanup_failure_count": 0,
+      "failure_categories": {},
+      "transfer_min_bottom_clearance": {
+        "count": 3,
+        "mean": 0.028329989496003006,
+        "stddev": 0.00023600533154033844,
+        "min": 0.028049556880685722,
+        "max": 0.028626941045304773
+      },
+      "final_xy_error": {
+        "count": 3,
+        "mean": 0.0033402227665074815,
+        "stddev": 0.00021312376895749508,
+        "min": 0.0030392315503420136,
+        "max": 0.0035043502191240946
+      },
+      "final_height_error": {
+        "count": 3,
+        "mean": 3.5762786863846596e-08,
+        "stddev": 0.0,
+        "min": 3.5762786863846596e-08,
+        "max": 3.5762786863846596e-08
+      },
+      "max_height": {
+        "count": 3,
+        "mean": 0.06473477681477864,
+        "stddev": 0.000318597504923815,
+        "min": 0.06438899040222168,
+        "max": 0.06515783071517944
+      },
+      "long_axis_vertical_cosine": {
+        "count": 3,
+        "mean": 0.9999999999999059,
+        "stddev": 6.709326358082853e-14,
+        "min": 0.9999999999998457,
+        "max": 0.9999999999999994
+      },
+      "max_contact_relative_displacement_m": {
+        "count": 3,
+        "mean": 0.004094680394836793,
+        "stddev": 0.0009968732176019162,
+        "min": 0.0029255806960440563,
+        "max": 0.005361534237091217
+      },
+      "max_loaded_jaw_asymmetry_m": {
+        "count": 3,
+        "mean": 0.002100950417419275,
+        "stddev": 0.0001499496617820464,
+        "min": 0.001890098676085472,
+        "max": 0.002225959673523903
+      },
+      "max_post_release_displacement_m": {
+        "count": 3,
+        "mean": 4.946667943921603e-05,
+        "stddev": 4.4310643907728936e-05,
+        "min": 1.819162662271482e-06,
+        "max": 0.00010853863429246397
+      }
+    },
+    "m500_offset_w40_v20": {
+      "run_count": 3,
+      "success_count": 3,
+      "failure_count": 0,
+      "success_rate": 1.0,
+      "elapsed_seconds": {
+        "count": 3,
+        "mean": 239.2230656563332,
+        "stddev": 10.379153140495168,
+        "min": 224.60497882299933,
+        "max": 247.68271016399967
+      },
+      "task_planning_seconds": {
+        "count": 3,
+        "mean": 10.012333333333332,
+        "stddev": 9.968933621785007,
+        "min": 2.733,
+        "max": 24.108
+      },
+      "task_execution_seconds": {
+        "count": 3,
+        "mean": 175.109,
+        "stddev": 0.5077033254437798,
+        "min": 174.391,
+        "max": 175.469
+      },
+      "safety_false_positive_count": 0,
+      "process_cleanup_failure_count": 0,
+      "failure_categories": {},
+      "transfer_min_bottom_clearance": {
+        "count": 3,
+        "mean": 0.0268558152572939,
+        "stddev": 0.0002411523329985987,
+        "min": 0.02653199368101937,
+        "max": 0.02711038866799447
+      },
+      "final_xy_error": {
+        "count": 3,
+        "mean": 0.0033602431883921237,
+        "stddev": 0.00020846985202486234,
+        "min": 0.0030663202696267953,
+        "max": 0.0035271171356468425
+      },
+      "final_height_error": {
+        "count": 3,
+        "mean": 3.5762786863846596e-08,
+        "stddev": 0.0,
+        "min": 3.5762786863846596e-08,
+        "max": 3.5762786863846596e-08
+      },
+      "max_height": {
+        "count": 3,
+        "mean": 0.06442145506540935,
+        "stddev": 0.0001629023790230061,
+        "min": 0.06429308652877808,
+        "max": 0.06465131044387817
+      },
+      "long_axis_vertical_cosine": {
+        "count": 3,
+        "mean": 0.9999999999999982,
+        "stddev": 1.1968915953746331e-15,
+        "min": 0.9999999999999966,
+        "max": 0.9999999999999994
+      },
+      "max_contact_relative_displacement_m": {
+        "count": 3,
+        "mean": 0.004175425466472598,
+        "stddev": 0.0014230230505182869,
+        "min": 0.003028827861417168,
+        "max": 0.006181022196290729
+      },
+      "max_loaded_jaw_asymmetry_m": {
+        "count": 3,
+        "mean": 0.0018370427812139194,
+        "stddev": 1.7215861010177347e-05,
+        "min": 0.001819542609155178,
+        "max": 0.0018604518845677376
+      },
+      "max_post_release_displacement_m": {
+        "count": 3,
+        "mean": 2.5396826147627217e-06,
+        "stddev": 1.5692159089025615e-06,
+        "min": 7.890583452507094e-07,
+        "max": 4.596156827040686e-06
+      }
+    }
+  },
+  "overall": {
+    "run_count": 6,
+    "success_count": 6,
+    "failure_count": 0,
+    "success_rate": 1.0,
+    "safety_false_positive_count": 0,
+    "process_cleanup_failure_count": 0,
+    "task_planning_seconds": {
+      "count": 6,
+      "mean": 19.106666666666666,
+      "stddev": 18.002395689339668,
+      "min": 2.733,
+      "max": 55.864
+    },
+    "task_execution_seconds": {
+      "count": 6,
+      "mean": 173.21900000000002,
+      "stddev": 2.585554421524848,
+      "min": 167.914,
+      "max": 175.469
+    },
+    "elapsed_seconds": {
+      "count": 6,
+      "mean": 246.98354091599995,
+      "stddev": 17.926525310452508,
+      "min": 224.60497882299933,
+      "max": 276.33604934400046
+    }
+  },
+  "resumed_at": "2026-10-01T11:02:23.182909+00:00"
+}

@@ -1,0 +1,56 @@
+{
+  "diagnostic_only": true,
+  "collision_model_approved": false,
+  "updated_at_unix": 1791652705.360499,
+  "objects": {
+    "red_block": {
+      "position": [
+        0.24016735050914742,
+        -0.27991779014720053,
+        0.025199580744884625
+      ],
+      "rotation_base": [
+        [
+          0.7069525093586251,
+          -0.7072609432980432,
+          -0.0003280193674502016
+        ],
+        [
+          0.7072609724726278,
+          0.7069522175705255,
+          0.0006920182002549185
+        ],
+        [
+          -0.0002575434258667067,
+          -0.00072121930000474,
+          0.9999997067570096
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 0.7856162591410211,
+      "normal_base": [
+        -0.0003280193674502016,
+        0.0006920182002549185,
+        0.9999997067570096
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 1791652705.1248565,
+      "stamp_clock": "unix_system",
+      "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+      "receipt_age_s": 0.04098279400204774,
+      "exposure_age_s": 0.23564369602536317,
+      "sample_count": 3,
+      "position_std_m": [
+        8.832036672504583e-06,
+        8.816833988121948e-06,
+        2.3855613381280206e-08
+      ],
+      "max_yaw_spread_rad": 6.214166259344012e-08,
+      "max_normal_spread_rad": 3.4184770750453852e-06,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    }
+  }
+}

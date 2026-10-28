@@ -1,0 +1,35 @@
+{
+  "actuation": false,
+  "values": [
+    {
+      "id": 1,
+      "current_a": 0.0,
+      "limit_a": 8.0
+    },
+    {
+      "id": 2,
+      "current_a": 0.0,
+      "limit_a": 28.5
+    },
+    {
+      "id": 3,
+      "current_a": 0.0,
+      "limit_a": 8.0
+    },
+    {
+      "id": 4,
+      "current_a": 0.0,
+      "limit_a": 5.5
+    },
+    {
+      "id": 5,
+      "current_a": 0.0,
+      "limit_a": 5.5
+    },
+    {
+      "id": 6,
+      "current_a": 0.0,
+      "limit_a": 5.5
+    }
+  ]
+}

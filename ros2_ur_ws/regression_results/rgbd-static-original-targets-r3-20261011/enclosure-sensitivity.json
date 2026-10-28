@@ -1,0 +1,1195 @@
+{
+  "diagnostic_only": true,
+  "collision_model_approved": false,
+  "uncertainty": "hypothetical_sensitivity_not_certified",
+  "measurement_revision": "f3650d47b75f6dd3731b90e8db9abcf2d2e103d33c452342a1fcee9f4187e3f1",
+  "evaluated_at_unix": 1791654181.0119965,
+  "nominal_size_m": [
+    0.03,
+    0.03,
+    0.05
+  ],
+  "numerical_margin_m": 1e-06,
+  "nominal_unknown_direction_spheres": [
+    {
+      "objects": [
+        "red_block",
+        "green_block"
+      ],
+      "nominal_sphere_signed_gap_m": -0.009079416281336204
+    },
+    {
+      "objects": [
+        "red_block",
+        "blue_block"
+      ],
+      "nominal_sphere_signed_gap_m": -0.025497684914770037
+    },
+    {
+      "objects": [
+        "green_block",
+        "blue_block"
+      ],
+      "nominal_sphere_signed_gap_m": -0.025539332441225887
+    }
+  ],
+  "rows": [
+    {
+      "position_error_each_xyz_m": 0.0,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.010024476272184113,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.012575012147944868,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.010024476272184113,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.010034807750119418,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.0,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.009696034167587755,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.012159451074480236,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.009696034167587755,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.009706935363268894,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.0,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.009367594115753476,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.01174389259827096,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.009367594115753476,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00937906502561972,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.0,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.00838230680417458,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.01049725872538796,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00838230680417458,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00839548679962486,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.0,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0067403939218034295,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.008419829947576153,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0067403939218034295,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.006756421989693617,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.001,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.008017513147241903,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.010035690338871507,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.008017513147241903,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00803396631416299,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.001,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.007689071042645539,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.009620129265406875,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.007689071042645539,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.007706093927312467,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.001,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.007360630990811259,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.009204570789197612,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.007360630990811259,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.007378223589663294,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.001,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.00637534367923237,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.0079579369163146,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00637534367923237,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.006394645363668433,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.001,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.00473343079686122,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.005880508138502799,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00473343079686122,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00475558055373719,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.002,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.006010550022299686,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.007496368529798153,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.006010550022299686,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.006033124878206564,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.002,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.005682107917703329,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.007080807456333528,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.005682107917703329,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.005705252491356047,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.002,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0053536678658690495,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.006665248980124251,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0053536678658690495,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.005377382153706867,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.002,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0043683805542901535,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.005418615107241252,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0043683805542901535,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.004393803927712006,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.002,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.002726467671919003,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.003341186329429445,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.002726467671919003,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0027547391177807634,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.003,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0040035868973574765,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.004957046720724799,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0040035868973574765,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.004032283442250144,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.003,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.003675144792761112,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.004541485647260181,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.003675144792761112,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00370441105539962,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.003,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0033467047409268397,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.004125927171050904,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0033467047409268397,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0033765407177504467,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.003,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0023614174293479367,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.002879293298167891,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0023614174293479367,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.002392962491755579,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.003,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.000719504546976793,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.0008018645203560909,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.000719504546976793,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0007538976818243365,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.004,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0019966237724152597,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.002417724911651445,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0019966237724152597,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.002031442006293717,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.004,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.001668181667818902,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.00200216383818682,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.001668181667818902,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0017035696194431932,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.004,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0013397416159846298,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.001586605361977543,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0013397416159846298,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0013756992817940267,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.004,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": true,
+      "minimum_pair_sat_axis_gap_m": 0.0003486889668182086,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": 0.0003486889668182086,
+          "separated": true
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.0003544543044057269,
+          "separated": true
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 0.00039212105579915224,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.004,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0012932272082432916,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0012932272082432916,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0012874585779654169,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0012469437541320835,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.005,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -1.6109583487536328e-05,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -1.6109583487536328e-05,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -1.0339352526950174e-05,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": 3.0600570337296906e-05,
+          "separated": true
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.005,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0003445523467413489,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0003445523467413489,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.00033878145712330776,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.00029727181651323376,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.005,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0006729930572289544,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0006729930572289544,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.00066722150895758,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0006251421541624003,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.005,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0016582823447019862,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0016582823447019862,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.001652508820536483,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0016087203801572747,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.005,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0033001985197634726,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0033001985197634726,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0032944217029076336,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0032477851900885105,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.006,
+      "full_rotation_error_rad": 0.0,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.002023080895007731,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.002023080895007731,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.00201730247746916,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.00197024086561913,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.006,
+      "full_rotation_error_rad": 0.005,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0023515236582615368,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0023515236582615368,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0023457445820655246,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0022981132524696538,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.006,
+      "full_rotation_error_rad": 0.01,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.0026799643687491423,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.0026799643687491423,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.002674184633899797,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.002625983590118827,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.006,
+      "full_rotation_error_rad": 0.025,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.003665253656222167,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.003665253656222167,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.003659471945478693,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0036095618161137016,
+          "separated": false
+        }
+      ]
+    },
+    {
+      "position_error_each_xyz_m": 0.006,
+      "full_rotation_error_rad": 0.05,
+      "size_error_each_dimension_m": 0.0,
+      "all_pairs_separated": false,
+      "minimum_pair_sat_axis_gap_m": -0.00530716983128366,
+      "pairs": [
+        {
+          "objects": [
+            "red_block",
+            "green_block"
+          ],
+          "sat_axis_gap_m": -0.00530716983128366,
+          "separated": false
+        },
+        {
+          "objects": [
+            "red_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0053013848278498504,
+          "separated": false
+        },
+        {
+          "objects": [
+            "green_block",
+            "blue_block"
+          ],
+          "sat_axis_gap_m": -0.0052486266260449305,
+          "separated": false
+        }
+      ]
+    }
+  ],
+  "caution": "SAT gap is projected separation, not Euclidean gripper/path clearance. No bounds are adopted.",
+  "time_validation": "recorded_timestamp_replay_not_current_freshness"
+}

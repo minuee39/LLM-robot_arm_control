@@ -1,0 +1,6 @@
+{
+  "moveit_feedback_matches": true,
+  "move_group_clean_exit": true,
+  "feedback_node_clean_exit": true,
+  "segfault": false
+}

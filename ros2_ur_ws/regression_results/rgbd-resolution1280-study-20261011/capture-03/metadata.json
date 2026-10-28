@@ -1,0 +1,88 @@
+{
+  "captured_at_unix": 1791650994.6305509,
+  "rgb_stamp": 49.425002577,
+  "depth_stamp": 49.425002577,
+  "camera_info_stamp": 49.491669247,
+  "stamp_clock": "ros_header",
+  "rgb_frame": "pallet_camera_optical_frame",
+  "depth_frame": "pallet_camera_optical_frame",
+  "camera_info_frame": "pallet_camera_optical_frame",
+  "depth_encoding": "32FC1",
+  "k": [
+    1465.9985736982494,
+    0.0,
+    640.0,
+    0.0,
+    1465.9985736982494,
+    480.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "d": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "r": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "p": [
+    1465.9985736982494,
+    0.0,
+    640.0,
+    0.0,
+    0.0,
+    1465.9985736982494,
+    480.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0
+  ],
+  "distortion_model": "plumb_bob",
+  "width": 1280,
+  "height": 960,
+  "sync_delta_s": 0.0,
+  "optical_to_base_footprint": [
+    [
+      -0.9722236371577777,
+      -0.2079386184719777,
+      0.10743709927053609,
+      -0.14999999999999997
+    ],
+    [
+      -0.23405383857502043,
+      0.8637450305759077,
+      -0.44627718158530394,
+      0.45000000000000007
+    ],
+    [
+      0.0,
+      -0.4590272901510207,
+      -0.888422167044818,
+      1.1000000000000003
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+  "registered_rectified": "unverified",
+  "depth_semantics": "unverified",
+  "purpose": "diagnostic_only_no_object_truth"
+}

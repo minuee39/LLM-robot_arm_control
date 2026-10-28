@@ -1,0 +1,26 @@
+pp_watchdog_verified: true
+current_limit_policy: preserve_existing
+limits:
+  current_limit_a: null
+  current_trip_a: null
+  velocity_rad_s: 0.1
+  acceleration_rad_s2: 0.1
+  travel_rad: 0.02
+  goal_tolerance_rad: 0.001
+  timeout_s: 4.0
+  hold_s: 0.5
+  period_s: 0.05
+  feedback_timeout_s: 0.015
+  watchdog_s: 0.25
+  speed_trip_rad_s: 0.2
+joint_scope: J1
+pp_watchdog_evidence: measurements/position/J1_pp_watchdog_20261027.json
+verification_scope: Supported J1 PP current-position hold, passive Run->Reset and
+  STOP. Loaded torque cutoff not verified. Hardware current limit reduced 16A to 8A
+  by user instruction. Software current trip explicitly disabled; current recorded.
+position_tracking_verified: true
+latest_position_test: J1 +0.01rad with 8A preserved, velocity/acceleration0.1, speed
+  trip0.2; goal tolerance0.001rad held0.5s and STOP confirmed
+current_limit_evidence: measurements/position/arm_half_current_limits_20261027.json
+expected_preserved_current_limit_a: 8.0
+position_tracking_evidence: measurements/position/J1_plus001_speed_trip020_20261027.jsonl

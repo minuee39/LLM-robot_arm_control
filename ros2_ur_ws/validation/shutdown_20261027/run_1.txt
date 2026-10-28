@@ -1,0 +1,12 @@
+{
+  "log_directory": "/tmp/pallet_mock_verify_cwquq5qp",
+  "hardware": "GenericSystem",
+  "domain": 87,
+  "shutdown_fix_loaded": true,
+  "planned_points": 14,
+  "arm_execution": "passed",
+  "gripper_execution": "passed",
+  "controller_cancel_and_hold": "passed",
+  "move_group_clean_exit": true,
+  "shutdown_segfault": false
+}

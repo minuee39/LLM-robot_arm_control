@@ -1,0 +1,20 @@
+{
+  "motor_id": 1,
+  "actuation": false,
+  "settings_modified": false,
+  "timestamp_utc": "2026-10-27T12:19:07.013856+00:00",
+  "values": {
+    "run_mode": 1,
+    "loc_ref_motor_rad": -0.793796718120575,
+    "configured_current_limit_a": 8.0,
+    "measured_motor_rad": -0.7938351035118103,
+    "measured_current_a": 0.0,
+    "measured_motor_velocity_rad_s": 0.01351526752114296,
+    "watchdog_ticks": 5000,
+    "watchdog_configured_s": 0.25
+  },
+  "read_errors": {},
+  "complete": true,
+  "pp_watchdog_verified": false,
+  "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+}

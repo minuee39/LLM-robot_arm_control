@@ -1,0 +1,7 @@
+{"event": "live_configuration", "joint": "J1", "limits": {"current_limit_a": null, "current_trip_a": null, "velocity_rad_s": 0.1, "acceleration_rad_s2": 0.1, "travel_rad": 0.02, "goal_tolerance_rad": 0.001, "timeout_s": 4.0, "hold_s": 0.5, "period_s": 0.05, "feedback_timeout_s": 0.015, "watchdog_s": 0.25}}
+{"event": "current_limit_preserved", "observed_current_limit_a": 8.0, "measured_current_trip_a": null}
+{"event": "profile_sent_write_only", "velocity_joint_rad_s": 0.1, "acceleration_joint_rad_s2": 0.1}
+{"event": "initial_reference_verified", "expected_motor_rad": -0.7939118146896362, "readback_motor_rad": -0.7939118146896362, "readback_error_rad": 0.0, "readback_tolerance_rad": 0.0002}
+{"event": "enabled", "joint": "J1", "motor_id": 1, "start_joint_rad": 0.7938734292984009, "target_joint_rad": 0.8038734292984009, "initial_hold_motor_rad": -0.7938734292984009, "target_motor_rad": -0.8038734292984009, "delta_joint_rad": 0.01}
+{"event": "limit_event", "elapsed_s": 0.012819059000321431, "joint_rad": 0.7939118146896362, "motor_rad": -0.7939118146896362, "current_a": -0.043380845338106155, "velocity_rad_s": 0.11150091141462326, "goal_error_rad": 0.009961614608764657, "reason": "Speed trip or angle discontinuity"}
+{"event": "stop_confirmed"}

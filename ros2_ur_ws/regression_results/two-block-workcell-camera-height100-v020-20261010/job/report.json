@@ -1,0 +1,480 @@
+{
+  "job_id": "palletize-1791641347",
+  "created_at": 1791641542.564329,
+  "requested_count": 2,
+  "completed_count": 1,
+  "passed": false,
+  "failure_class": "planning_or_startup",
+  "motion_scaling": {
+    "arm_velocity": 0.2,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.2,
+    "cartesian_acceleration": 0.05
+  },
+  "planning_tuning": {
+    "totg_path_tolerance_rad": 0.01,
+    "scene_obstacles": true
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 161.6741958599996,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "6491bf53936b43a2a17472c247a390e4",
+          "started_at_unix": 1791641352.9040716,
+          "ended_at_unix": 1791641513.9180455,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1345,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.23942779779434203,
+          -0.279906302690506,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -8.613378810196082e-08,
+          -5.050804929851438e-07,
+          0.7071699500083923,
+          0.7070437073707581
+        ],
+        "max_height": 0.12455934286117554,
+        "transfer_min_bottom_clearance": 0.0936635527748254,
+        "transfer_sample_count": 214,
+        "final_xy_error": 0.0005798228608517032,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.999999999999475,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 44.304837429001054,
+          "tcp_fresh_sample_count": 1341,
+          "joint_fresh_sample_count": 1345,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.002400857781673986,
+        "max_loaded_jaw_asymmetry_m": 0.0010378947481513023,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 106.67371041300066,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 5.960464477539063e-08,
+        "placement_pass": true
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/01-red_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "6491bf53936b43a2a17472c247a390e4",
+              "started_at_unix": 1791641352.9040716,
+              "ended_at_unix": 1791641513.9180455,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 1345,
+            "target": [
+              0.24,
+              -0.28,
+              0.025
+            ],
+            "final_position": [
+              0.23942779779434203,
+              -0.279906302690506,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -8.613378810196082e-08,
+              -5.050804929851438e-07,
+              0.7071699500083923,
+              0.7070437073707581
+            ],
+            "max_height": 0.12455934286117554,
+            "transfer_min_bottom_clearance": 0.0936635527748254,
+            "transfer_sample_count": 214,
+            "final_xy_error": 0.0005798228608517032,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.999999999999475,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 44.304837429001054,
+              "tcp_fresh_sample_count": 1341,
+              "joint_fresh_sample_count": 1345,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.002400857781673986,
+            "max_loaded_jaw_asymmetry_m": 0.0010378947481513023,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": true,
+            "release_seconds": 106.67371041300066,
+            "post_release_recontact_detected": false,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": 5.960464477539063e-08,
+            "placement_pass": true
+          }
+        }
+      ]
+    },
+    {
+      "object_id": "green_block",
+      "target": [
+        0.28,
+        -0.24,
+        0.025
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 27.920042208999803,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "a51d025cd0f34b10bf980d0fbc91722a",
+          "started_at_unix": 1791641534.0063703,
+          "ended_at_unix": 1791641542.3692436,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 69,
+        "target": [
+          0.28,
+          -0.24,
+          0.025
+        ],
+        "final_position": [
+          -0.3200000596046448,
+          0.020000027492642403,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -4.276995184682164e-07,
+          -2.8988233680138364e-07,
+          -1.766085802046291e-07,
+          1.0
+        ],
+        "max_height": 0.025000035762786865,
+        "transfer_min_bottom_clearance": null,
+        "transfer_sample_count": 0,
+        "final_xy_error": 0.6539113745927289,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999994661,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": null,
+          "tcp_fresh_sample_count": 68,
+          "joint_fresh_sample_count": 69,
+          "contact_reference_available": false
+        },
+        "max_contact_relative_displacement_m": null,
+        "max_loaded_jaw_asymmetry_m": null,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "2ceb46158aab4c4683d34060ba044c2b",
+              "started_at_unix": 1791641515.0007374,
+              "ended_at_unix": 1791641521.8631477,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 32,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000025629997253,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.3769566104856494e-07,
+              -2.772085565538873e-07,
+              -1.6816981940337428e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113738521273,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994632,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 31,
+              "joint_fresh_sample_count": 32,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        },
+        {
+          "attempt": 2,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-02.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-02-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-02-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "13fa4dae625f48a8b7ce8576f8b51545",
+              "started_at_unix": 1791641522.7864196,
+              "ended_at_unix": 1791641533.0434165,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 85,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000027492642403,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.090859420102788e-07,
+              -2.9406828616629355e-07,
+              -1.7126883733453724e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113745927289,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994923,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 84,
+              "joint_fresh_sample_count": 85,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        },
+        {
+          "attempt": 3,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-workcell-camera-height100-v020-20261010/job/02-green_block-attempt-03-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "a51d025cd0f34b10bf980d0fbc91722a",
+              "started_at_unix": 1791641534.0063703,
+              "ended_at_unix": 1791641542.3692436,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 69,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3200000596046448,
+              0.020000027492642403,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -4.276995184682164e-07,
+              -2.8988233680138364e-07,
+              -1.766085802046291e-07,
+              1.0
+            ],
+            "max_height": 0.025000035762786865,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6539113745927289,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994661,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": null,
+              "tcp_fresh_sample_count": 68,
+              "joint_fresh_sample_count": 69,
+              "contact_reference_available": false
+            },
+            "max_contact_relative_displacement_m": null,
+            "max_loaded_jaw_asymmetry_m": null,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        }
+      ]
+    }
+  ]
+}

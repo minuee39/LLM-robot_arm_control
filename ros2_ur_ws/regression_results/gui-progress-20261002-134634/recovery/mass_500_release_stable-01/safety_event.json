@@ -1,0 +1,19 @@
+{
+  "event_id": "watch-pallet-block-24725-2999728153012",
+  "code": "TELEMETRY_STALE",
+  "severity": "critical",
+  "source": "watch_pallet_block",
+  "frame": "base_footprint",
+  "published_at_unix": 1790916562.6387877,
+  "injected": false,
+  "seconds": 50.90616467499967,
+  "first_exceeded_seconds": 50.90242922299967,
+  "confirmed_seconds": 50.90616467499967,
+  "confirm_samples": 0,
+  "block_position_m": null,
+  "stale_measurements": [
+    "block_pose_stream"
+  ],
+  "pose_stream_age_seconds": 0.7537354520000008,
+  "timeout_seconds": 0.75
+}

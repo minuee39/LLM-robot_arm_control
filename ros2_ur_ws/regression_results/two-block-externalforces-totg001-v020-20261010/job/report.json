@@ -1,0 +1,395 @@
+{
+  "job_id": "palletize-1791638345",
+  "created_at": 1791638565.814747,
+  "requested_count": 2,
+  "completed_count": 1,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 0.2,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.2,
+    "cartesian_acceleration": 0.05
+  },
+  "planning_tuning": {
+    "totg_path_tolerance_rad": 0.01
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 154.6154477,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "07b71990768e4e6aa87b8e59c9c87577",
+          "started_at_unix": 1791638353.1655974,
+          "ended_at_unix": 1791638507.0709865,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1288,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.24160968542098998,
+          -0.2791571319103241,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          4.840831024921499e-07,
+          -6.814365605123385e-08,
+          0.706900417804718,
+          -0.7073131799697876
+        ],
+        "max_height": 0.06711643934249878,
+        "transfer_min_bottom_clearance": 0.03484180261838857,
+        "transfer_sample_count": 208,
+        "final_xy_error": 0.0018170068164818976,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.999999999999522,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 57.40530484300052,
+          "tcp_fresh_sample_count": 1279,
+          "joint_fresh_sample_count": 1288,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.004257655075732762,
+        "max_loaded_jaw_asymmetry_m": 0.001322767697274685,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 109.60065180600031,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.00032312265342664034,
+        "placement_pass": true
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/01-red_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "07b71990768e4e6aa87b8e59c9c87577",
+              "started_at_unix": 1791638353.1655974,
+              "ended_at_unix": 1791638507.0709865,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 1288,
+            "target": [
+              0.24,
+              -0.28,
+              0.025
+            ],
+            "final_position": [
+              0.24160968542098998,
+              -0.2791571319103241,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              4.840831024921499e-07,
+              -6.814365605123385e-08,
+              0.706900417804718,
+              -0.7073131799697876
+            ],
+            "max_height": 0.06711643934249878,
+            "transfer_min_bottom_clearance": 0.03484180261838857,
+            "transfer_sample_count": 208,
+            "final_xy_error": 0.0018170068164818976,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.999999999999522,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 57.40530484300052,
+              "tcp_fresh_sample_count": 1279,
+              "joint_fresh_sample_count": 1288,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.004257655075732762,
+            "max_loaded_jaw_asymmetry_m": 0.001322767697274685,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": true,
+            "release_seconds": 109.60065180600031,
+            "post_release_recontact_detected": false,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": 0.00032312265342664034,
+            "placement_pass": true
+          }
+        }
+      ]
+    },
+    {
+      "object_id": "green_block",
+      "target": [
+        0.28,
+        -0.24,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 57.97163324199937,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "7020c60b82224b28987e395dd6615248",
+          "started_at_unix": 1791638508.4542022,
+          "ended_at_unix": 1791638565.604085,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 477,
+        "target": [
+          0.28,
+          -0.24,
+          0.025
+        ],
+        "final_position": [
+          -0.3197021555900574,
+          -0.02006068080663681,
+          0.044487059116363525
+        ],
+        "final_orientation_xyzw": [
+          0.7071110010147095,
+          0.00012551732652354985,
+          0.00021982152247801423,
+          0.7071025967597961
+        ],
+        "max_height": 0.044487059116363525,
+        "transfer_min_bottom_clearance": null,
+        "transfer_sample_count": 0,
+        "final_xy_error": 0.6387612852596826,
+        "final_height_error": 0.019487059116363524,
+        "long_axis_vertical_cosine": 1.1967021247505372e-05,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 51.3632204580008,
+          "tcp_fresh_sample_count": 474,
+          "joint_fresh_sample_count": 477,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0010713874178806023,
+        "max_loaded_jaw_asymmetry_m": 0.0007679229602217674,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": true,
+        "runtime_fault_event": {
+          "code": "TILT_DETECTED",
+          "seconds": 56.609811532000094,
+          "first_exceeded_seconds": 56.363751123999464,
+          "confirmed_seconds": 56.609811532000094,
+          "confirm_samples": 3,
+          "block_position_m": [
+            -0.3196183514595032,
+            -0.02005125768482685,
+            0.038344502449035645
+          ],
+          "long_axis_vertical_cosine": 4.38009307472953e-05,
+          "threshold_deg": 20.0
+        },
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-57515-8225410977835",
+          "code": "TILT_DETECTED",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1791638565.2333262,
+          "injected": false,
+          "seconds": 56.609811532000094,
+          "first_exceeded_seconds": 56.363751123999464,
+          "confirmed_seconds": 56.609811532000094,
+          "confirm_samples": 3,
+          "block_position_m": [
+            -0.3196183514595032,
+            -0.02005125768482685,
+            0.038344502449035645
+          ],
+          "long_axis_vertical_cosine": 4.38009307472953e-05,
+          "threshold_deg": 20.0
+        },
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-externalforces-totg001-v020-20261010/job/02-green_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "7020c60b82224b28987e395dd6615248",
+              "started_at_unix": 1791638508.4542022,
+              "ended_at_unix": 1791638565.604085,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 477,
+            "target": [
+              0.28,
+              -0.24,
+              0.025
+            ],
+            "final_position": [
+              -0.3197021555900574,
+              -0.02006068080663681,
+              0.044487059116363525
+            ],
+            "final_orientation_xyzw": [
+              0.7071110010147095,
+              0.00012551732652354985,
+              0.00021982152247801423,
+              0.7071025967597961
+            ],
+            "max_height": 0.044487059116363525,
+            "transfer_min_bottom_clearance": null,
+            "transfer_sample_count": 0,
+            "final_xy_error": 0.6387612852596826,
+            "final_height_error": 0.019487059116363524,
+            "long_axis_vertical_cosine": 1.1967021247505372e-05,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 51.3632204580008,
+              "tcp_fresh_sample_count": 474,
+              "joint_fresh_sample_count": 477,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.0010713874178806023,
+            "max_loaded_jaw_asymmetry_m": 0.0007679229602217674,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": true,
+            "runtime_fault_event": {
+              "code": "TILT_DETECTED",
+              "seconds": 56.609811532000094,
+              "first_exceeded_seconds": 56.363751123999464,
+              "confirmed_seconds": 56.609811532000094,
+              "confirm_samples": 3,
+              "block_position_m": [
+                -0.3196183514595032,
+                -0.02005125768482685,
+                0.038344502449035645
+              ],
+              "long_axis_vertical_cosine": 4.38009307472953e-05,
+              "threshold_deg": 20.0
+            },
+            "safety_event_published": true,
+            "safety_event": {
+              "event_id": "watch-pallet-block-57515-8225410977835",
+              "code": "TILT_DETECTED",
+              "severity": "critical",
+              "source": "watch_pallet_block",
+              "frame": "base_footprint",
+              "published_at_unix": 1791638565.2333262,
+              "injected": false,
+              "seconds": 56.609811532000094,
+              "first_exceeded_seconds": 56.363751123999464,
+              "confirmed_seconds": 56.609811532000094,
+              "confirm_samples": 3,
+              "block_position_m": [
+                -0.3196183514595032,
+                -0.02005125768482685,
+                0.038344502449035645
+              ],
+              "long_axis_vertical_cosine": 4.38009307472953e-05,
+              "threshold_deg": 20.0
+            },
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": false,
+            "release_seconds": null,
+            "post_release_recontact_detected": null,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": null,
+            "placement_pass": false
+          }
+        }
+      ]
+    }
+  ]
+}

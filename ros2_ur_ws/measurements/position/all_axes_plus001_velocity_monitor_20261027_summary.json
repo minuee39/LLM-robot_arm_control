@@ -1,0 +1,23 @@
+{
+  "direction": "plus",
+  "goal_hold_passed": true,
+  "all_stop_confirmed": true,
+  "max_cycle_ms": 77.72770499832404,
+  "duration_s": 2.3800039580000885,
+  "max_final_error_rad": 0.0003700081631541254,
+  "raw_suspect_events": [
+    {
+      "joint": "J2",
+      "position_rad": 0.012612713500857353,
+      "current_a": -2.854123115539551,
+      "velocity_rad_s": -0.2308422029018402,
+      "position_sample_time_s": 8839.257235938,
+      "position_velocity_rad_s": 0.0017010922395767586,
+      "raw_overspeed_count": 1,
+      "raw_speed_suspect": true,
+      "velocity_confirmation_samples": 2
+    }
+  ],
+  "J2_peak_raw_rad_s": 0.2308422029018402,
+  "J2_peak_position_derived_rad_s": 0.01070483738697468
+}

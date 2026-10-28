@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "frame": "base_footprint",
+  "unit": "m",
+  "tasks": [
+    {
+      "action": "pick_place",
+      "pick_object": "green_block",
+      "place_xyz": [
+        0.24,
+        -0.24,
+        0.025
+      ]
+    }
+  ]
+}

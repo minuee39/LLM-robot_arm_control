@@ -1,0 +1,25 @@
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+trajectory_execution:
+  # Serial PP preparation and measured settling are part of action execution.
+  allowed_goal_duration_margin: 3.0
+moveit_simple_controller_manager:
+  controller_names:
+  - pallet_arm_controller
+  - pallet_gripper_controller
+  pallet_arm_controller:
+    type: FollowJointTrajectory
+    joints:
+    - J1
+    - J2
+    - J3
+    - J4
+    - J5
+    - J6
+    action_ns: follow_joint_trajectory
+    default: true
+  pallet_gripper_controller:
+    type: FollowJointTrajectory
+    joints:
+    - g_r
+    action_ns: follow_joint_trajectory
+    default: true

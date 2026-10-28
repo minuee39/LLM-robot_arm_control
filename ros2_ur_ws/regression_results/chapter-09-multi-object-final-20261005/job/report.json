@@ -1,0 +1,22 @@
+{
+  "job_id": "palletize-1791198823",
+  "created_at": 1791198829.9285727,
+  "requested_count": 3,
+  "completed_count": 0,
+  "passed": false,
+  "runs": [
+    {
+      "object_id": "blue_block",
+      "target": [
+        0.28,
+        -0.28,
+        0.025
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 4.432684206999966,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-final-20261005/job/01-blue_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-multi-object-final-20261005/job/01-blue_block-task.json"
+    }
+  ]
+}

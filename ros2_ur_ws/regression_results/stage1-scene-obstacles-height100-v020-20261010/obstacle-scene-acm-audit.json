@@ -1,0 +1,250 @@
+{
+  "read_only": true,
+  "snapshots": [
+    {
+      "phase": "world",
+      "observed_at_unix": 1791639797.2982426,
+      "objects": [
+        {
+          "id": "blue_block",
+          "frame": "base_footprint",
+          "object_pose": {
+            "position_m": [
+              -0.3203,
+              -0.0595,
+              0.025
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "primitives": [
+            {
+              "type": 2,
+              "dimensions": [
+                0.03278719262151
+              ]
+            }
+          ],
+          "primitive_poses_relative": [
+            {
+              "position_m": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "green_block",
+          "frame": "base_footprint",
+          "object_pose": {
+            "position_m": [
+              -0.3213,
+              0.0193,
+              0.025
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "primitives": [
+            {
+              "type": 2,
+              "dimensions": [
+                0.03278719262151
+              ]
+            }
+          ],
+          "primitive_poses_relative": [
+            {
+              "position_m": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "red_block",
+          "frame": "base_footprint",
+          "object_pose": {
+            "position_m": [
+              -0.3203,
+              0.0985,
+              0.025
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "primitives": [
+            {
+              "type": 1,
+              "dimensions": [
+                0.03,
+                0.03,
+                0.05
+              ]
+            }
+          ],
+          "primitive_poses_relative": [
+            {
+              "position_m": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        }
+      ],
+      "attached_ids": [],
+      "obstacle_acm_rows": {
+        "green_block": {
+          "entry_present": false
+        },
+        "blue_block": {
+          "entry_present": false
+        }
+      },
+      "default_entries": {},
+      "sphere_geometry_verified": true,
+      "explicit_obstacle_pairs_forbidden": false
+    },
+    {
+      "phase": "attached",
+      "observed_at_unix": 1791639870.6841395,
+      "objects": [
+        {
+          "id": "blue_block",
+          "frame": "base_footprint",
+          "object_pose": {
+            "position_m": [
+              -0.3203,
+              -0.0595,
+              0.025
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "primitives": [
+            {
+              "type": 2,
+              "dimensions": [
+                0.03278719262151
+              ]
+            }
+          ],
+          "primitive_poses_relative": [
+            {
+              "position_m": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        },
+        {
+          "id": "green_block",
+          "frame": "base_footprint",
+          "object_pose": {
+            "position_m": [
+              -0.3213,
+              0.0193,
+              0.025
+            ],
+            "orientation_xyzw": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "primitives": [
+            {
+              "type": 2,
+              "dimensions": [
+                0.03278719262151
+              ]
+            }
+          ],
+          "primitive_poses_relative": [
+            {
+              "position_m": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "orientation_xyzw": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          ]
+        }
+      ],
+      "attached_ids": [
+        "red_block"
+      ],
+      "obstacle_acm_rows": {
+        "green_block": {
+          "entry_present": false
+        },
+        "blue_block": {
+          "entry_present": false
+        }
+      },
+      "default_entries": {},
+      "sphere_geometry_verified": true,
+      "explicit_obstacle_pairs_forbidden": false
+    }
+  ],
+  "observed_phases": [
+    "attached",
+    "world"
+  ],
+  "required_phases_observed": true
+}

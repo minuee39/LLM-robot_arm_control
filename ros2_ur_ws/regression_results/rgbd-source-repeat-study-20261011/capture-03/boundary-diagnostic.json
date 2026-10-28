@@ -1,0 +1,297 @@
+{
+  "diagnostic_only": true,
+  "collision_model_approved": false,
+  "frame": "base_footprint",
+  "unit": "m",
+  "capture_path": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/rgbd-source-repeat-study-20261011/capture-03",
+  "exposure_stamps": {
+    "rgb_stamp": 26.008334689,
+    "depth_stamp": 26.008334689,
+    "stamp_clock": "ros_header"
+  },
+  "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+  "current_motion_freshness": "not_evaluated_offline",
+  "saturation": 50,
+  "opening_kernel_size": 3,
+  "plane_limits": {
+    "distance_limit_m": 0.0005,
+    "max_tilt_rad": 0.3,
+    "min_inliers": 20,
+    "min_inlier_fraction": 0.15,
+    "min_minor_span_m": 0.008,
+    "trials": 2048
+  },
+  "boundary_limits": {
+    "expected_side_m": 0.03,
+    "max_size_error_m": 0.003,
+    "max_plane_residual_m": 0.0005,
+    "edge_band_m": 0.0015,
+    "min_edge_support": 6,
+    "min_edge_span_fraction": 0.6,
+    "max_hull_residual_m": 0.0015
+  },
+  "box_height_m": 0.05,
+  "uncertainty": "not_certified",
+  "detections": [
+    {
+      "object_id": "red_block",
+      "bbox": [
+        472,
+        376,
+        500,
+        408
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 726,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 610,
+      "rejected": "top hull deviates from a square boundary",
+      "rejected_diagnostics": {
+        "accepted": false,
+        "yaw_mod_quarter_turn_rad": 0.005710894461915972,
+        "observed_size_xy_m": [
+          0.02984056084563183,
+          0.02994296054541959
+        ],
+        "edge_support_counts": [
+          21,
+          21,
+          18,
+          22
+        ],
+        "edge_support_spans_m": [
+          0.02738437107496336,
+          0.027449908164879702,
+          0.02506266616979965,
+          0.027606118282189424
+        ],
+        "hull_residual_max_m": 0.001594233012241072,
+        "hull_residual_limit_m": 0.0015
+      }
+    },
+    {
+      "object_id": "green_block",
+      "bbox": [
+        479,
+        326,
+        507,
+        358
+      ],
+      "diagnostic_candidate": true,
+      "collision_model_approved": false,
+      "mask_pixels": 706,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 590,
+      "top_center_base_m": [
+        -0.3190760784731023,
+        0.019562061004466794,
+        0.05034395239121631
+      ],
+      "box_center_candidate_m": [
+        -0.3190876550302629,
+        0.01955399512863496,
+        0.025343956372717195
+      ],
+      "rotation_base": [
+        [
+          0.0011549988240179489,
+          -0.9999992257752179,
+          0.0004630622864228503
+        ],
+        [
+          0.9999992807692757,
+          0.001155148287767927,
+          0.0003226350332732955
+        ],
+        [
+          -0.0003231696890885485,
+          0.00046268931029020896,
+          0.9999998407399644
+        ]
+      ],
+      "normal_base": [
+        0.0004630622864228503,
+        0.0003226350332732955,
+        0.9999998407399644
+      ],
+      "yaw_mod_quarter_turn_rad": 1.569641327590248,
+      "observed_size_xy_m": [
+        0.029952188738176004,
+        0.029947491989643322
+      ],
+      "edge_support_counts": [
+        19,
+        20,
+        20,
+        19
+      ],
+      "hull_residual_max_m": 0.001462701376850384,
+      "plane_residual_rms_m": 3.0369076100560888e-05
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        0,
+        271,
+        73
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 13355,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 12671,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        568,
+        0,
+        640,
+        149
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 9351,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 8913,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        33,
+        242,
+        90
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 2805,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 2211,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        253,
+        82,
+        322,
+        105
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 786,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 606,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        379,
+        106,
+        559,
+        152
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 2203,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 1751,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        566,
+        143,
+        640,
+        168
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 916,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 722,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        486,
+        279,
+        513,
+        311
+      ],
+      "diagnostic_candidate": true,
+      "collision_model_approved": false,
+      "mask_pixels": 667,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 553,
+      "top_center_base_m": [
+        -0.3191039274387277,
+        -0.06044642255926751,
+        0.05035596627479569
+      ],
+      "box_center_candidate_m": [
+        -0.31910262437316195,
+        -0.06046172561507471,
+        0.025355970992426067
+      ],
+      "rotation_base": [
+        [
+          0.9999988952426593,
+          -0.001485529095441945,
+          -5.2122622628193415e-05
+        ],
+        [
+          0.0014855607245316488,
+          0.9999987092070203,
+          0.0006121222322879594
+        ],
+        [
+          5.121322996264741e-05,
+          -0.0006121989873624658,
+          0.9999998112947848
+        ]
+      ],
+      "normal_base": [
+        -5.2122622628193415e-05,
+        0.0006121222322879594,
+        0.9999998112947848
+      ],
+      "yaw_mod_quarter_turn_rad": 0.0014855296438371912,
+      "observed_size_xy_m": [
+        0.029926001585069292,
+        0.02995094839290654
+      ],
+      "edge_support_counts": [
+        17,
+        17,
+        18,
+        19
+      ],
+      "hull_residual_max_m": 0.0013800629049300205,
+      "plane_residual_rms_m": 2.566164422703885e-05
+    },
+    {
+      "object_id": "blue_block",
+      "bbox": [
+        0,
+        475,
+        16,
+        480
+      ],
+      "diagnostic_candidate": false,
+      "collision_model_approved": false,
+      "mask_pixels": 55,
+      "valid_depth_fraction": 1.0,
+      "interior_points": 17,
+      "rejected": "outside Pallet tabletop diagnostic region"
+    }
+  ]
+}

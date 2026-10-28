@@ -1,0 +1,154 @@
+{
+  "diagnostic_only": true,
+  "collision_model_approved": false,
+  "updated_at_unix": 1791654334.3161662,
+  "objects": {
+    "red_block": {
+      "position": [
+        0.2399792941648412,
+        -0.2799527009259921,
+        0.025000025741656863
+      ],
+      "rotation_base": [
+        [
+          0.0030732894138685908,
+          -0.9999952774349196,
+          -1.9231093410804184e-07
+        ],
+        [
+          0.9999952774349219,
+          0.003073289413833859,
+          1.8063795119252864e-07
+        ],
+        [
+          -1.8004607096008938e-07,
+          -1.928651786102832e-07,
+          0.9999999999999653
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 1.5677230325430824,
+      "normal_base": [
+        -1.9231093410804184e-07,
+        1.8063795119252864e-07,
+        0.9999999999999653
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 1791654334.1206934,
+      "stamp_clock": "unix_system",
+      "calibration_revision": "f3650d47b75f6dd3731b90e8db9abcf2d2e103d33c452342a1fcee9f4187e3f1",
+      "receipt_age_s": 0.0007165099996200297,
+      "exposure_age_s": 0.1954737331288925,
+      "sample_count": 4,
+      "position_std_m": [
+        2.0485254623089388e-10,
+        1.4116134243302517e-10,
+        1.177086858341499e-11
+      ],
+      "max_yaw_spread_rad": 0.0,
+      "max_normal_spread_rad": 1.4901161193847656e-08,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    },
+    "green_block": {
+      "position": [
+        0.2799926393973109,
+        -0.2399926046639329,
+        0.025000049280904248
+      ],
+      "rotation_base": [
+        [
+          0.7064822567963809,
+          -0.7077307544755217,
+          -1.183822815679584e-06
+        ],
+        [
+          0.7077307544761255,
+          0.7064822567967546,
+          1.3702588321826853e-07
+        ],
+        [
+          7.393723827560609e-07,
+          -9.34634169722523e-07,
+          0.9999999999992899
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 0.7862809846873395,
+      "normal_base": [
+        -1.183822815679584e-06,
+        1.3702588321826853e-07,
+        0.9999999999992899
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 1791654334.1206934,
+      "stamp_clock": "unix_system",
+      "calibration_revision": "f3650d47b75f6dd3731b90e8db9abcf2d2e103d33c452342a1fcee9f4187e3f1",
+      "receipt_age_s": 0.0007165099996200297,
+      "exposure_age_s": 0.1954737331288925,
+      "sample_count": 4,
+      "position_std_m": [
+        8.758767211388391e-06,
+        8.733724600452943e-06,
+        2.562146788280232e-08
+      ],
+      "max_yaw_spread_rad": 1.608011013676247e-06,
+      "max_normal_spread_rad": 2.0329575085257024e-06,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    },
+    "blue_block": {
+      "position": [
+        0.2800559199561424,
+        -0.28003895036239645,
+        0.025000029834010618
+      ],
+      "rotation_base": [
+        [
+          0.9999999135022255,
+          -0.00041592732128951004,
+          -6.975167513228893e-08
+        ],
+        [
+          0.0004159273213045362,
+          0.9999999135022047,
+          2.1554747318038584e-07
+        ],
+        [
+          6.966201701579219e-08,
+          -2.155764661634034e-07,
+          0.9999999999999744
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 0.00041592733328177367,
+      "normal_base": [
+        -6.975167513228893e-08,
+        2.1554747318038584e-07,
+        0.9999999999999744
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 1791654334.1206934,
+      "stamp_clock": "unix_system",
+      "calibration_revision": "f3650d47b75f6dd3731b90e8db9abcf2d2e103d33c452342a1fcee9f4187e3f1",
+      "receipt_age_s": 0.0007165099996200297,
+      "exposure_age_s": 0.1954737331288925,
+      "sample_count": 3,
+      "position_std_m": [
+        2.12224734001258e-09,
+        4.49872206573129e-06,
+        1.6148018015825e-10
+      ],
+      "max_yaw_spread_rad": 3.065883946717918e-08,
+      "max_normal_spread_rad": 3.942476676500724e-08,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    }
+  }
+}

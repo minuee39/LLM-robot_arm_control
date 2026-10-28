@@ -1,0 +1,122 @@
+[
+  {
+    "motor_id": 1,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:01.941182+00:00",
+    "values": {
+      "run_mode": 1,
+      "loc_ref_motor_rad": -0.8046879768371582,
+      "configured_current_limit_a": 8.0,
+      "measured_motor_rad": -0.804611325263977,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": -0.02772023156285286,
+      "watchdog_ticks": 5000,
+      "watchdog_configured_s": 0.25
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  },
+  {
+    "motor_id": 2,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:01.963874+00:00",
+    "values": {
+      "run_mode": 0,
+      "loc_ref_motor_rad": -0.0005965232849121094,
+      "configured_current_limit_a": 28.5,
+      "measured_motor_rad": -0.0006391737260855734,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": 0.0,
+      "watchdog_ticks": 0,
+      "watchdog_configured_s": 0.0
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  },
+  {
+    "motor_id": 3,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:01.986360+00:00",
+    "values": {
+      "run_mode": 0,
+      "loc_ref_motor_rad": -0.03965342044830322,
+      "configured_current_limit_a": 8.0,
+      "measured_motor_rad": -0.03965342044830322,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": 0.04497013986110687,
+      "watchdog_ticks": 0,
+      "watchdog_configured_s": 0.0
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  },
+  {
+    "motor_id": 4,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:02.008930+00:00",
+    "values": {
+      "run_mode": 0,
+      "loc_ref_motor_rad": 0.06338803470134735,
+      "configured_current_limit_a": 5.5,
+      "measured_motor_rad": 0.06333855539560318,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": -0.016789671033620834,
+      "watchdog_ticks": 0,
+      "watchdog_configured_s": 0.0
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  },
+  {
+    "motor_id": 5,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:02.031468+00:00",
+    "values": {
+      "run_mode": 0,
+      "loc_ref_motor_rad": -0.020090194419026375,
+      "configured_current_limit_a": 5.5,
+      "measured_motor_rad": -0.020139677450060844,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": -0.02034073695540428,
+      "watchdog_ticks": 5000,
+      "watchdog_configured_s": 0.25
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  },
+  {
+    "motor_id": 6,
+    "actuation": false,
+    "settings_modified": false,
+    "timestamp_utc": "2026-10-27T12:25:02.054065+00:00",
+    "values": {
+      "run_mode": 0,
+      "loc_ref_motor_rad": 0.0015339851379394531,
+      "configured_current_limit_a": 5.5,
+      "measured_motor_rad": 0.001682281494140625,
+      "measured_current_a": 0.0,
+      "measured_motor_velocity_rad_s": -0.07276570796966553,
+      "watchdog_ticks": 5000,
+      "watchdog_configured_s": 0.25
+    },
+    "read_errors": {},
+    "complete": true,
+    "pp_watchdog_verified": false,
+    "note": "Observed settings are not certified operating limits. PP TX-silence behavior is not tested. No commissioning config is modified."
+  }
+]

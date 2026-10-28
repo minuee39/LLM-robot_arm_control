@@ -1,0 +1,22 @@
+{
+  "motor_id": 1,
+  "enable_sent": false,
+  "samples": [
+    {
+      "written_current_raw_rad": -0.7828287482261658,
+      "loc_ref_readback_rad": -0.7827137112617493,
+      "difference_rad": 0.0001150369644165039
+    },
+    {
+      "written_current_raw_rad": -0.7828671336174011,
+      "loc_ref_readback_rad": -0.7828287482261658,
+      "difference_rad": 3.838539123535156e-05
+    },
+    {
+      "written_current_raw_rad": -0.7829055190086365,
+      "loc_ref_readback_rad": -0.7828287482261658,
+      "difference_rad": 7.677078247070312e-05
+    }
+  ],
+  "stop_confirmed": true
+}

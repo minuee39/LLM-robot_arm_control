@@ -1,0 +1,330 @@
+{
+  "joint": "J1",
+  "motor_id": 1,
+  "new_pose_commanded": false,
+  "current_limit_policy": "preserve_existing",
+  "current_trip_a": 0.2,
+  "travel_trip_joint_rad": 0.02,
+  "pp_run_to_reset_observed": true,
+  "loaded_torque_cutoff_verified": false,
+  "passed": true,
+  "initial_motor_rad": -0.7817549705505371,
+  "preserved_current_limit_a": 16.0,
+  "run_confirmed": true,
+  "hold_samples": [
+    {
+      "motor_rad": -0.781678318977356,
+      "current_a": 0.026937775313854218,
+      "joint_velocity_rad_s": -0.02525026723742485
+    },
+    {
+      "motor_rad": -0.781908392906189,
+      "current_a": -0.02610590308904648,
+      "joint_velocity_rad_s": 0.07452202588319778
+    },
+    {
+      "motor_rad": -0.7818700671195984,
+      "current_a": -0.005898090545088053,
+      "joint_velocity_rad_s": 0.034307464957237244
+    }
+  ],
+  "passive_observation": {
+    "first_reset_s": 0.2815941649996603,
+    "trace": [
+      {
+        "elapsed_s": 0.003203440999641316,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.009612116000425885,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.020179854000161868,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.029700222000428766,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.040447510000376496,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.050016766999760875,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.059570776999862574,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.07018047200017463,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.07976206199964508,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.08946755099987058,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.10009835500022746,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.10970490100044117,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.12031928400028846,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.1298705589997553,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.1405201469997337,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.15006357699985529,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.15961264799989294,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.17022988600001554,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.17976171499958582,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.19037130000015168,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.19987389499965502,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.21051154100041458,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.22005748599985964,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.23067189900029916,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.2402942050002821,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.2498359419996632,
+        "state": 2,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.2815941649996603,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.29223145000014483,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3019257480000306,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3115922050001245,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3222603470003378,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3318265500001871,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.341391570000269,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.352093454000169,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3616737619995547,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3712780650002969,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.3819137669997872,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.39148082100018655,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.4021451460002936,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.411717158999636,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.4212844129997393,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.43188354799985973,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.4414446509999834,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.45207838999976957,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.4616475379998519,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.47227558600025077,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.4818381920003958,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.49139796199960983,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5020115939996685,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5115750209997714,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5221975889999158,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5317635410001458,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5413322479998897,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5519519509998645,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5615121319997343,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5721376760002386,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5817081859995596,
+        "state": 0,
+        "fault_bits": 0
+      },
+      {
+        "elapsed_s": 0.5923381780003183,
+        "state": 0,
+        "fault_bits": 0
+      }
+    ]
+  },
+  "final_motor_rad": -0.7817549705505371,
+  "final_current_a": 0.0,
+  "joint_drift_rad": 0.0,
+  "stop_confirmed": true
+}

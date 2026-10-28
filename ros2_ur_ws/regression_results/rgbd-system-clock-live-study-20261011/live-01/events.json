@@ -1,0 +1,896 @@
+[
+  {
+    "observed_at_unix": 1791651548.0029364,
+    "exposure_stamp": 1791651547.8290415,
+    "rejected": "CameraInfo/RGB/depth exposure skew exceeds diagnostic limit",
+    "processing_seconds": 2.2792999516241252e-05
+  },
+  {
+    "observed_at_unix": 1791651548.257445,
+    "exposure_stamp": 1791651548.147776,
+    "processing_seconds": 0.26064847300222027,
+    "exposure_age_s": 0.3703169822692871,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651548.5222743,
+    "exposure_stamp": 1791651548.1980171,
+    "processing_seconds": 0.25247822099845507,
+    "exposure_age_s": 0.5767357349395752,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651548.7787116,
+    "exposure_stamp": 1791651548.4431498,
+    "processing_seconds": 0.24593789500067942,
+    "exposure_age_s": 0.5814993381500244,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": [
+      "red_block",
+      "green_block",
+      "blue_block"
+    ]
+  },
+  {
+    "observed_at_unix": 1791651549.0301926,
+    "exposure_stamp": 1791651548.6881979,
+    "processing_seconds": 0.24591873799727182,
+    "exposure_age_s": 0.5879135131835938,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651549.283024,
+    "exposure_stamp": 1791651548.960345,
+    "processing_seconds": 0.2464008120005019,
+    "exposure_age_s": 0.569080114364624,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651549.5342634,
+    "exposure_stamp": 1791651549.229648,
+    "processing_seconds": 0.25005148900163476,
+    "exposure_age_s": 0.5546667575836182,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651549.787855,
+    "exposure_stamp": 1791651549.4499984,
+    "processing_seconds": 0.2436861010028224,
+    "exposure_age_s": 0.58154296875,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651550.0395298,
+    "exposure_stamp": 1791651549.76841,
+    "processing_seconds": 0.2522345420002239,
+    "exposure_age_s": 0.5233542919158936,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651550.2951348,
+    "exposure_stamp": 1791651549.9676273,
+    "processing_seconds": 0.2446579829993425,
+    "exposure_age_s": 0.5721659660339355,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651550.5460656,
+    "exposure_stamp": 1791651550.259899,
+    "processing_seconds": 0.2445568529983575,
+    "exposure_age_s": 0.530724287033081,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651550.797523,
+    "exposure_stamp": 1791651550.504718,
+    "processing_seconds": 0.2520577690011123,
+    "exposure_age_s": 0.5448627471923828,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651551.0531373,
+    "exposure_stamp": 1791651550.728458,
+    "processing_seconds": 0.2521326189998945,
+    "exposure_age_s": 0.5768122673034668,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651551.3085797,
+    "exposure_stamp": 1791651550.9749174,
+    "processing_seconds": 0.2580051930017362,
+    "exposure_age_s": 0.591667652130127,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651551.5699234,
+    "exposure_stamp": 1791651551.2475193,
+    "processing_seconds": 0.24748276799800806,
+    "exposure_age_s": 0.5698869228363037,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651551.8202791,
+    "exposure_stamp": 1791651551.4908655,
+    "processing_seconds": 0.24748839899984887,
+    "exposure_age_s": 0.5769016742706299,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651552.0711436,
+    "exposure_stamp": 1791651551.7362783,
+    "processing_seconds": 0.24557958899822552,
+    "exposure_age_s": 0.5804448127746582,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651552.3218784,
+    "exposure_stamp": 1791651552.0067456,
+    "processing_seconds": 0.2537455130004673,
+    "exposure_age_s": 0.5688784122467041,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651552.5789785,
+    "exposure_stamp": 1791651552.252509,
+    "processing_seconds": 0.24551950599925476,
+    "exposure_age_s": 0.5719892978668213,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651552.8301303,
+    "exposure_stamp": 1791651552.521635,
+    "processing_seconds": 0.24897908399725566,
+    "exposure_age_s": 0.5574746131896973,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651553.082583,
+    "exposure_stamp": 1791651552.7438257,
+    "processing_seconds": 0.24806040999828838,
+    "exposure_age_s": 0.5868179798126221,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651553.3359337,
+    "exposure_stamp": 1791651553.0149462,
+    "processing_seconds": 0.2476027510019776,
+    "exposure_age_s": 0.5685901641845703,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651553.5878103,
+    "exposure_stamp": 1791651553.261373,
+    "processing_seconds": 0.24585230900265742,
+    "exposure_age_s": 0.5722897052764893,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651553.8381736,
+    "exposure_stamp": 1791651553.5063188,
+    "processing_seconds": 0.2499456250006915,
+    "exposure_age_s": 0.5818002223968506,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651554.0924191,
+    "exposure_stamp": 1791651553.7541668,
+    "processing_seconds": 0.246778283999447,
+    "exposure_age_s": 0.5850305557250977,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651554.3445525,
+    "exposure_stamp": 1791651554.0030556,
+    "processing_seconds": 0.24970495299930917,
+    "exposure_age_s": 0.5912008285522461,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651554.598311,
+    "exposure_stamp": 1791651554.271414,
+    "processing_seconds": 0.2462196570013475,
+    "exposure_age_s": 0.5731163024902344,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651554.8485012,
+    "exposure_stamp": 1791651554.516528,
+    "processing_seconds": 0.24882328899911954,
+    "exposure_age_s": 0.580796480178833,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651555.10168,
+    "exposure_stamp": 1791651554.7627134,
+    "processing_seconds": 0.2901266279986885,
+    "exposure_age_s": 0.6290936470031738,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651555.3972652,
+    "exposure_stamp": 1791651555.058136,
+    "processing_seconds": 0.2997728280024603,
+    "exposure_age_s": 0.6389021873474121,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651555.701774,
+    "exposure_stamp": 1791651555.3564982,
+    "processing_seconds": 0.35958363600002485,
+    "exposure_age_s": 0.7048583030700684,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651556.067292,
+    "exposure_stamp": 1791651555.7265258,
+    "processing_seconds": 0.38246479499866837,
+    "exposure_age_s": 0.7232301235198975,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651556.4543383,
+    "exposure_stamp": 1791651556.1209848,
+    "processing_seconds": 0.3726808470019023,
+    "exposure_age_s": 0.7060341835021973,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651556.8340385,
+    "exposure_stamp": 1791651556.489092,
+    "rejected": "CameraInfo/RGB/depth exposure skew exceeds diagnostic limit",
+    "processing_seconds": 3.0056999094085768e-05
+  },
+  {
+    "observed_at_unix": 1791651557.1118672,
+    "exposure_stamp": 1791651557.004984,
+    "processing_seconds": 0.24197976200230187,
+    "exposure_age_s": 0.3488631248474121,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651557.3626742,
+    "exposure_stamp": 1791651557.1003149,
+    "processing_seconds": 0.24360912799966172,
+    "exposure_age_s": 0.5059683322906494,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651557.6144702,
+    "exposure_stamp": 1791651557.3203218,
+    "processing_seconds": 0.2511029609995603,
+    "exposure_age_s": 0.5452516078948975,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": [
+      "red_block",
+      "green_block",
+      "blue_block"
+    ]
+  },
+  {
+    "observed_at_unix": 1791651557.8709278,
+    "exposure_stamp": 1791651557.5448275,
+    "processing_seconds": 0.24849129199719755,
+    "exposure_age_s": 0.5745916366577148,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651558.1234136,
+    "exposure_stamp": 1791651557.791314,
+    "processing_seconds": 0.24838815899784095,
+    "exposure_age_s": 0.5804877281188965,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651558.375901,
+    "exposure_stamp": 1791651558.0376499,
+    "processing_seconds": 0.24742302899903734,
+    "exposure_age_s": 0.5856738090515137,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651558.6285217,
+    "exposure_stamp": 1791651558.2825215,
+    "processing_seconds": 0.25390150799648836,
+    "exposure_age_s": 0.5999009609222412,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651558.8864202,
+    "exposure_stamp": 1791651558.5544949,
+    "processing_seconds": 0.24643491499955417,
+    "exposure_age_s": 0.5783600807189941,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651559.1369085,
+    "exposure_stamp": 1791651558.800387,
+    "processing_seconds": 0.2479725890007103,
+    "exposure_age_s": 0.5844943523406982,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651559.388975,
+    "exposure_stamp": 1791651559.04651,
+    "processing_seconds": 0.24556360000133282,
+    "exposure_age_s": 0.5880281925201416,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651559.6402912,
+    "exposure_stamp": 1791651559.3178182,
+    "rejected": "CameraInfo/RGB/depth exposure skew exceeds diagnostic limit",
+    "processing_seconds": 1.616000008652918e-05
+  },
+  {
+    "observed_at_unix": 1791651559.9199305,
+    "exposure_stamp": 1791651559.8090494,
+    "processing_seconds": 0.25149863000115147,
+    "exposure_age_s": 0.362379789352417,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651560.1756978,
+    "exposure_stamp": 1791651559.8355029,
+    "processing_seconds": 0.26084440600243397,
+    "exposure_age_s": 0.601038932800293,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651560.4405959,
+    "exposure_stamp": 1791651560.107363,
+    "processing_seconds": 0.2584573599997384,
+    "exposure_age_s": 0.5916907787322998,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": [
+      "red_block",
+      "green_block",
+      "blue_block"
+    ]
+  },
+  {
+    "observed_at_unix": 1791651560.7035406,
+    "exposure_stamp": 1791651560.3804486,
+    "processing_seconds": 0.2587242610024987,
+    "exposure_age_s": 0.5818164348602295,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651560.9665194,
+    "exposure_stamp": 1791651560.6241367,
+    "processing_seconds": 0.3724303189992497,
+    "exposure_age_s": 0.7148129940032959,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651561.3430977,
+    "exposure_stamp": 1791651561.0198305,
+    "processing_seconds": 0.24710345700077596,
+    "exposure_age_s": 0.5703704357147217,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651561.5942183,
+    "exposure_stamp": 1791651561.271366,
+    "processing_seconds": 0.24911381700076163,
+    "exposure_age_s": 0.5719661712646484,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651561.8483598,
+    "exposure_stamp": 1791651561.5106444,
+    "processing_seconds": 0.24836713499826146,
+    "exposure_age_s": 0.5860826969146729,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651562.10303,
+    "exposure_stamp": 1791651561.7810073,
+    "processing_seconds": 0.24952796199795557,
+    "exposure_age_s": 0.5715508460998535,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651562.3559034,
+    "exposure_stamp": 1791651562.027789,
+    "processing_seconds": 0.24669524899945827,
+    "exposure_age_s": 0.5748097896575928,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651562.6059952,
+    "exposure_stamp": 1791651562.274674,
+    "processing_seconds": 0.2482382130001497,
+    "exposure_age_s": 0.5795602798461914,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651562.8584373,
+    "exposure_stamp": 1791651562.5220048,
+    "processing_seconds": 0.35863797000274644,
+    "exposure_age_s": 0.6950702667236328,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651563.2204423,
+    "exposure_stamp": 1791651562.8937852,
+    "processing_seconds": 0.2502315700003237,
+    "exposure_age_s": 0.5768890380859375,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651563.4745035,
+    "exposure_stamp": 1791651563.13782,
+    "processing_seconds": 0.24790528700032155,
+    "exposure_age_s": 0.5845890045166016,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651563.7274995,
+    "exposure_stamp": 1791651563.407223,
+    "processing_seconds": 0.2555405060011253,
+    "exposure_age_s": 0.5758171081542969,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651563.9870899,
+    "exposure_stamp": 1791651563.6524632,
+    "processing_seconds": 0.2572840549983084,
+    "exposure_age_s": 0.5919106006622314,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651564.2493076,
+    "exposure_stamp": 1791651563.922868,
+    "processing_seconds": 0.2564340710014221,
+    "exposure_age_s": 0.582874059677124,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651564.5100741,
+    "exposure_stamp": 1791651564.1710835,
+    "processing_seconds": 0.25722164800026803,
+    "exposure_age_s": 0.5962121486663818,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651564.7713094,
+    "exposure_stamp": 1791651564.440203,
+    "processing_seconds": 0.2557550679994165,
+    "exposure_age_s": 0.586862325668335,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651565.0315695,
+    "exposure_stamp": 1791651564.7094266,
+    "processing_seconds": 0.2513424009994196,
+    "exposure_age_s": 0.5734848976135254,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651565.2868896,
+    "exposure_stamp": 1791651564.95589,
+    "processing_seconds": 0.25748404800106073,
+    "exposure_age_s": 0.5884835720062256,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651565.54836,
+    "exposure_stamp": 1791651565.22525,
+    "processing_seconds": 0.24940036900079576,
+    "exposure_age_s": 0.5725104808807373,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651565.8018696,
+    "exposure_stamp": 1791651565.470429,
+    "processing_seconds": 0.2652864010015037,
+    "exposure_age_s": 0.5967264175415039,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651566.0711143,
+    "exposure_stamp": 1791651565.739513,
+    "processing_seconds": 0.2660041460003413,
+    "exposure_age_s": 0.5976052284240723,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651566.3399024,
+    "exposure_stamp": 1791651566.009948,
+    "processing_seconds": 0.2720335729973158,
+    "exposure_age_s": 0.6019878387451172,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651566.6160839,
+    "exposure_stamp": 1791651566.280027,
+    "processing_seconds": 0.2639698810016853,
+    "exposure_age_s": 0.6000263690948486,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651566.8849208,
+    "exposure_stamp": 1791651566.5501988,
+    "processing_seconds": 0.26545067700135405,
+    "exposure_age_s": 0.6001729965209961,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651567.1547587,
+    "exposure_stamp": 1791651566.8196323,
+    "processing_seconds": 0.2672481070003414,
+    "exposure_age_s": 0.6023750305175781,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651567.4279916,
+    "exposure_stamp": 1791651567.0892944,
+    "processing_seconds": 0.3522157890001836,
+    "exposure_age_s": 0.6909115314483643,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  },
+  {
+    "observed_at_unix": 1791651567.7842085,
+    "exposure_stamp": 1791651567.4690344,
+    "processing_seconds": 0.2510872909988393,
+    "exposure_age_s": 0.5662612915039062,
+    "candidates": {
+      "red_block": true,
+      "green_block": true,
+      "blue_block": true
+    },
+    "stable_objects": []
+  }
+]

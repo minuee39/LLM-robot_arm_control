@@ -1,0 +1,128 @@
+{
+  "job_id": "palletize-1791552394",
+  "created_at": 1791552468.252696,
+  "requested_count": 1,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 0.3,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.3,
+    "cartesian_acceleration": 0.05
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 62.06882172099995,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-repeat2-20261009/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-repeat2-20261009/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 535,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          -0.3379886817932129,
+          -0.06717444956302643,
+          0.06640458106994629
+        ],
+        "final_orientation_xyzw": [
+          0.10044945776462555,
+          0.008487912826240063,
+          0.15780366957187653,
+          0.9823115468025208
+        ],
+        "max_height": 0.06876736879348755,
+        "transfer_min_bottom_clearance": 0.038686919852788194,
+        "transfer_sample_count": 6,
+        "final_xy_error": 0.6159266443334439,
+        "final_height_error": 0.04140458106994629,
+        "long_axis_vertical_cosine": 0.9796757235412937,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 533,
+          "joint_fresh_sample_count": 535,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.007636467199449665,
+        "max_loaded_jaw_asymmetry_m": 0.0010930262506008148,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": true,
+        "slip_event": {
+          "seconds": 60.985488138000164,
+          "first_exceeded_seconds": 60.755084648999855,
+          "confirmed_seconds": 60.985488138000164,
+          "relative_displacement_m": 0.006887633956678848,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.3402183723449707,
+            -0.05555582419037819,
+            0.06822645664215088
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-44435-3923334719757",
+          "code": "SLIP_DETECTED",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1791552467.6813052,
+          "injected": false,
+          "seconds": 60.985488138000164,
+          "first_exceeded_seconds": 60.755084648999855,
+          "confirmed_seconds": 60.985488138000164,
+          "relative_displacement_m": 0.006887633956678848,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.3402183723449707,
+            -0.05555582419037819,
+            0.06822645664215088
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-repeat2-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-repeat2-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        }
+      ]
+    }
+  ]
+}

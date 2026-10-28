@@ -1,0 +1,1143 @@
+{
+  "created_at": "2026-10-01T17:02:02.781617+00:00",
+  "runs": [
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 15.667,
+      "task_execution_seconds": 81.704,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 855,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2985510754585266,
+          -0.2987736463546753,
+          0.02499997615814209
+        ],
+        "final_orientation_xyzw": [
+          1.5406008913032565e-08,
+          -1.7841365718140878e-08,
+          -7.371306855930015e-05,
+          -1.0
+        ],
+        "max_height": 0.06429368257522583,
+        "transfer_min_bottom_clearance": 0.026858739006340324,
+        "transfer_sample_count": 109,
+        "final_xy_error": 0.0018982427637910348,
+        "final_height_error": 2.384185791154403e-08,
+        "long_axis_vertical_cosine": 0.9999999999999989,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 852,
+          "joint_fresh_sample_count": 855,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0032646166114663313,
+        "max_loaded_jaw_asymmetry_m": 0.0014344491064548492,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 71.86308663,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 5.015740597160708e-07,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 123.25736796000001,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-01/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-01/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-01/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-01/recovery.log"
+      },
+      "repetition": 1,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 0.814,
+      "task_execution_seconds": 78.184,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 678,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29857296526432037,
+          -0.29926979541778564,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -4.302373213249666e-08,
+          -3.1478282380703604e-07,
+          0.7072691917419434,
+          0.7069444060325623
+        ],
+        "max_height": 0.06425350904464722,
+        "transfer_min_bottom_clearance": 0.02661402812782625,
+        "transfer_sample_count": 89,
+        "final_xy_error": 0.0016030055735158982,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999997982,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 677,
+          "joint_fresh_sample_count": 678,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.004294142393608779,
+        "max_loaded_jaw_asymmetry_m": 0.0016960902139544487,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 53.733201589000146,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.9802322387695312e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 101.36312907000001,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-02/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-02/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-02/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-02/recovery.log"
+      },
+      "repetition": 2,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 11.58,
+      "task_execution_seconds": 80.88,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 817,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29846354603767394,
+          -0.29928138852119446,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -1.9354270364146942e-07,
+          -1.7094568249831354e-07,
+          9.191712888423353e-05,
+          1.0
+        ],
+        "max_height": 0.06429064273834229,
+        "transfer_min_bottom_clearance": 0.026829991644037574,
+        "transfer_sample_count": 105,
+        "final_xy_error": 0.0016961996450354767,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998667,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 809,
+          "joint_fresh_sample_count": 817,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0035454083329739157,
+        "max_loaded_jaw_asymmetry_m": 0.0016560675576329231,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 67.2915583490003,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.0485709734063626e-07,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 119.34771897899964,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-03/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-03/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-03/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-03/recovery.log"
+      },
+      "repetition": 3,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 10.678,
+      "task_execution_seconds": 81.588,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 813,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2985522377490997,
+          -0.2988359034061432,
+          0.02499997615814209
+        ],
+        "final_orientation_xyzw": [
+          4.651146312539822e-08,
+          -1.443614294771578e-08,
+          -8.348921255674213e-05,
+          -1.0
+        ],
+        "max_height": 0.0642654299736023,
+        "transfer_min_bottom_clearance": 0.026697705542820242,
+        "transfer_sample_count": 109,
+        "final_xy_error": 0.0018577234495373103,
+        "final_height_error": 2.384185791154403e-08,
+        "long_axis_vertical_cosine": 0.9999999999999952,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 809,
+          "joint_fresh_sample_count": 813,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.003231186951216593,
+        "max_loaded_jaw_asymmetry_m": 0.001345144584774971,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 66.89145019199987,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 6.556510925292969e-07,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 118.85564307200002,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-04/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-04/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-04/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-04/recovery.log"
+      },
+      "repetition": 4,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 92.068,
+      "task_execution_seconds": 82.204,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1503,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29930087208747863,
+          -0.2992295026779175,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -3.899769751569693e-08,
+          -2.7915990585825057e-07,
+          0.7072089910507202,
+          0.7070045471191406
+        ],
+        "max_height": 0.06424641609191895,
+        "transfer_min_bottom_clearance": 0.026796067857438755,
+        "transfer_sample_count": 89,
+        "final_xy_error": 0.0010404066327176064,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999998411,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1470,
+          "joint_fresh_sample_count": 1503,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.00621946517567703,
+        "max_loaded_jaw_asymmetry_m": 0.0014698617160320282,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 149.04741270799968,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 3.332000937312528e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 201.01412087000062,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-05/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-05/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-05/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-05/recovery.log"
+      },
+      "repetition": 5,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 5.787,
+      "task_execution_seconds": 78.166,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 742,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.29852115392684936,
+          -0.29926908016204834,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -2.1585066178886336e-08,
+          -2.7727719498216175e-07,
+          0.7072095274925232,
+          0.7070040106773376
+        ],
+        "max_height": 0.06425809860229492,
+        "transfer_min_bottom_clearance": 0.026787553838393933,
+        "transfer_sample_count": 89,
+        "final_xy_error": 0.0016496149604026706,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999998453,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 715,
+          "joint_fresh_sample_count": 742,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.004988285384652572,
+        "max_loaded_jaw_asymmetry_m": 0.0016878247261047363,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 58.607183470000564,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 8.940696716308594e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 110.48450875699928,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-06/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-06/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-06/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-06/recovery.log"
+      },
+      "repetition": 6,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 15.671,
+      "task_execution_seconds": 78.086,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 829,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2986055541038513,
+          -0.29929083585739136,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -3.322899999602669e-08,
+          -2.596887611616694e-07,
+          0.7072517275810242,
+          0.7069618105888367
+        ],
+        "max_height": 0.06434136629104614,
+        "transfer_min_bottom_clearance": 0.026926871978080406,
+        "transfer_sample_count": 90,
+        "final_xy_error": 0.001564414631243176,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999998629,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 822,
+          "joint_fresh_sample_count": 829,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.006210745909384645,
+        "max_loaded_jaw_asymmetry_m": 0.001700843684375286,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 68.77341803500076,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.9802322387695312e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 120.45103470200047,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-07/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-07/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-07/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-07/recovery.log"
+      },
+      "repetition": 7,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 11.53,
+      "task_execution_seconds": 80.824,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 815,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2986094135046005,
+          -0.2993305027484894,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -1.7360370918595436e-07,
+          -1.6311487627262977e-07,
+          0.0001244626473635435,
+          1.0
+        ],
+        "max_height": 0.06454569101333618,
+        "transfer_min_bottom_clearance": 0.02720980361151616,
+        "transfer_sample_count": 104,
+        "final_xy_error": 0.001543359119248544,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998865,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 809,
+          "joint_fresh_sample_count": 815,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.004923336681246264,
+        "max_loaded_jaw_asymmetry_m": 0.001590656116604805,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 67.02569770900027,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 6.664001874625056e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 118.95227379799962,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-08/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-08/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-08/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-08/recovery.log"
+      },
+      "repetition": 8,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 0.828,
+      "task_execution_seconds": 78.169,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 708,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2986385452747345,
+          -0.29926979541778564,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -1.6221164855778625e-08,
+          -2.7231396870774915e-07,
+          0.7072167992591858,
+          0.7069967985153198
+        ],
+        "max_height": 0.06427735090255737,
+        "transfer_min_bottom_clearance": 0.026922817070511286,
+        "transfer_sample_count": 89,
+        "final_xy_error": 0.001544913492993889,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998511,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 700,
+          "joint_fresh_sample_count": 708,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.006292796383320361,
+        "max_loaded_jaw_asymmetry_m": 0.0016643106937408447,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 54.14407036600005,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.0,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 105.82173183600025,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-09/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-09/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-09/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-09/recovery.log"
+      },
+      "repetition": 9,
+      "failure_category": null
+    },
+    {
+      "scenario": {
+        "name": "m500_offset_w30_arm50_cart35",
+        "center_xy": [
+          -0.32,
+          0.26
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.2,
+        "cartesian_velocity_scaling": 0.35,
+        "cartesian_acceleration_scaling": 0.2
+      },
+      "task_returncode": 0,
+      "task_execution_completed": true,
+      "task_planning_seconds": 5.745,
+      "task_execution_seconds": 78.171,
+      "safety_stop_expected": false,
+      "recovery_returncode": null,
+      "recovery_completed": false,
+      "recovery_safe_refusal": false,
+      "recovery_attempts": [],
+      "fallback_hold_latched": false,
+      "recovery_outcome": "not_requested",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 750,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          0.2986075359582901,
+          -0.29929500818252563,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -4.3258324922135216e-08,
+          -2.8122843787059537e-07,
+          0.7072729468345642,
+          0.7069406509399414
+        ],
+        "max_height": 0.06423169374465942,
+        "transfer_min_bottom_clearance": 0.026630292199410394,
+        "transfer_sample_count": 89,
+        "final_xy_error": 0.0015607592928318097,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998381,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 749,
+          "joint_fresh_sample_count": 750,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.003980516475032461,
+        "max_loaded_jaw_asymmetry_m": 0.0016970522701740265,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 59.58094758200059,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.9802322387695312e-08,
+        "placement_pass": true
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 111.98281301299994,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-10/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-10/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-10/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-05-final-repeat10-20261002/m500_offset_w30_arm50_cart35-10/recovery.log"
+      },
+      "repetition": 10,
+      "failure_category": null
+    }
+  ],
+  "passed": true,
+  "statistics": {
+    "m500_offset_w30_arm50_cart35": {
+      "run_count": 10,
+      "success_count": 10,
+      "failure_count": 0,
+      "success_rate": 1.0,
+      "elapsed_seconds": {
+        "count": 10,
+        "mean": 123.15303420569998,
+        "stddev": 26.796817482903567,
+        "min": 101.36312907000001,
+        "max": 201.01412087000062
+      },
+      "task_planning_seconds": {
+        "count": 10,
+        "mean": 17.0368,
+        "stddev": 25.522393636961247,
+        "min": 0.814,
+        "max": 92.068
+      },
+      "task_execution_seconds": {
+        "count": 10,
+        "mean": 79.7976,
+        "stddev": 1.6837251675971325,
+        "min": 78.086,
+        "max": 82.204
+      },
+      "safety_false_positive_count": 0,
+      "process_cleanup_failure_count": 0,
+      "failure_categories": {},
+      "transfer_min_bottom_clearance": {
+        "count": 10,
+        "mean": 0.026827387087637534,
+        "stddev": 0.00016431359499514343,
+        "min": 0.02661402812782625,
+        "max": 0.02720980361151616
+      },
+      "final_xy_error": {
+        "count": 10,
+        "mean": 0.0015958639561317416,
+        "stddev": 0.00022116005615406578,
+        "min": 0.0010404066327176064,
+        "max": 0.0018982427637910348
+      },
+      "final_height_error": {
+        "count": 10,
+        "mean": 6.318092346108139e-08,
+        "stddev": 3.2450336428961616e-08,
+        "min": 2.384185791154403e-08,
+        "max": 9.536743163923722e-08
+      },
+      "max_height": {
+        "count": 10,
+        "mean": 0.06430038809776306,
+        "stddev": 8.681209028418416e-05,
+        "min": 0.06423169374465942,
+        "max": 0.06454569101333618
+      },
+      "long_axis_vertical_cosine": {
+        "count": 10,
+        "mean": 0.9999999999998785,
+        "stddev": 6.316386147061084e-14,
+        "min": 0.9999999999997982,
+        "max": 0.9999999999999989
+      },
+      "max_contact_relative_displacement_m": {
+        "count": 10,
+        "mean": 0.004695050029857895,
+        "stddev": 0.001161639649675087,
+        "min": 0.003231186951216593,
+        "max": 0.006292796383320361
+      },
+      "max_loaded_jaw_asymmetry_m": {
+        "count": 10,
+        "mean": 0.0015942300669848919,
+        "stddev": 0.00012363789094367917,
+        "min": 0.001345144584774971,
+        "max": 0.001700843684375286
+      },
+      "max_post_release_displacement_m": {
+        "count": 10,
+        "mean": 1.6408562120315517e-07,
+        "stddev": 2.1688468552413427e-07,
+        "min": 0.0,
+        "max": 6.556510925292969e-07
+      }
+    }
+  },
+  "overall": {
+    "run_count": 10,
+    "success_count": 10,
+    "failure_count": 0,
+    "success_rate": 1.0,
+    "safety_false_positive_count": 0,
+    "process_cleanup_failure_count": 0,
+    "task_planning_seconds": {
+      "count": 10,
+      "mean": 17.0368,
+      "stddev": 25.522393636961247,
+      "min": 0.814,
+      "max": 92.068
+    },
+    "task_execution_seconds": {
+      "count": 10,
+      "mean": 79.7976,
+      "stddev": 1.6837251675971325,
+      "min": 78.086,
+      "max": 82.204
+    },
+    "elapsed_seconds": {
+      "count": 10,
+      "mean": 123.15303420569998,
+      "stddev": 26.796817482903567,
+      "min": 101.36312907000001,
+      "max": 201.01412087000062
+    }
+  }
+}

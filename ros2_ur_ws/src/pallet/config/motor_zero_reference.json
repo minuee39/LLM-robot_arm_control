@@ -1,0 +1,21 @@
+{
+  "source": "STOP + mechanical zero command executed and raw position verified, 2026-10-22",
+  "motor_zero_rad": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0
+  },
+  "urdf_pose_before_rebase_rad": {
+    "J1": 0.0,
+    "J2": 0.56,
+    "J3": -0.6086975215607006,
+    "J4": 0.0,
+    "J5": -0.13658834773265566,
+    "J6": 0.0,
+    "g_r": 0.0
+  },
+  "hardware_zero_command_sent": true
+}

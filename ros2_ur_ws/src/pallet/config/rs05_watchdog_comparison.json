@@ -1,0 +1,38 @@
+{
+  "stopped_reporting_control": {
+    "state": 0,
+    "fault_bits": 0
+  },
+  "reporting_on_passive": {
+    "before": {
+      "state": 2,
+      "fault_bits": 0
+    },
+    "count": 121,
+    "states": [
+      2
+    ],
+    "last": {
+      "elapsed_s": 1.2074173409999958,
+      "state": 2,
+      "fault_bits": 0
+    },
+    "first_reset": null
+  },
+  "report_enable_does_not_enable_control": {
+    "state": 0,
+    "fault_bits": 0
+  },
+  "reporting_off_then_report_query": {
+    "before": {
+      "state": 2,
+      "fault_bits": 0
+    },
+    "after": {
+      "state": 2,
+      "fault_bits": 0
+    },
+    "silent_s": 0.8,
+    "query_may_refresh_timer": true
+  }
+}

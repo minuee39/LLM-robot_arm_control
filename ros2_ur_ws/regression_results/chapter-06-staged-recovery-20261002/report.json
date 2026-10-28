@@ -1,0 +1,395 @@
+{
+  "created_at": "2026-10-01T17:27:32.120339+00:00",
+  "runs": [
+    {
+      "scenario": {
+        "name": "mass_500_release_stable",
+        "center_xy": [
+          -0.27,
+          0.28
+        ],
+        "size": [
+          0.03,
+          0.03,
+          0.05
+        ],
+        "mass_kg": 0.5,
+        "gripper_close_position": 0.002,
+        "arm_velocity_scaling": 0.5,
+        "arm_acceleration_scaling": 0.25,
+        "cartesian_velocity_scaling": 0.5,
+        "cartesian_acceleration_scaling": 0.25
+      },
+      "task_returncode": 0,
+      "task_execution_completed": false,
+      "task_planning_seconds": 0.712,
+      "task_execution_seconds": 32.894,
+      "safety_stop_expected": true,
+      "recovery_returncode": 0,
+      "recovery_completed": false,
+      "recovery_safe_refusal": true,
+      "recovery_attempts": [
+        {
+          "candidate": "vertical",
+          "returncode": 0,
+          "planning_seconds": 0.066,
+          "execution_started": false,
+          "task_completed": false,
+          "safe_refusal": true,
+          "failure_classification": "cartesian_path_incomplete",
+          "failure_evidence": [
+            "[INFO] [1790875709.905019318] [mtc_tutorial]: RECOVERY_SCENE_DIAGNOSTIC attached_count=1 attached=red_block@tcp world_count=3 acm_entries=10 collision=true contact_count=8 contact_pairs=J8:red_block,J9:red_block",
+            "recovery retreat vertical to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000",
+            "recovery retreat vertical to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000"
+          ],
+          "failed_retreat_target_m": 0.005,
+          "scene_diagnostic": {
+            "attached_count": 1,
+            "attached": [
+              "red_block@tcp"
+            ],
+            "world_count": 3,
+            "acm_entries": 10,
+            "collision": true,
+            "contact_count": 8,
+            "contact_pairs": [
+              "J8:red_block",
+              "J9:red_block"
+            ]
+          },
+          "direction_base": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/recovery-vertical.log"
+        },
+        {
+          "candidate": "reverse_transfer",
+          "returncode": 0,
+          "planning_seconds": 0.065,
+          "execution_started": false,
+          "task_completed": false,
+          "safe_refusal": true,
+          "failure_classification": "cartesian_path_incomplete",
+          "failure_evidence": [
+            "[INFO] [1790875713.260403277] [mtc_tutorial]: RECOVERY_SCENE_DIAGNOSTIC attached_count=1 attached=red_block@tcp world_count=3 acm_entries=10 collision=true contact_count=8 contact_pairs=J8:red_block,J9:red_block",
+            "recovery retreat reverse_transfer to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000",
+            "recovery retreat reverse_transfer to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000"
+          ],
+          "failed_retreat_target_m": 0.005,
+          "scene_diagnostic": {
+            "attached_count": 1,
+            "attached": [
+              "red_block@tcp"
+            ],
+            "world_count": 3,
+            "acm_entries": 10,
+            "collision": true,
+            "contact_count": 8,
+            "contact_pairs": [
+              "J8:red_block",
+              "J9:red_block"
+            ]
+          },
+          "direction_base": [
+            -0.7009315268217042,
+            0.7132285711519096,
+            0.5
+          ],
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/recovery-reverse_transfer.log"
+        },
+        {
+          "candidate": "lateral_left",
+          "returncode": 0,
+          "planning_seconds": 0.065,
+          "execution_started": false,
+          "task_completed": false,
+          "safe_refusal": true,
+          "failure_classification": "cartesian_path_incomplete",
+          "failure_evidence": [
+            "[INFO] [1790875716.120252881] [mtc_tutorial]: RECOVERY_SCENE_DIAGNOSTIC attached_count=1 attached=red_block@tcp world_count=3 acm_entries=10 collision=true contact_count=8 contact_pairs=J8:red_block,J9:red_block",
+            "recovery retreat lateral_left to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000",
+            "recovery retreat lateral_left to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000"
+          ],
+          "failed_retreat_target_m": 0.005,
+          "scene_diagnostic": {
+            "attached_count": 1,
+            "attached": [
+              "red_block@tcp"
+            ],
+            "world_count": 3,
+            "acm_entries": 10,
+            "collision": true,
+            "contact_count": 8,
+            "contact_pairs": [
+              "J8:red_block",
+              "J9:red_block"
+            ]
+          },
+          "direction_base": [
+            -0.7132285711519096,
+            -0.7009315268217042,
+            0.5
+          ],
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/recovery-lateral_left.log"
+        },
+        {
+          "candidate": "lateral_right",
+          "returncode": 0,
+          "planning_seconds": 0.065,
+          "execution_started": false,
+          "task_completed": false,
+          "safe_refusal": true,
+          "failure_classification": "cartesian_path_incomplete",
+          "failure_evidence": [
+            "[INFO] [1790875717.701794884] [mtc_tutorial]: RECOVERY_SCENE_DIAGNOSTIC attached_count=1 attached=red_block@tcp world_count=3 acm_entries=10 collision=true contact_count=8 contact_pairs=J8:red_block,J9:red_block",
+            "recovery retreat lateral_right to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000",
+            "recovery retreat lateral_right to 0.005000 m (0/1): CartesianPath: min_fraction not met. Achieved: 0.000000"
+          ],
+          "failed_retreat_target_m": 0.005,
+          "scene_diagnostic": {
+            "attached_count": 1,
+            "attached": [
+              "red_block@tcp"
+            ],
+            "world_count": 3,
+            "acm_entries": 10,
+            "collision": true,
+            "contact_count": 8,
+            "contact_pairs": [
+              "J8:red_block",
+              "J9:red_block"
+            ]
+          },
+          "direction_base": [
+            0.7132285711519096,
+            0.7009315268217042,
+            0.5
+          ],
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/recovery-lateral_right.log"
+        }
+      ],
+      "fallback_hold_latched": true,
+      "recovery_outcome": "refused_relatched",
+      "summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 452,
+        "target": [
+          0.3,
+          -0.3,
+          0.025
+        ],
+        "final_position": [
+          -0.36836517572402955,
+          -0.1804981678724289,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -4.905573973701394e-07,
+          -1.746693442328251e-06,
+          0.31603124737739563,
+          0.948748767375946
+        ],
+        "max_height": 0.06441444158554077,
+        "transfer_min_bottom_clearance": -2.467679244069765e-07,
+        "transfer_sample_count": 162,
+        "final_xy_error": 0.6789644291142645,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999934168,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 450,
+          "joint_fresh_sample_count": 452,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0037667034716248804,
+        "max_loaded_jaw_asymmetry_m": 0.00101435836404562,
+        "slip_threshold_m": 0.005,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": true,
+        "runtime_fault_event": {
+          "code": "TELEMETRY_STALE",
+          "seconds": 37.514058827000554,
+          "first_exceeded_seconds": 37.50644325200028,
+          "confirmed_seconds": 37.514058827000554,
+          "confirm_samples": 0,
+          "block_position_m": null,
+          "stale_measurements": [
+            "block_pose_stream"
+          ],
+          "pose_stream_age_seconds": 0.7576155750002727,
+          "timeout_seconds": 0.75
+        },
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-51045-5367482225420",
+          "code": "TELEMETRY_STALE",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1790875705.3483756,
+          "injected": false,
+          "seconds": 37.514058827000554,
+          "first_exceeded_seconds": 37.50644325200028,
+          "confirmed_seconds": 37.514058827000554,
+          "confirm_samples": 0,
+          "block_position_m": null,
+          "stale_measurements": [
+            "block_pose_stream"
+          ],
+          "pose_stream_age_seconds": 0.7576155750002727,
+          "timeout_seconds": 0.75
+        },
+        "sim_fault_command_published": true,
+        "sim_fault_command": {
+          "fault_id": "watch-pallet-block-51045-5366772892244",
+          "code": "TELEMETRY_STALE",
+          "phase": "transfer",
+          "published_at_unix": 1790875704.639043
+        },
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "min_clearance_required": 0.02,
+      "process_cleanup_ok": true,
+      "lingering_process_groups": [],
+      "passed": true,
+      "error": null,
+      "elapsed_seconds": 76.35626474299988,
+      "logs": {
+        "simulation": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/simulation.log",
+        "task": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/task.log",
+        "monitor": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/monitor.log",
+        "recovery": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-06-staged-recovery-20261002/mass_500_release_stable-01/recovery.log"
+      },
+      "repetition": 1,
+      "failure_category": null
+    }
+  ],
+  "passed": true,
+  "statistics": {
+    "mass_500_release_stable": {
+      "run_count": 1,
+      "success_count": 1,
+      "failure_count": 0,
+      "success_rate": 1.0,
+      "elapsed_seconds": {
+        "count": 1,
+        "mean": 76.35626474299988,
+        "stddev": 0.0,
+        "min": 76.35626474299988,
+        "max": 76.35626474299988
+      },
+      "task_planning_seconds": {
+        "count": 1,
+        "mean": 0.712,
+        "stddev": 0.0,
+        "min": 0.712,
+        "max": 0.712
+      },
+      "task_execution_seconds": {
+        "count": 1,
+        "mean": 32.894,
+        "stddev": 0.0,
+        "min": 32.894,
+        "max": 32.894
+      },
+      "safety_false_positive_count": 0,
+      "process_cleanup_failure_count": 0,
+      "failure_categories": {},
+      "transfer_min_bottom_clearance": {
+        "count": 1,
+        "mean": -2.467679244069765e-07,
+        "stddev": 0.0,
+        "min": -2.467679244069765e-07,
+        "max": -2.467679244069765e-07
+      },
+      "final_xy_error": {
+        "count": 1,
+        "mean": 0.6789644291142645,
+        "stddev": 0.0,
+        "min": 0.6789644291142645,
+        "max": 0.6789644291142645
+      },
+      "final_height_error": {
+        "count": 1,
+        "mean": 3.5762786863846596e-08,
+        "stddev": 0.0,
+        "min": 3.5762786863846596e-08,
+        "max": 3.5762786863846596e-08
+      },
+      "max_height": {
+        "count": 1,
+        "mean": 0.06441444158554077,
+        "stddev": 0.0,
+        "min": 0.06441444158554077,
+        "max": 0.06441444158554077
+      },
+      "long_axis_vertical_cosine": {
+        "count": 1,
+        "mean": 0.9999999999934168,
+        "stddev": 0.0,
+        "min": 0.9999999999934168,
+        "max": 0.9999999999934168
+      },
+      "max_contact_relative_displacement_m": {
+        "count": 1,
+        "mean": 0.0037667034716248804,
+        "stddev": 0.0,
+        "min": 0.0037667034716248804,
+        "max": 0.0037667034716248804
+      },
+      "max_loaded_jaw_asymmetry_m": {
+        "count": 1,
+        "mean": 0.00101435836404562,
+        "stddev": 0.0,
+        "min": 0.00101435836404562,
+        "max": 0.00101435836404562
+      },
+      "max_post_release_displacement_m": null
+    }
+  },
+  "overall": {
+    "run_count": 1,
+    "success_count": 1,
+    "failure_count": 0,
+    "success_rate": 1.0,
+    "safety_false_positive_count": 0,
+    "process_cleanup_failure_count": 0,
+    "task_planning_seconds": {
+      "count": 1,
+      "mean": 0.712,
+      "stddev": 0.0,
+      "min": 0.712,
+      "max": 0.712
+    },
+    "task_execution_seconds": {
+      "count": 1,
+      "mean": 32.894,
+      "stddev": 0.0,
+      "min": 32.894,
+      "max": 32.894
+    },
+    "elapsed_seconds": {
+      "count": 1,
+      "mean": 76.35626474299988,
+      "stddev": 0.0,
+      "min": 76.35626474299988,
+      "max": 76.35626474299988
+    }
+  }
+}

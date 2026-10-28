@@ -1,0 +1,72 @@
+{
+  "job_id": "palletize-1791274159",
+  "created_at": 1791274558.169203,
+  "requested_count": 3,
+  "completed_count": 3,
+  "passed": true,
+  "runs": [
+    {
+      "object_id": "blue_block",
+      "target": [
+        0.28,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 160.84913216,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/01-blue_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/01-blue_block-attempt-01-task.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/01-blue_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/01-blue_block-attempt-01-task.json"
+        }
+      ]
+    },
+    {
+      "object_id": "green_block",
+      "target": [
+        0.28,
+        -0.24,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 121.50306237800004,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/02-green_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/02-green_block-attempt-01-task.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/02-green_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/02-green_block-attempt-01-task.json"
+        }
+      ]
+    },
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 105.892033319,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/03-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/03-red_block-attempt-01-task.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/03-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/palletizing-20261006-170822/job/03-red_block-attempt-01-task.json"
+        }
+      ]
+    }
+  ]
+}
