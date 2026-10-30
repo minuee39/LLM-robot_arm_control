@@ -1,0 +1,23 @@
+{
+  "node": "mtc_node_63069",
+  "observed_at_unix": 1791639529.2372549,
+  "parameters": {
+    "lift_min_distance": {
+      "type": 3,
+      "double_value": 0.1
+    },
+    "lift_max_distance": {
+      "type": 3,
+      "double_value": 0.1
+    },
+    "lower_min_distance": {
+      "type": 3,
+      "double_value": 0.1
+    },
+    "lower_max_distance": {
+      "type": 3,
+      "double_value": 0.1
+    }
+  },
+  "override_verified": true
+}

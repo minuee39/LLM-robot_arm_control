@@ -1,0 +1,14 @@
+{
+  "read_only": true,
+  "observed_at_unix": 1791639867.2489574,
+  "obstacle_acm_rows": {
+    "green_block": {
+      "entry_present": false
+    },
+    "blue_block": {
+      "entry_present": false
+    }
+  },
+  "default_entries": {},
+  "verified": false
+}

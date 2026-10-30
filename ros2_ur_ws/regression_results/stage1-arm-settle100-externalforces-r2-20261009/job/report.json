@@ -1,0 +1,97 @@
+{
+  "job_id": "palletize-1791555132",
+  "created_at": 1791555204.1173494,
+  "requested_count": 1,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 0.3,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.3,
+    "cartesian_acceleration": 0.05
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 64.60790635900048,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-arm-settle100-externalforces-r2-20261009/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-arm-settle100-externalforces-r2-20261009/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 559,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          -0.320063419342041,
+          0.09986378252506256,
+          0.06400495767593384
+        ],
+        "final_orientation_xyzw": [
+          -0.0005090049817226827,
+          -0.001691626152023673,
+          2.6575666197459213e-05,
+          0.9999984502792358
+        ],
+        "max_height": 0.06463444232940674,
+        "transfer_min_bottom_clearance": null,
+        "transfer_sample_count": 0,
+        "final_xy_error": 0.6767329805464981,
+        "final_height_error": 0.039004957675933837,
+        "long_axis_vertical_cosine": 0.9999937586297808,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 51.704380839000805,
+          "tcp_fresh_sample_count": 558,
+          "joint_fresh_sample_count": 559,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0009748998702528807,
+        "max_loaded_jaw_asymmetry_m": 0.0007610861212015152,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-arm-settle100-externalforces-r2-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-arm-settle100-externalforces-r2-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        }
+      ]
+    }
+  ]
+}

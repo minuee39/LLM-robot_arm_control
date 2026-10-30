@@ -15,7 +15,9 @@ def generate_launch_description():
         )
         .robot_description(file_path="config/ur10e_robotiq_2f140.urdf.xacro")
         .robot_description_semantic(file_path="config/ur10e_robotiq_2f140.srdf")
+        .robot_description_kinematics(file_path="config/kinematics.yaml")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
+        .planning_pipelines(default_planning_pipeline="ompl", pipelines=["ompl"])
         .to_moveit_configs()
     )
 
@@ -52,6 +54,7 @@ def generate_launch_description():
         parameters=[
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
         ],
     )
 
@@ -61,7 +64,11 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "world", "base_link"],
+        arguments=[
+            "--x", "0.0", "--y", "0.0", "--z", "0.0",
+            "--roll", "0.0", "--pitch", "0.0", "--yaw", "0.0",
+            "--frame-id", "world", "--child-frame-id", "base_link",
+        ],
     )
 
     # Publish TF

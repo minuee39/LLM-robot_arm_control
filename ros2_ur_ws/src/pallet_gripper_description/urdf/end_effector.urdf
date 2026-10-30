@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="pallet_end_effector">
+  <!--Extracted from pallet_gripper.urdf. CAD transforms, inertials and limits are inherited, not independently measured. Mesh coordinates retained without scaling. g2 has zero travel. Finger motion is an inherited simplified mimic model; linkage and leadscrew dynamics are not represented.-->
+  <link name="gripper">
+    <inertial>
+      <origin xyz="-0.000002335 -0.00130269 -0.00005826" rpy="0 0 0" />
+      <mass value="0.35218616" />
+      <inertia ixx="0.00017781" ixy="-5.818E-05" ixz="7.205E-05" iyy="0.00024068" iyz="3.354E-05" izz="0.00022588" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="move_gripper">
+    <inertial>
+      <origin xyz="4.1078E-15 0.008 1.3323E-15" rpy="0 0 0" />
+      <mass value="0.027" />
+      <inertia ixx="1.3E-06" ixy="5E-08" ixz="6E-08" iyy="1.27E-06" iyz="0" izz="1.28E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/move_gripper.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/move_gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="g2" type="revolute">
+    <origin xyz="0 0.0299209524500723 0" rpy="0 1.17809724509618 0" />
+    <parent link="gripper" />
+    <child link="move_gripper" />
+    <axis xyz="0 1 0" />
+    <limit lower="0" upper="0" effort="0" velocity="0" />
+  </joint>
+  <link name="gripper_r">
+    <inertial>
+      <origin xyz="-0.033504 -0.029535 -0.0082666" rpy="0 0 0" />
+      <mass value="0.234" />
+      <inertia ixx="1.322E-05" ixy="5.09E-06" ixz="-7.51E-06" iyy="1.886E-05" iyz="2.16E-06" izz="1.665E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper_r.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper_r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="g_r" type="revolute">
+    <origin xyz="-0.007486 0.0031518 0.0082" rpy="0 0 -1.7453" />
+    <parent link="move_gripper" />
+    <child link="gripper_r" />
+    <axis xyz="0 0 -1" />
+    <limit lower="0" upper="0.103" effort="10" velocity="1.0" />
+  </joint>
+  <link name="gripper_l">
+    <inertial>
+      <origin xyz="-0.033445 0.029588 -0.0082666" rpy="0 0 0" />
+      <mass value="0.244" />
+      <inertia ixx="1.37E-05" ixy="-6.33E-07" ixz="-6.61E-06" iyy="1.807E-05" iyz="2.27E-06" izz="1.823E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper_l.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://pallet_gripper_description/meshes/gripper_l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="g_l" type="revolute">
+    <origin xyz="0.007486 0.0031518 0.0082" rpy="0 0 -1.3963" />
+    <parent link="move_gripper" />
+    <child link="gripper_l" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-0.103" upper="0" effort="10" velocity="1.0" />
+    <mimic joint="g_r" multiplier="-1" offset="0" />
+  </joint>
+</robot>

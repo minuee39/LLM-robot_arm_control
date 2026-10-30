@@ -1,0 +1,30 @@
+{
+  "planning_bounded_500g_w25": {
+    "center_xy": [-0.27, 0.28],
+    "size": [0.03, 0.025, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "grasp_angle_delta": 3.141592653589793,
+    "arm_velocity_scaling": 0.2,
+    "arm_acceleration_scaling": 0.1,
+    "cartesian_velocity_scaling": 0.15,
+    "cartesian_acceleration_scaling": 0.1,
+    "move_to_pick_timeout": 3,
+    "move_to_place_timeout": 2,
+    "return_home_timeout": 2
+  },
+  "planning_bounded_500g_w40": {
+    "center_xy": [-0.32, 0.26],
+    "size": [0.03, 0.04, 0.05],
+    "mass_kg": 0.5,
+    "gripper_close_position": 0.002,
+    "grasp_angle_delta": 6.283185307179586,
+    "arm_velocity_scaling": 0.2,
+    "arm_acceleration_scaling": 0.1,
+    "cartesian_velocity_scaling": 0.15,
+    "cartesian_acceleration_scaling": 0.1,
+    "move_to_pick_timeout": 3,
+    "move_to_place_timeout": 2,
+    "return_home_timeout": 2
+  }
+}

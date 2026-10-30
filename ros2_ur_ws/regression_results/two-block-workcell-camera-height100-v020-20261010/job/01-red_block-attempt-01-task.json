@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "task_id": "palletize-1791641347-01-red_block-attempt-01",
+  "state": "succeeded",
+  "attempt": 1,
+  "command": {
+    "action": "pick_place",
+    "pick_object": "red_block",
+    "place_xyz": [
+      0.24,
+      -0.28,
+      0.025
+    ]
+  },
+  "metadata": {
+    "robot_profile": "pallet_gripper",
+    "execution_mode": "standard",
+    "scene_file": "/tmp/pallet_vision_scene.json",
+    "launch_args": [
+      "robot_profile:=pallet_gripper",
+      "planning_only:=false",
+      "object_id:=red_block",
+      "object_x:=-0.320400",
+      "object_y:=0.100000",
+      "object_z:=0.025000",
+      "object_size_x:=0.030000",
+      "object_size_y:=0.030000",
+      "object_size_z:=0.050000",
+      "place_x:=0.240000",
+      "place_y:=-0.280000",
+      "place_z:=0.025000",
+      "planner_id:=RRTConnectkConfigDefault",
+      "max_solutions:=1",
+      "max_solution_cost:=60.000",
+      "move_to_pick_timeout:=10.000",
+      "move_to_pick_max_path_length:=-1.000",
+      "move_to_place_timeout:=10.000",
+      "move_to_place_max_path_length:=-1.000",
+      "return_home_timeout:=5.000",
+      "return_home_max_path_length:=-1.000",
+      "gripper_close_min:=0.002",
+      "gripper_close_max:=0.002",
+      "gripper_close_step:=1.000",
+      "arm_velocity_scaling:=0.200",
+      "arm_acceleration_scaling:=0.050",
+      "cartesian_velocity_scaling:=0.200",
+      "cartesian_acceleration_scaling:=0.050",
+      "place_yaw:=0.000000",
+      "grasp_angle_delta:=6.283185307",
+      "cartesian_transfer:=false",
+      "upright_transfer:=true",
+      "lift_min_distance:=0.100000",
+      "lift_max_distance:=0.100000",
+      "lower_min_distance:=0.100000",
+      "lower_max_distance:=0.100000",
+      "totg_path_tolerance:=0.010000",
+      "pallet_scene_obstacles:=[{\"id\": \"blue_block\", \"position_m\": [-0.3198, -0.0614, 0.025], \"radius_m\": 0.03278719262151}, {\"id\": \"green_block\", \"position_m\": [-0.3202, 0.0178, 0.025], \"radius_m\": 0.03278719262151}]"
+    ]
+  },
+  "created_at": 1791641353.1491895,
+  "updated_at": 1791641513.8294325,
+  "history": [
+    {
+      "state": "queued",
+      "at": 1791641353.1491895
+    },
+    {
+      "state": "running",
+      "at": 1791641353.1500735
+    },
+    {
+      "state": "succeeded",
+      "at": 1791641513.8294325
+    }
+  ],
+  "result": {
+    "physical_placement_verified": true
+  },
+  "error": null
+}

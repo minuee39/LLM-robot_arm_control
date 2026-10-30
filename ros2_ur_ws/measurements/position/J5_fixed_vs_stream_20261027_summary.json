@@ -1,0 +1,26 @@
+{
+  "trials": [
+    {
+      "event": "trial_result",
+      "mode": "fixed",
+      "goal_hold_passed": true,
+      "settled_by_s": 0.9740874939998321,
+      "peak_tracking_error_rad": 0.008713612556457528,
+      "rms_tracking_error_rad": 0.0019987326528855287,
+      "last_final_error_rad": 9.44042205810458e-05
+    },
+    {
+      "event": "trial_result",
+      "mode": "stream",
+      "goal_hold_passed": true,
+      "settled_by_s": 1.6777058150000812,
+      "peak_tracking_error_rad": 0.0019359830541179068,
+      "rms_tracking_error_rad": 0.0010498287518274892,
+      "last_final_error_rad": 4.493236541747159e-05
+    }
+  ],
+  "all_stop_confirmed": true,
+  "scope": "J5 +0.01rad, fixed PP goal vs 1-second 10Hz ramp; other arm joints held, ID7 untouched",
+  "physical_actuation": true,
+  "interpretation": "Both methods passed for small motion. Does not prove high-speed tracking or isolate earlier lag."
+}

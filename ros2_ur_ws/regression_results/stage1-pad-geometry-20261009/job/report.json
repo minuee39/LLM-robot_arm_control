@@ -1,0 +1,95 @@
+{
+  "job_id": "palletize-1791552198",
+  "created_at": 1791552345.316772,
+  "requested_count": 1,
+  "completed_count": 1,
+  "passed": true,
+  "failure_class": null,
+  "motion_scaling": {
+    "arm_velocity": 0.3,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.3,
+    "cartesian_acceleration": 0.05
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 140.43336005300034,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-20261009/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-20261009/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1219,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.24284944713115691,
+          -0.2791770100593567,
+          0.02499997615814209
+        ],
+        "final_orientation_xyzw": [
+          7.901437726332006e-09,
+          -2.7743993769036024e-09,
+          0.7070204615592957,
+          -0.7071931958198547
+        ],
+        "max_height": 0.06714844703674316,
+        "transfer_min_bottom_clearance": 0.035308429558896945,
+        "transfer_sample_count": 144,
+        "final_xy_error": 0.0029659166198088825,
+        "final_height_error": 2.384185791154403e-08,
+        "long_axis_vertical_cosine": 0.9999999999999999,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 1217,
+          "joint_fresh_sample_count": 1218,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.006025886533495503,
+        "max_loaded_jaw_asymmetry_m": 0.0014987820759415627,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 104.20587593299979,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 1.2087000458263162e-05,
+        "placement_pass": true
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-pad-geometry-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        }
+      ]
+    }
+  ]
+}

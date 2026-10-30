@@ -1,0 +1,21 @@
+pp_watchdog_verified: true
+current_limit_policy: preserve_existing
+limits:
+  current_limit_a: null
+  current_trip_a: 0.2
+  velocity_rad_s: 0.1
+  acceleration_rad_s2: 0.1
+  travel_rad: 0.02
+  goal_tolerance_rad: 0.001
+  timeout_s: 4.0
+  hold_s: 0.5
+  period_s: 0.05
+  feedback_timeout_s: 0.015
+  watchdog_s: 0.25
+joint_scope: J1
+pp_watchdog_evidence: measurements/position/J1_pp_watchdog_20261027.json
+verification_scope: Supported J1 PP current-position hold, passive Run->Reset and
+  STOP. Loaded torque cutoff not verified.
+position_tracking_verified: false
+latest_position_test: J1 +0.01rad attempt2 interrupted by software current trip0.2A;
+  STOP confirmed; no goal/hold success

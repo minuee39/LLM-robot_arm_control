@@ -1,0 +1,176 @@
+{
+  "job_id": "palletize-1791640311",
+  "created_at": 1791640483.2584233,
+  "requested_count": 1,
+  "completed_count": 1,
+  "passed": true,
+  "failure_class": null,
+  "motion_scaling": {
+    "arm_velocity": 0.2,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.2,
+    "cartesian_acceleration": 0.05
+  },
+  "planning_tuning": {
+    "totg_path_tolerance_rad": 0.01,
+    "scene_obstacles": true
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 160.62758065600065,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "be34bc9aa9f54778bfd290603e143a4d",
+          "started_at_unix": 1791640322.974966,
+          "ended_at_unix": 1791640482.8756137,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1331,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.2409966218471527,
+          -0.27889323234558105,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          4.771545718540438e-07,
+          -8.417184460540739e-08,
+          0.7070834040641785,
+          -0.7071302533149719
+        ],
+        "max_height": 0.12456190586090088,
+        "transfer_min_bottom_clearance": 0.09377258869150479,
+        "transfer_sample_count": 208,
+        "final_xy_error": 0.0014893588375841991,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999995305,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 53.58890963600061,
+          "tcp_fresh_sample_count": 1323,
+          "joint_fresh_sample_count": 1331,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0022734472796887982,
+        "max_loaded_jaw_asymmetry_m": 0.0013254350051283836,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 115.94628218400067,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.735489569706592e-07,
+        "placement_pass": true
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-scene-obstacles-height100-v020-r2-20261010/job/01-red_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "be34bc9aa9f54778bfd290603e143a4d",
+              "started_at_unix": 1791640322.974966,
+              "ended_at_unix": 1791640482.8756137,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 1331,
+            "target": [
+              0.24,
+              -0.28,
+              0.025
+            ],
+            "final_position": [
+              0.2409966218471527,
+              -0.27889323234558105,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              4.771545718540438e-07,
+              -8.417184460540739e-08,
+              0.7070834040641785,
+              -0.7071302533149719
+            ],
+            "max_height": 0.12456190586090088,
+            "transfer_min_bottom_clearance": 0.09377258869150479,
+            "transfer_sample_count": 208,
+            "final_xy_error": 0.0014893588375841991,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999995305,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 53.58890963600061,
+              "tcp_fresh_sample_count": 1323,
+              "joint_fresh_sample_count": 1331,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.0022734472796887982,
+            "max_loaded_jaw_asymmetry_m": 0.0013254350051283836,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": true,
+            "release_seconds": 115.94628218400067,
+            "post_release_recontact_detected": false,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": 2.735489569706592e-07,
+            "placement_pass": true
+          }
+        }
+      ]
+    }
+  ]
+}

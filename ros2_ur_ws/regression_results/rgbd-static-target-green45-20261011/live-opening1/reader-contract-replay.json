@@ -1,0 +1,8 @@
+{
+  "purpose": "recorded_timestamp_replay_not_current_freshness",
+  "recorded_replay_accepted": true,
+  "object_count": 3,
+  "calibration_revision": "f3650d47b75f6dd3731b90e8db9abcf2d2e103d33c452342a1fcee9f4187e3f1",
+  "current_read_rejected": "stale or future snapshot update",
+  "collision_model_approved": false
+}

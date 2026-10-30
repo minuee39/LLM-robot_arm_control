@@ -1,0 +1,130 @@
+{
+  "job_id": "palletize-1791553494",
+  "created_at": 1791553573.3674898,
+  "requested_count": 1,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 0.3,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.3,
+    "cartesian_acceleration": 0.05
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 66.18765114499911,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-early-contact-reference-20261009/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-early-contact-reference-20261009/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 572,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          -0.33776349544525147,
+          -0.0685640498995781,
+          0.06638801097869873
+        ],
+        "final_orientation_xyzw": [
+          0.08959363400936127,
+          0.006649368908256292,
+          0.15920984745025635,
+          0.9831485152244568
+        ],
+        "max_height": 0.06891661882400513,
+        "transfer_min_bottom_clearance": 0.038885491699996694,
+        "transfer_sample_count": 6,
+        "final_xy_error": 0.6152363916934558,
+        "final_height_error": 0.04138801097869873,
+        "long_axis_vertical_cosine": 0.983857533276237,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 51.1032229299999,
+          "tcp_fresh_sample_count": 570,
+          "joint_fresh_sample_count": 572,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.007486374293684243,
+        "max_loaded_jaw_asymmetry_m": 0.001246587373316288,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": true,
+        "slip_event": {
+          "seconds": 65.13525380099964,
+          "first_exceeded_seconds": 64.90040869699988,
+          "confirmed_seconds": 65.13525380099964,
+          "relative_displacement_m": 0.007208496888554266,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.3404387903213501,
+            -0.05684096738696098,
+            0.0687185525894165
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-52301-5028476160521",
+          "code": "SLIP_DETECTED",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1791553572.8227456,
+          "injected": false,
+          "seconds": 65.13525380099964,
+          "first_exceeded_seconds": 64.90040869699988,
+          "confirmed_seconds": 65.13525380099964,
+          "relative_displacement_m": 0.007208496888554266,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.3404387903213501,
+            -0.05684096738696098,
+            0.0687185525894165
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-early-contact-reference-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-early-contact-reference-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "mode": "DRY_RUN",
+  "physical_actuation": false,
+  "long_60s_goal_accepted": true,
+  "concurrent_goal_rejected": true,
+  "cancel_during_execution": "passed",
+  "moveit_plan_points": 19,
+  "moveit_execute_via_bridge": "passed",
+  "final_joint_states": {
+    "J1": 0.010036020330572501,
+    "J2": -9.161896160803735e-05,
+    "J3": 7.053410243242979e-05,
+    "J4": 9.198871734552085e-05,
+    "J5": 5.762410634197296e-05,
+    "J6": -5.665792874060571e-05,
+    "g_r": 0.0,
+    "g_l": 0.0
+  },
+  "segfault": false
+}

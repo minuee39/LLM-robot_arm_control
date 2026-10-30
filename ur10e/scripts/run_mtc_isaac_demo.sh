@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-cd /home/minwoo/Desktop/LLM/ros2_ur_ws
+cd /home/minwoo/Development/LLM/ros2_ur_ws
 export ROS_LOG_DIR="${ROS_LOG_DIR:-/tmp/ros_logs}"
 export RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 
 lock_file="/tmp/mtc_isaac_demo.lock"

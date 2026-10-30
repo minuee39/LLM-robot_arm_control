@@ -1,0 +1,21 @@
+{
+  "event_id": "watch-pallet-block-42712-3916036541424",
+  "code": "SLIP_DETECTED",
+  "severity": "critical",
+  "source": "watch_pallet_block",
+  "frame": "base_footprint",
+  "published_at_unix": 1790850646.0459058,
+  "injected": false,
+  "seconds": 112.83305925200011,
+  "first_exceeded_seconds": 112.50787071100012,
+  "confirmed_seconds": 112.83305925200011,
+  "relative_displacement_m": 0.005013014544153519,
+  "contact_state": "bilateral_loaded",
+  "block_position_m": [
+    0.2989639866352081,
+    -0.30376875400543213,
+    0.059149861335754395
+  ],
+  "threshold_m": 0.005,
+  "confirm_samples": 3
+}

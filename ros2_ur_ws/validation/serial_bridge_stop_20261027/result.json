@@ -1,0 +1,24 @@
+{
+  "physical_actuation": true,
+  "scope": "six-axis +/-0.005rad MoveIt planning and execution cancellation",
+  "plan_points": 16,
+  "stop_event_status": 6,
+  "stop_event_error_code": -7,
+  "moveit_stop_event": "passed",
+  "controller_cancel_accepted": true,
+  "controller_cancel_status": 5,
+  "controller_cancel_message": "Trajectory canceled",
+  "controller_live_cancellation": "passed",
+  "final_joint_states": {
+    "J1": 0.8074108362197876,
+    "J2": 0.0033662584610283375,
+    "J3": -0.03064127080142498,
+    "J4": 0.06957344710826874,
+    "J5": 0.024098334833979607,
+    "J6": 0.0054931640625,
+    "g_r": 0.0,
+    "g_l": 0.0
+  },
+  "last_status": "LIVE OK; gripper display placeholder, not measured",
+  "segfault": false
+}

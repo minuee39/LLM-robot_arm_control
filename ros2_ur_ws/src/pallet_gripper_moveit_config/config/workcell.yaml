@@ -1,0 +1,18 @@
+# Dimensions and positions are meters in Isaac's Z-up world frame unless noted.
+table:
+  center_xy_world: [-0.43, 0.0]
+  size: [1.80, 0.75, 0.75]
+  top_thickness: 0.05
+  leg_size: 0.05
+
+# The robot base is fixed at the center of the table's top surface.
+block:
+  center_xy_base: [-0.30, 0.30]
+  size: [0.030, 0.030, 0.050]
+  mass_kg: 0.05
+
+cup:
+  center_xy_world: [-0.20, 0.18]
+  radius: 0.04
+  height: 0.12
+  mass_kg: 0.25

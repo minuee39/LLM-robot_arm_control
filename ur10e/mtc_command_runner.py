@@ -1,5 +1,6 @@
 import argparse
 import json
+import math
 import os
 import subprocess
 import time
@@ -10,13 +11,14 @@ import numpy as np
 from command_parser import (
     MEMORY_OBJECT_ALIASES,
     SPATIAL_OBJECT_ALIASES,
+    build_camera_relation_offsets,
     parse_user_command_with_memory,
     validate_command,
 )
 from grasp_verifier import GraspMonitor
-from llm_to_json import parse_user_command_with_llm
 from scene_config import BLOCK_SIZE
 from scene_manager import SceneManager
+from task_state import TaskJournal
 from vision.scene_objects import EXPECTED_BLOCK_NAMES
 
 
@@ -25,11 +27,21 @@ DEFAULT_RUN_SCRIPT = PROJECT_DIR / "scripts" / "run_mtc_isaac_pick_place.sh"
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
 DEFAULT_SCENE_MEMORY_FILE = Path("/tmp/ur10e_command_scene_memory.json")
 DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
+DEFAULT_PALLET_SCENE_FILE = Path("/tmp/pallet_vision_scene.json")
+DEFAULT_PALLET_TASK_STATE_FILE = Path("/tmp/pallet_task_state.json")
+PALLET_FRAME = "base_footprint"
 DEFAULT_VISION_MAX_AGE = 2.0
 DEFAULT_VISION_MIN_CONFIDENCE = 0.6
 DEFAULT_GRASP_MIN_LIFT = 0.03
 DEFAULT_GRASP_RELATIVE_TOLERANCE = 0.03
 DEFAULT_GRASP_MIN_LIFTED_SAMPLES = 2
+PALLET_NEAR_RELATION_DISTANCE = 0.06
+# Stacking needs more vertical clearance and a broader place-IK search than a
+# same-level placement.  Keep these overrides local to Pallet ``on`` commands
+# so ordinary near/left/right moves retain the proven profile tuning.
+PALLET_STACK_LOWER_DISTANCE = 0.08
+PALLET_STACK_PLACE_MAX_IK_SOLUTIONS = 8
+PALLET_STACK_PLACE_IK_MIN_SOLUTION_DISTANCE = 0.10
 SUPPORTED_PLANNER_IDS = (
     "RRTkConfigDefault",
     "RRTConnectkConfigDefault",
@@ -41,6 +53,15 @@ RECOVERY_MTC_ARGS = (
     "max_solution_cost:=-1.000",
 )
 MTC_EXECUTION_FAILURE_RETURN_CODE = 2
+PALLET_PLACEMENT_FAILURE_RETURN_CODE = 3
+PALLET_BLOCK_MONITOR = PROJECT_DIR.parent / 'ros2_ur_ws/scripts/watch_pallet_block.py'
+
+
+def parse_user_command_with_llm(*args, **kwargs):
+    # Local and Pallet planning modes do not need an API client dependency.
+    from llm_to_json import parse_user_command_with_llm as parse_with_llm
+
+    return parse_with_llm(*args, **kwargs)
 
 
 def format_xyz(position) -> str:
@@ -118,6 +139,26 @@ def select_provider(provider: str) -> str | None:
 
 def parse_command(user_text: str, scene_manager: SceneManager, provider: str | None) -> dict:
     scene_objects = scene_manager.as_command_scene()
+    if isinstance(scene_manager, PalletSceneManager):
+        if user_text.lstrip().startswith("{"):
+            try:
+                command = json.loads(user_text)
+            except json.JSONDecodeError as error:
+                raise ValueError(f"invalid Pallet command JSON: {error}") from error
+            if not isinstance(command, dict):
+                raise ValueError("Pallet command JSON must be an object")
+            return command
+        if provider is not None:
+            try:
+                print(f"[Parser] {provider} LLM 사용", flush=True)
+                return parse_user_command_with_llm(
+                    user_text, scene_objects, provider=provider)
+            except ValueError as error:
+                print(f"[Parser] LLM 파싱 실패, 로컬 파서로 전환: {error}", flush=True)
+        return parse_user_command_with_memory(
+            user_text, scene_manager.memory, scene_objects,
+            screen_right=scene_manager.relation_offsets["right_of"],
+        )
     if (
         provider is None
         or any(alias in user_text for alias in MEMORY_OBJECT_ALIASES)
@@ -143,6 +184,94 @@ def clamp_center_z(position: np.ndarray, object_height: float) -> np.ndarray:
     return adjusted
 
 
+class PalletSceneManager(SceneManager):
+    """A Pallet scene with placement directions in base_footprint coordinates."""
+
+    def __init__(self, scene_objects: dict, relation_offsets: dict) -> None:
+        super().__init__(SceneManager.from_command_scene(scene_objects)._objects)
+        self.relation_offsets = relation_offsets
+
+    def resolve_target_position(self, command: dict) -> np.ndarray:
+        if "place_xyz" in command:
+            return np.asarray(command["place_xyz"], dtype=float)
+        target = self.get_object(command["target_object"])
+        if command["relation"] == "on":
+            picked = self.get_object(command["pick_object"])
+            result = target.position.copy()
+            result[2] += (float(target.size[2]) + float(picked.size[2])) / 2.0
+            return result
+        picked = self.get_object(command["pick_object"])
+        result = target.position + self.relation_offsets[command["relation"]]
+        result[2] = float(picked.size[2]) / 2.0
+        return result
+
+
+def load_pallet_scene(
+    path: str | Path, *, max_age: float = DEFAULT_VISION_MAX_AGE,
+    min_confidence: float = DEFAULT_VISION_MIN_CONFIDENCE,
+    now: float | None = None,
+) -> PalletSceneManager:
+    """Load measured/simulated poses and camera orientation in base_footprint."""
+    path = Path(path).expanduser()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"cannot read Pallet scene {path}: {error}") from error
+    if not isinstance(data, dict) or data.get("frame") != PALLET_FRAME:
+        raise ValueError(f"Pallet scene frame must be {PALLET_FRAME}")
+    if data.get("unit") != "m":
+        raise ValueError("Pallet scene unit must be m")
+    if max_age <= 0 or not np.isfinite(max_age):
+        raise ValueError("Pallet scene max age must be positive and finite")
+    if not np.isfinite(min_confidence) or not 0 <= min_confidence <= 1:
+        raise ValueError("Pallet scene min confidence must be between 0 and 1")
+    updated_at = data.get("updated_at")
+    if not isinstance(updated_at, (float, int)) or not np.isfinite(updated_at):
+        raise ValueError("Pallet scene updated_at must be a finite timestamp")
+    age = (time.time() if now is None else now) - updated_at
+    if age < -1 or age > max_age:
+        raise ValueError(f"Pallet scene age {age:.2f}s is outside allowed range")
+    camera = data.get("camera")
+    if not isinstance(camera, dict):
+        raise ValueError("Pallet scene requires camera eye, target, and up vectors")
+    vectors = {}
+    for name in ("eye", "target", "up"):
+        try:
+            vector = np.asarray(camera.get(name), dtype=float)
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"invalid Pallet camera {name}") from error
+        if vector.shape != (3,) or not np.all(np.isfinite(vector)):
+            raise ValueError(f"Pallet camera {name} must be three finite coordinates")
+        vectors[name] = vector
+    relation_offsets = build_camera_relation_offsets(
+        vectors["eye"], vectors["target"], vectors["up"],
+        near_distance=PALLET_NEAR_RELATION_DISTANCE,
+        near_side_only=True,
+    )
+    objects = data.get("objects")
+    if not isinstance(objects, dict) or not objects:
+        raise ValueError("Pallet scene objects must be a nonempty object")
+    validated = {}
+    for name, item in objects.items():
+        if name not in EXPECTED_BLOCK_NAMES or not isinstance(item, dict):
+            raise ValueError(f"unsupported Pallet scene object: {name}")
+        try:
+            position = np.asarray(item.get("position"), dtype=float)
+            size = np.asarray(item.get("size"), dtype=float)
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"invalid Pallet position or size for {name}") from error
+        if position.shape != (3,) or not np.all(np.isfinite(position)):
+            raise ValueError(f"invalid Pallet position for {name}")
+        if size.shape != (3,) or not np.all(np.isfinite(size)) or np.any(size <= 0):
+            raise ValueError(f"invalid Pallet size for {name}")
+        confidence = item.get("confidence")
+        if (not isinstance(confidence, (float, int)) or not np.isfinite(confidence)
+                or confidence < min_confidence or confidence > 1):
+            raise ValueError(f"Pallet scene confidence for {name} is invalid or below {min_confidence}")
+        validated[name] = {"position": position, "size": size, "confidence": float(confidence)}
+    return PalletSceneManager(validated, relation_offsets)
+
+
 def read_isaac_scene_objects(path: Path = DEFAULT_SCENE_STATE_FILE) -> dict[str, dict]:
     if not path.exists():
         return {}
@@ -158,6 +287,17 @@ def read_isaac_scene_objects(path: Path = DEFAULT_SCENE_STATE_FILE) -> dict[str,
             continue
         scene_objects[str(item["name"])] = item
     return scene_objects
+
+
+def pallet_obstacle_description(scene_manager, pick_object):
+    """Enclose unknown block orientation without claiming it was measured."""
+    if scene_manager.names() != set(EXPECTED_BLOCK_NAMES):
+        raise ValueError('Scene obstacles require all three fresh Pallet camera blocks')
+    return [
+        {'id': name, 'position_m': scene_manager.get_object(name).position.tolist(),
+         'radius_m': float(np.linalg.norm(scene_manager.get_object(name).size) / 2)}
+        for name in sorted(scene_manager.names()) if name != pick_object
+    ]
 
 
 def sync_scene_manager_from_isaac(scene_manager: SceneManager, path: Path = DEFAULT_SCENE_STATE_FILE) -> bool:
@@ -390,7 +530,7 @@ def command_to_mtc_args(command: dict, scene_manager: SceneManager) -> list[str]
     object_position = clamp_center_z(pick_object.position, object_height)
     place_position = clamp_center_z(target_position, object_height)
 
-    return [
+    mtc_args = [
         f"object_id:={command['pick_object']}",
         f"object_x:={object_position[0]:.6f}",
         f"object_y:={object_position[1]:.6f}",
@@ -402,6 +542,84 @@ def command_to_mtc_args(command: dict, scene_manager: SceneManager) -> list[str]
         f"place_y:={place_position[1]:.6f}",
         f"place_z:={place_position[2]:.6f}",
     ]
+    if isinstance(scene_manager, PalletSceneManager) and command.get("relation") == "on":
+        mtc_args.extend([
+            f"lower_min_distance:={PALLET_STACK_LOWER_DISTANCE:.3f}",
+            f"lower_max_distance:={PALLET_STACK_LOWER_DISTANCE:.3f}",
+            f"retreat_min_distance:={PALLET_STACK_LOWER_DISTANCE:.3f}",
+            f"retreat_max_distance:={PALLET_STACK_LOWER_DISTANCE:.3f}",
+            f"place_max_ik_solutions:={PALLET_STACK_PLACE_MAX_IK_SOLUTIONS}",
+            (
+                "place_ik_min_solution_distance:="
+                f"{PALLET_STACK_PLACE_IK_MIN_SOLUTION_DISTANCE:.3f}"
+            ),
+        ])
+    return mtc_args
+
+
+def pallet_block_pose_topic(object_id: str) -> str:
+    if object_id not in EXPECTED_BLOCK_NAMES:
+        raise ValueError(f"unsupported Pallet object for physical verification: {object_id}")
+    if object_id == "red_block":
+        return "/isaac_calibration_block_pose"
+    return f"/isaac_{object_id}_pose"
+
+
+def verify_pallet_physical_placement(
+    target_position: np.ndarray, object_id: str = "red_block",
+) -> int:
+    """Fail closed unless Isaac reports a fresh, upright block at the target."""
+    target = np.asarray(target_position, dtype=float)
+    if target.shape != (3,) or not np.all(np.isfinite(target)):
+        raise ValueError('physical placement target must be three finite metres')
+    command = [
+        'bash', '-lc',
+        'set -e; source /opt/ros/jazzy/setup.bash; exec /usr/bin/python3 "$@"',
+        'pallet-placement-check', str(PALLET_BLOCK_MONITOR),
+        '--pose-topic', pallet_block_pose_topic(object_id),
+        '--seconds', '3', '--target', *(f'{value:.6f}' for value in target),
+    ]
+    try:
+        completed = subprocess.run(
+            command, cwd=PROJECT_DIR.parent, capture_output=True, text=True,
+            timeout=15, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        print(f'[ERROR] Isaac placement check could not complete: {error}', flush=True)
+        return PALLET_PLACEMENT_FAILURE_RETURN_CODE
+    try:
+        summary = json.loads(completed.stdout.splitlines()[-1])
+    except (IndexError, json.JSONDecodeError):
+        summary = None
+    if (completed.returncode != 0 or not isinstance(summary, dict)
+            or summary.get('frame') != PALLET_FRAME or summary.get('unit') != 'm'
+            or summary.get('fresh_feedback') is not True
+            or summary.get('placement_pass') is not True
+            or summary.get('target') != [float(f'{value:.6f}') for value in target]):
+        print(f'[ERROR] Isaac physical placement failed: {summary!r}', flush=True)
+        if completed.stderr:
+            print(completed.stderr.strip(), flush=True)
+        return PALLET_PLACEMENT_FAILURE_RETURN_CODE
+    print(f'[Isaac physical placement] {json.dumps(summary, ensure_ascii=False)}', flush=True)
+    return 0
+
+
+def validate_pallet_direct_command(command: dict, scene_manager: PalletSceneManager) -> None:
+    """Validate an explicit base_footprint placement for a camera-detected block."""
+    if set(command) - {"action", "pick_object", "place_xyz"}:
+        raise ValueError("direct Pallet command has unsupported fields")
+    if command.get("action") != "pick_place":
+        raise ValueError("direct Pallet command action must be pick_place")
+    if command.get("pick_object") not in scene_manager.names():
+        raise ValueError("direct Pallet command pick_object is not in the camera scene")
+    try:
+        position = np.asarray(command.get("place_xyz"), dtype=float)
+    except (TypeError, ValueError) as error:
+        raise ValueError("direct Pallet place_xyz must be three finite metres") from error
+    if position.shape != (3,) or not np.all(np.isfinite(position)):
+        raise ValueError("direct Pallet place_xyz must be three finite metres")
+    if position[2] < 0:
+        raise ValueError("direct Pallet place_xyz is below the tabletop")
 
 
 def execution_tuning_args(
@@ -444,7 +662,10 @@ def build_mtc_invocation(
 
     selected_provider = select_provider(provider)
     command = parse_command(user_text, scene_manager, selected_provider)
-    validate_command(command, scene_manager.as_command_scene())
+    if isinstance(scene_manager, PalletSceneManager) and "place_xyz" in command:
+        validate_pallet_direct_command(command, scene_manager)
+    else:
+        validate_command(command, scene_manager.as_command_scene())
     return command, command_to_mtc_args(command, scene_manager)
 
 
@@ -758,6 +979,30 @@ def main() -> int:
         help="Parser provider. auto uses Gemini, then ChatGPT, then local fallback.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print parsed command and launch args only.")
+    parser.add_argument(
+        "--robot-profile", choices=["ur10e_robotiq", "pallet_gripper"],
+        default="ur10e_robotiq",
+    )
+    parser.add_argument(
+        "--pallet-scene-file", type=Path, default=DEFAULT_PALLET_SCENE_FILE,
+        help="Fresh Pallet camera scene JSON in base_footprint.",
+    )
+    parser.add_argument('--scene-obstacles', action='store_true',
+                        help='Require all three camera blocks and add non-picked enclosing spheres to MoveIt.')
+    parser.add_argument(
+        "--pallet-execution-mode", choices=["planning_only", "standard"],
+        default="planning_only",
+        help="Pallet mode: plan only, or execute in the already running simulator.",
+    )
+    parser.add_argument(
+        "--task-state-file", type=Path, default=DEFAULT_PALLET_TASK_STATE_FILE,
+        help="Crash-safe Pallet task journal JSON.",
+    )
+    parser.add_argument("--task-id", help="Optional stable identifier for the Pallet task.")
+    parser.add_argument(
+        "--acknowledge-recovery", action="store_true",
+        help="Mark an interrupted recovery_required task failed after inspection.",
+    )
     parser.add_argument("--run-script", default=str(DEFAULT_RUN_SCRIPT), help="MTC coordinate launch wrapper.")
     parser.add_argument("--once", action="store_true", help="Run the provided command once and exit.")
     parser.add_argument(
@@ -779,6 +1024,8 @@ def main() -> int:
     parser.add_argument("--move-to-place-max-path-length", type=float, default=-1.0)
     parser.add_argument("--return-home-timeout", type=float, default=1.0)
     parser.add_argument("--return-home-max-path-length", type=float, default=-1.0)
+    parser.add_argument('--totg-path-tolerance', type=float,
+                        help='Pallet-only planning comparison: TOTG path deviation tolerance in rad.')
     parser.add_argument("--gripper-close-min", type=float, default=0.02)
     parser.add_argument("--gripper-close-max", type=float, default=0.50)
     parser.add_argument("--gripper-close-step", type=float, default=0.08)
@@ -786,13 +1033,172 @@ def main() -> int:
     parser.add_argument("--vision-max-age", type=float, default=DEFAULT_VISION_MAX_AGE)
     parser.add_argument("--vision-min-confidence", type=float, default=DEFAULT_VISION_MIN_CONFIDENCE)
     parser.add_argument("--vision-verification-timeout", type=float, default=3.0)
+    parser.add_argument("--arm-velocity-scaling", type=float, default=0.50)
+    parser.add_argument("--arm-acceleration-scaling", type=float, default=0.20)
+    parser.add_argument("--cartesian-velocity-scaling", type=float, default=0.35)
+    parser.add_argument("--cartesian-acceleration-scaling", type=float, default=0.20)
+    parser.add_argument(
+        "--place-yaw", type=float, default=0.0,
+        help="Target object yaw in radians; stacking retries use this to seek another IK branch.",
+    )
+    parser.add_argument(
+        "--grasp-angle-delta", type=float, default=math.pi / 2.0,
+        help="Angular spacing in radians for generated grasp candidates.",
+    )
     parser.add_argument(
         "--gripper-close-position",
         type=float,
         default=None,
         help="Compatibility option: use one fixed close value instead of the automatic close range.",
     )
+    parser.add_argument('--release-open-position', type=float,
+                        help='Pallet final release only: one-jaw travel in metres; pre-grasp unchanged.')
+    parser.add_argument(
+        "--cartesian-transfer", action="store_true",
+        help="Use a straight Cartesian path for the loaded move-to-place segment.",
+    )
+    parser.add_argument(
+        "--upright-transfer", action="store_true",
+        help="Constrain loaded-transfer roll/pitch while allowing yaw.",
+    )
+    parser.add_argument(
+        "--transfer-height", type=float, default=None,
+        help="Override both lift and pre-place lowering distances in metres.",
+    )
     args = parser.parse_args()
+    if args.release_open_position is not None and (
+            args.robot_profile != 'pallet_gripper' or not math.isfinite(args.release_open_position)
+            or not 0 < args.release_open_position <= 0.0335):
+        parser.error('--release-open-position requires Pallet and a finite value in (0, 0.0335] m')
+    if args.scene_obstacles and args.robot_profile != 'pallet_gripper':
+        parser.error('--scene-obstacles requires the Pallet profile')
+    if args.totg_path_tolerance is not None and (
+            args.robot_profile != 'pallet_gripper' or not math.isfinite(args.totg_path_tolerance)
+            or not 0 < args.totg_path_tolerance <= 0.1):
+        parser.error('--totg-path-tolerance requires Pallet and finite (0, 0.1] rad')
+    if args.robot_profile == "pallet_gripper":
+        try:
+            task_journal = TaskJournal(args.task_state_file)
+            if args.acknowledge_recovery:
+                acknowledged = task_journal.acknowledge_recovery()
+                print(
+                    f"[Task] acknowledged recovery for {acknowledged['task_id']}",
+                    flush=True,
+                )
+                if not args.command:
+                    return 0
+            if not args.command:
+                raise ValueError("Pallet mode requires a natural-language command")
+            scene_manager = load_pallet_scene(
+                args.pallet_scene_file, max_age=args.vision_max_age,
+                min_confidence=args.vision_min_confidence,
+            )
+            command, mtc_args = build_mtc_invocation(
+                " ".join(args.command), provider=args.provider, scene_manager=scene_manager,
+            )
+            print(json.dumps(command, ensure_ascii=False), flush=True)
+            pallet_gripper_close = (
+                0.0 if args.gripper_close_position is None
+                else args.gripper_close_position
+            )
+            launch_args = [
+                "robot_profile:=pallet_gripper",
+                f"planning_only:={'true' if args.pallet_execution_mode == 'planning_only' else 'false'}",
+                *mtc_args,
+                *execution_tuning_args(
+                    args.planner_id,
+                    args.max_solutions,
+                    args.max_solution_cost,
+                    args.move_to_pick_timeout,
+                    args.move_to_pick_max_path_length,
+                    args.move_to_place_timeout,
+                    args.move_to_place_max_path_length,
+                    args.return_home_timeout,
+                    args.return_home_max_path_length,
+                    pallet_gripper_close,
+                    pallet_gripper_close,
+                    1.0,
+                ),
+                f"arm_velocity_scaling:={args.arm_velocity_scaling:.3f}",
+                f"arm_acceleration_scaling:={args.arm_acceleration_scaling:.3f}",
+                f"cartesian_velocity_scaling:={args.cartesian_velocity_scaling:.3f}",
+                f"cartesian_acceleration_scaling:={args.cartesian_acceleration_scaling:.3f}",
+                f"place_yaw:={args.place_yaw:.6f}",
+                f"grasp_angle_delta:={args.grasp_angle_delta:.9f}",
+                f"cartesian_transfer:={'true' if args.cartesian_transfer else 'false'}",
+                f"upright_transfer:={'true' if args.upright_transfer else 'false'}",
+            ]
+            if args.transfer_height is not None:
+                if not math.isfinite(args.transfer_height) or not 0.0 < args.transfer_height <= 0.40:
+                    raise ValueError("--transfer-height must be within (0, 0.40] metres")
+                launch_args.extend([
+                    f"lift_min_distance:={args.transfer_height:.6f}",
+                    f"lift_max_distance:={args.transfer_height:.6f}",
+                    f"lower_min_distance:={args.transfer_height:.6f}",
+                    f"lower_max_distance:={args.transfer_height:.6f}",
+                ])
+            if args.totg_path_tolerance is not None:
+                launch_args.append(f'totg_path_tolerance:={args.totg_path_tolerance:.6f}')
+            if args.release_open_position is not None:
+                launch_args.append(f'release_open_position:={args.release_open_position:.6f}')
+            if args.scene_obstacles:
+                obstacles = pallet_obstacle_description(scene_manager, command['pick_object'])
+                launch_args.append('pallet_scene_obstacles:=' + json.dumps(obstacles, allow_nan=False))
+            print("ros2 launch mtc_tutorial pick_place_demo.launch.py " + " ".join(launch_args), flush=True)
+            if args.dry_run:
+                return 0
+            task_journal.enqueue(
+                command,
+                task_id=args.task_id,
+                metadata={
+                    "robot_profile": "pallet_gripper",
+                    "execution_mode": args.pallet_execution_mode,
+                    "scene_file": str(args.pallet_scene_file),
+                    "launch_args": launch_args,
+                },
+            )
+            task_journal.start()
+            try:
+                completed = subprocess.run(
+                    ["bash", args.run_script, *launch_args],
+                    cwd=PROJECT_DIR.parent / "ros2_ur_ws", check=False,
+                )
+            except OSError as error:
+                task_journal.require_recovery(f"MTC process could not be observed: {error}")
+                raise
+            if completed.returncode != 0:
+                if completed.returncode == MTC_EXECUTION_FAILURE_RETURN_CODE:
+                    task_journal.require_recovery(
+                        "MTC execution failed after robot motion started",
+                        {"returncode": completed.returncode},
+                    )
+                else:
+                    task_journal.fail(
+                        "MTC planning or launch failed",
+                        {"returncode": completed.returncode},
+                    )
+                return completed.returncode
+            if args.pallet_execution_mode != 'standard':
+                task_journal.succeed({"planning_only": True})
+                return 0
+            picked = scene_manager.get_object(command['pick_object'])
+            target = clamp_center_z(
+                scene_manager.resolve_target_position(command), float(picked.size[2]),
+            )
+            verification = verify_pallet_physical_placement(
+                target, object_id=command['pick_object'])
+            if verification == 0:
+                task_journal.succeed({"physical_placement_verified": True})
+            else:
+                task_journal.require_recovery(
+                    "Isaac physical placement verification failed",
+                    {"returncode": verification},
+                )
+                return MTC_EXECUTION_FAILURE_RETURN_CODE
+            return 0
+        except ValueError as error:
+            print(f"[ERROR] {error}", flush=True)
+            return 1
     if args.gripper_close_position is not None:
         args.gripper_close_min = args.gripper_close_position
         args.gripper_close_max = args.gripper_close_position

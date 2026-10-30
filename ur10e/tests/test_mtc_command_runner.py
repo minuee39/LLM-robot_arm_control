@@ -1,6 +1,7 @@
 import numpy as np
 import json
 import time
+import pytest
 from types import SimpleNamespace
 
 import mtc_command_runner
@@ -12,6 +13,7 @@ from mtc_command_runner import (
     execution_tuning_args,
     execute_user_command,
     read_vision_scene_objects,
+    pallet_block_pose_topic,
     restore_scene_memory,
     run_grasp_failure_recovery,
     save_scene_memory,
@@ -49,6 +51,327 @@ def test_build_mtc_invocation_from_local_command():
     assert "object_y:=0.300000" in mtc_args
     assert "place_x:=0.420000" in mtc_args
     assert "place_y:=0.420000" in mtc_args
+
+
+def test_pallet_scene_uses_its_camera_and_object_dimensions(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": 100.0,
+        "camera": {
+            "eye": [0.0, -1.0, 1.0], "target": [0.0, 0.0, 0.0],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+            "blue_block": {"position": [0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.96},
+        },
+    }), encoding="utf-8")
+    manager = mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    command, args = build_mtc_invocation(
+        "왼쪽 물체를 오른쪽 물체 왼쪽에 놓아", provider="local",
+        scene_manager=manager,
+    )
+    assert command["pick_object"] == "red_block"
+    assert command["target_object"] == "blue_block"
+    assert "object_size_x:=0.030000" in args
+    assert "place_x:=0.150000" in args
+    assert "place_z:=0.025000" in args
+
+    command, args = build_mtc_invocation(
+        "빨간 블록을 파란 블록 옆에 놓아", provider="local",
+        scene_manager=manager,
+    )
+    assert command["relation"] == "near"
+    assert "place_x:=0.240000" in args
+    assert "place_y:=0.300000" in args
+
+    command, args = build_mtc_invocation(
+        "빨간 블록을 파란 블록 위에 놓아", provider="local",
+        scene_manager=manager,
+    )
+    assert command["relation"] == "on"
+    assert "place_z:=0.075000" in args
+    assert "lower_min_distance:=0.080" in args
+    assert "lower_max_distance:=0.080" in args
+    assert "retreat_min_distance:=0.080" in args
+    assert "retreat_max_distance:=0.080" in args
+    assert "place_max_ik_solutions:=8" in args
+    assert "place_ik_min_solution_distance:=0.100" in args
+
+    command, args = build_mtc_invocation(
+        json.dumps({
+            "action": "pick_place", "pick_object": "red_block",
+            "target_object": "blue_block", "relation": "right_of",
+            "confidence": 1.0,
+        }),
+        provider="local", scene_manager=manager,
+    )
+    assert command["relation"] == "right_of"
+    assert "place_x:=0.450000" in args
+    assert not any(arg.startswith("lower_min_distance:=") for arg in args)
+    assert not any(arg.startswith("place_max_ik_solutions:=") for arg in args)
+
+
+def test_pallet_scene_rejects_stale_or_wrong_frame(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "world", "unit": "m", "updated_at": 100.0,
+    }), encoding="utf-8")
+    import pytest
+    with pytest.raises(ValueError, match="frame"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    data = json.loads(scene_path.read_text(encoding="utf-8"))
+    data["frame"] = "base_footprint"
+    scene_path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="age"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=105.0)
+
+
+def test_pallet_direct_place_uses_only_camera_detected_pick(tmp_path):
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": 100.0,
+        "camera": {
+            "eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.028], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+        },
+    }), encoding="utf-8")
+    manager = mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+    command, args = build_mtc_invocation(
+        json.dumps({"action": "pick_place", "pick_object": "red_block",
+                    "place_xyz": [0.3, -0.3, 0.025]}),
+        provider="local", scene_manager=manager,
+    )
+    assert command["pick_object"] == "red_block"
+    assert "object_z:=0.028000" in args
+    assert "place_x:=0.300000" in args
+    assert "place_y:=-0.300000" in args
+    import pytest
+    with pytest.raises(ValueError, match="finite"):
+        build_mtc_invocation(
+            json.dumps({"action": "pick_place", "pick_object": "red_block",
+                        "place_xyz": [float("nan"), -0.3, 0.025]}),
+            provider="local", scene_manager=manager,
+        )
+    data = json.loads(scene_path.read_text(encoding="utf-8"))
+    data["objects"]["red_block"]["confidence"] = 0.3
+    scene_path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="confidence"):
+        mtc_command_runner.load_pallet_scene(scene_path, now=101.0)
+
+
+@pytest.mark.parametrize('release', [None, 0.020])
+def test_pallet_cli_dry_run_prints_planning_only_launch(tmp_path, monkeypatch, capsys, release):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {
+            "eye": [0.0, -1.0, 1.0], "target": [0.0, 0.0, 0.0],
+            "up": [0.0, 0.0, 1.0],
+        },
+        "objects": {
+            "red_block": {"position": [-0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.97},
+            "blue_block": {"position": [0.3, 0.3, 0.025], "size": [0.03, 0.03, 0.05], "confidence": 0.96},
+        },
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--dry-run", "--once",
+        "빨간 블록을 파란 블록 왼쪽에 놓아",
+    ])
+    if release is not None:
+        monkeypatch.setattr(sys, 'argv', sys.argv + ['--release-open-position', str(release)])
+    assert mtc_command_runner.main() == 0
+    output = capsys.readouterr().out
+    assert "robot_profile:=pallet_gripper" in output
+    assert "planning_only:=true" in output
+    if release is None:
+        assert 'release_open_position:=' not in output
+    else:
+        assert 'release_open_position:=0.020000' in output
+    assert "object_size_x:=0.030000" in output
+    assert "place_x:=0.150000" in output
+
+
+def test_release_open_cli_rejects_invalid_or_unrelated_profile(monkeypatch):
+    import sys
+    for profile, value in [('pallet_gripper', x) for x in ('nan', 'inf', '0', '-1', '0.034')] + [
+            ('ur10e_robotiq', '0.020')]:
+        monkeypatch.setattr(sys, 'argv', ['runner', '--robot-profile', profile,
+                                         '--release-open-position', value])
+        with pytest.raises(SystemExit) as error:
+            mtc_command_runner.main()
+        assert error.value.code == 2
+
+
+def test_pallet_obstacles_enclose_unknown_orientation_and_require_complete_scene():
+    import pytest
+    manager = SceneManager.from_command_scene({
+        name: {'position': [-0.32, y, 0.025], 'size': [0.03, 0.03, 0.05]}
+        for name, y in [('red_block', 0.1), ('green_block', 0.02), ('blue_block', -0.06)]
+    })
+    items = mtc_command_runner.pallet_obstacle_description(manager, 'red_block')
+    assert {x['id'] for x in items} == {'green_block', 'blue_block'}
+    assert all(np.isclose(x['radius_m'], np.sqrt(0.03**2*2 + 0.05**2)/2) for x in items)
+    incomplete = SceneManager.from_command_scene({'red_block': manager.as_command_scene()['red_block']})
+    with pytest.raises(ValueError, match='all three fresh'):
+        mtc_command_runner.pallet_obstacle_description(incomplete, 'red_block')
+
+
+def test_pallet_cli_obstacles_forward_validated_complete_scene(tmp_path, monkeypatch, capsys):
+    import sys
+    scene_path = tmp_path / 'pallet.json'
+    objects = {
+        name: {'position': [-0.32, y, 0.025], 'size': [0.03, 0.03, 0.05], 'confidence': 0.95}
+        for name, y in [('red_block', 0.1), ('green_block', 0.02), ('blue_block', -0.06)]
+    }
+    data = {'frame': 'base_footprint', 'unit': 'm', 'updated_at': time.time(),
+            'camera': {'eye': [-0.55, 0.65, 0.85], 'target': [-0.3, 0.3, 0.025],
+                       'up': [0, 0, 1]}, 'objects': objects}
+    scene_path.write_text(json.dumps(data))
+    monkeypatch.setattr(sys, 'argv', ['mtc_command_runner.py', '--robot-profile', 'pallet_gripper',
+        '--pallet-scene-file', str(scene_path), '--scene-obstacles', '--dry-run',
+        json.dumps({'action': 'pick_place', 'pick_object': 'red_block', 'place_xyz': [0.24, -0.28, 0.025]})])
+    assert mtc_command_runner.main() == 0
+    output = capsys.readouterr().out
+    description = json.loads(output.split('pallet_scene_obstacles:=', 1)[1].strip())
+    assert {x['id'] for x in description} == {'green_block', 'blue_block'}
+    del data['objects']['green_block']
+    scene_path.write_text(json.dumps(data))
+    assert mtc_command_runner.main() == 1
+    assert 'all three fresh' in capsys.readouterr().out
+
+
+def test_pallet_cli_can_request_sim_execution(tmp_path, monkeypatch, capsys):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {"eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+                   "up": [0.0, 0.0, 1.0]},
+        "objects": {"red_block": {"position": [-0.3, 0.3, 0.025],
+                                  "size": [0.03, 0.03, 0.05], "confidence": 0.97}},
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--pallet-execution-mode", "standard",
+        "--cartesian-transfer", "--upright-transfer", "--transfer-height", "0.10",
+        "--totg-path-tolerance", "0.01",
+        "--dry-run", json.dumps({"action": "pick_place", "pick_object": "red_block",
+                                  "place_xyz": [0.3, -0.3, 0.025]}),
+    ])
+    assert mtc_command_runner.main() == 0
+    output = capsys.readouterr().out
+    assert "planning_only:=false" in output
+    assert "totg_path_tolerance:=0.010000" in output
+    assert "cartesian_transfer:=true" in output
+    assert "upright_transfer:=true" in output
+    assert "lift_min_distance:=0.100000" in output
+    assert "lower_max_distance:=0.100000" in output
+    assert "place_y:=-0.300000" in output
+    assert "gripper_close_min:=0.000" in output
+    assert "gripper_close_max:=0.000" in output
+    assert "arm_velocity_scaling:=0.500" in output
+    assert "arm_acceleration_scaling:=0.200" in output
+    assert "cartesian_velocity_scaling:=0.350" in output
+    assert "cartesian_acceleration_scaling:=0.200" in output
+
+
+def test_pallet_physical_verification_requires_fresh_success(monkeypatch):
+    expected = [0.3, -0.3, 0.025]
+    summary = {
+        "frame": "base_footprint", "unit": "m", "target": expected,
+        "fresh_feedback": True, "placement_pass": True,
+    }
+    calls = []
+
+    def completed(command, **kwargs):
+        calls.append((command, kwargs))
+        return SimpleNamespace(returncode=0, stdout=json.dumps(summary) + "\n", stderr="")
+
+    monkeypatch.setattr(mtc_command_runner.subprocess, "run", completed)
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 0
+    assert calls[0][0][-4:] == ["--target", "0.300000", "-0.300000", "0.025000"]
+    assert calls[0][0][calls[0][0].index("--pose-topic") + 1] == "/isaac_calibration_block_pose"
+    assert calls[0][1]["timeout"] == 15
+    summary["placement_pass"] = False
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 3
+    summary["placement_pass"] = True
+    summary["fresh_feedback"] = False
+    assert mtc_command_runner.verify_pallet_physical_placement(expected) == 3
+
+
+def test_pallet_block_pose_topic_supports_all_camera_blocks():
+    assert pallet_block_pose_topic("red_block") == "/isaac_calibration_block_pose"
+    assert pallet_block_pose_topic("green_block") == "/isaac_green_block_pose"
+    assert pallet_block_pose_topic("blue_block") == "/isaac_blue_block_pose"
+
+
+def test_pallet_standard_propagates_physical_failure(tmp_path, monkeypatch):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {"eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+                   "up": [0.0, 0.0, 1.0]},
+        "objects": {"red_block": {"position": [-0.3, 0.3, 0.025],
+                                  "size": [0.03, 0.03, 0.05], "confidence": 0.97}},
+    }), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--pallet-execution-mode", "standard",
+        "--task-state-file", str(tmp_path / "task-state.json"),
+        "--once", json.dumps({"action": "pick_place", "pick_object": "red_block",
+                              "place_xyz": [0.3, -0.3, 0.025]}),
+    ])
+    monkeypatch.setattr(mtc_command_runner.subprocess, "run",
+                        lambda *args, **kwargs: SimpleNamespace(returncode=0))
+    targets = []
+    monkeypatch.setattr(mtc_command_runner, "verify_pallet_physical_placement",
+                        lambda target, object_id="red_block":
+                        targets.append((object_id, target.tolist())) or 3)
+    assert mtc_command_runner.main() == 2
+    assert targets == [("red_block", [0.3, -0.3, 0.025])]
+    task_state = json.loads((tmp_path / "task-state.json").read_text(encoding="utf-8"))
+    assert task_state["state"] == "recovery_required"
+    assert task_state["result"]["returncode"] == 3
+
+
+def test_pallet_standard_uses_failure_detecting_launch_wrapper(tmp_path, monkeypatch):
+    import sys
+    scene_path = tmp_path / "pallet.json"
+    scene_path.write_text(json.dumps({
+        "frame": "base_footprint", "unit": "m", "updated_at": time.time(),
+        "camera": {"eye": [-0.55, 0.65, 0.85], "target": [-0.3, 0.3, 0.025],
+                   "up": [0.0, 0.0, 1.0]},
+        "objects": {"green_block": {"position": [-0.23, 0.26, 0.025],
+                                     "size": [0.03, 0.03, 0.05], "confidence": 0.97}},
+    }), encoding="utf-8")
+    wrapper = tmp_path / "checked-wrapper.sh"
+    calls = []
+    monkeypatch.setattr(sys, "argv", [
+        "mtc_command_runner.py", "--robot-profile", "pallet_gripper",
+        "--pallet-scene-file", str(scene_path), "--pallet-execution-mode", "standard",
+        "--task-state-file", str(tmp_path / "task-state.json"),
+        "--run-script", str(wrapper), "--once",
+        json.dumps({"action": "pick_place", "pick_object": "green_block",
+                    "place_xyz": [0.3, -0.3, 0.025]}),
+    ])
+
+    def run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(returncode=1)
+
+    monkeypatch.setattr(mtc_command_runner.subprocess, "run", run)
+    monkeypatch.setattr(
+        mtc_command_runner, "verify_pallet_physical_placement",
+        lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("must not verify")))
+    assert mtc_command_runner.main() == 1
+    assert calls[0][:2] == ["bash", str(wrapper)]
 
 
 def test_build_mtc_invocation_resolves_bare_left_and_right_without_llm(monkeypatch):

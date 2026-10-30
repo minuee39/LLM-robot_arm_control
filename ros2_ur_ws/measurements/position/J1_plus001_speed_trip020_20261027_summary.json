@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "stop_confirmed": true,
+  "peak_abs_current_a": 1.0131911039352417,
+  "peak_abs_reported_velocity_rad_s": 0.09249846637248993,
+  "final_goal_error_rad": 0.000277688503265372,
+  "peak_overshoot_rad": 0.0023102068901061923,
+  "duration_s": 2.013352981000935
+}

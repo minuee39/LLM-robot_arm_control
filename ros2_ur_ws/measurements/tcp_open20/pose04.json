@@ -1,0 +1,20 @@
+{
+  "base_frame": "base_footprint",
+  "tool_frame": "gripper",
+  "opening_mm": 20.0,
+  "point_id": "open20_fingertips_center",
+  "model_sha256": "f5937514cb80a217ea9259edcc0394ebea4725e18dab0c2efbf4f696bd5768a9",
+  "stamp_sec": 1793100393,
+  "stamp_nanosec": 379951102,
+  "translation_m": [
+    -0.01604197279745736,
+    -0.5088923207914514,
+    0.04535663403574496
+  ],
+  "quaternion_xyzw": [
+    0.5655340571122847,
+    0.2233822383057395,
+    0.7278524760319015,
+    -0.3170211018053327
+  ]
+}

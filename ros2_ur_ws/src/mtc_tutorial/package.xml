@@ -15,7 +15,9 @@
   <depend>moveit_ros_planning</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>moveit_task_constructor_core</depend>
+  <depend>moveit_task_constructor_msgs</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
   <depend>shape_msgs</depend>
   <depend>tf2_eigen</depend>
   <depend>tf2_geometry_msgs</depend>
@@ -25,11 +27,16 @@
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>moveit_task_constructor_capabilities</exec_depend>
+  <exec_depend>pallet_gripper_moveit_config</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>ur10e_robotiq_2f140_moveit_config</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

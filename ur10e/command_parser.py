@@ -24,6 +24,9 @@ def build_camera_relation_offsets(
     camera_eye=SIM_CAMERA_EYE,
     camera_target=SIM_CAMERA_TARGET,
     camera_up=SIM_CAMERA_UP,
+    *,
+    near_distance=NEAR_RELATION_DISTANCE,
+    near_side_only=False,
 ) -> dict[str, np.ndarray]:
     """Build table-plane relations as seen from the active scene camera."""
     eye = np.asarray(camera_eye, dtype=float)
@@ -44,8 +47,12 @@ def build_camera_relation_offsets(
         "front_of": toward_camera * RELATION_DISTANCE,
         "behind": -toward_camera * RELATION_DISTANCE,
         "near": (
-            screen_left * NEAR_RELATION_DISTANCE
-            + toward_camera * NEAR_RELATION_DISTANCE
+            screen_left * float(near_distance)
+            if near_side_only
+            else (
+                screen_left * float(near_distance)
+                + toward_camera * float(near_distance)
+            )
         ),
     }
 
@@ -66,6 +73,8 @@ OBJECT_ALIASES = {
     "파란블록": "blue_block",
     "파란색 블럭": "blue_block",
     "파란색 블록": "blue_block",
+    "파란 물체": "blue_block",
+    "파란색 물체": "blue_block",
     "blue block": "blue_block",
     "blue_block": "blue_block",
     "blue": "blue_block",
@@ -76,6 +85,8 @@ OBJECT_ALIASES = {
     "빨간블록": "red_block",
     "빨간색 블럭": "red_block",
     "빨간색 블록": "red_block",
+    "빨간 물체": "red_block",
+    "빨간색 물체": "red_block",
     "red block": "red_block",
     "red_block": "red_block",
     "red": "red_block",
@@ -86,6 +97,8 @@ OBJECT_ALIASES = {
     "초록블록": "green_block",
     "초록색 블럭": "green_block",
     "초록색 블록": "green_block",
+    "초록 물체": "green_block",
+    "초록색 물체": "green_block",
     "green block": "green_block",
     "green_block": "green_block",
     "green": "green_block",
@@ -205,10 +218,14 @@ def _raise_invalid_object_slot(text: str, found_objects: list[tuple]) -> None:
         raise ValueError(f"target_object를 이해하지 못했습니다: {target_mention[4]}")
 
 
-def resolve_spatial_object(selector: str, scene_objects: dict) -> str:
+def resolve_spatial_object(
+    selector: str, scene_objects: dict, screen_right: np.ndarray | None = None,
+) -> str:
     """Resolve horizontal selectors in the active camera image coordinates."""
     candidates = []
-    screen_right = RELATION_OFFSETS["right_of"] / RELATION_DISTANCE
+    if screen_right is None:
+        screen_right = RELATION_OFFSETS["right_of"] / RELATION_DISTANCE
+    screen_right = _planar_unit(screen_right, "camera right")
 
     for name, info in scene_objects.items():
         if name not in SUPPORTED_OBJECTS:
@@ -259,7 +276,11 @@ def validate_command(command: dict, scene_objects: dict) -> None:
     if relation not in SUPPORTED_RELATIONS:
         raise ValueError(f"지원하지 않는 relation입니다: {relation}")
 
-    if confidence < MIN_CONFIDENCE:
+    if (
+        not isinstance(confidence, (int, float))
+        or not np.isfinite(confidence)
+        or not MIN_CONFIDENCE <= confidence <= 1.0
+    ):
         raise ValueError(f"명령 신뢰도가 낮습니다: {confidence}")
     
 def parse_user_command(user_text: str, scene_objects: dict | None = None) -> dict:
@@ -270,11 +291,15 @@ def parse_user_command_with_memory(
     user_text: str,
     memory,
     scene_objects: dict | None = None,
+    screen_right: np.ndarray | None = None,
 ) -> dict:
-    return _parse_user_command(user_text, memory=memory, scene_objects=scene_objects)
+    return _parse_user_command(
+        user_text, memory=memory, scene_objects=scene_objects,
+        screen_right=screen_right,
+    )
 
 
-def _parse_user_command(user_text: str, memory=None, scene_objects=None) -> dict:
+def _parse_user_command(user_text: str, memory=None, scene_objects=None, screen_right=None) -> dict:
     text = user_text.strip().lower()
     # 음성 인식이 색상 음절 사이에 넣는 공백은 의미가 없으므로 정규화한다.
     for spaced, normalized in (("파 란", "파란"), ("빨 간", "빨간"), ("초 록", "초록")):
@@ -303,7 +328,7 @@ def _parse_user_command(user_text: str, memory=None, scene_objects=None) -> dict
             continue
         if scene_objects is None:
             raise ValueError(f"공간 참조를 판단할 scene 정보가 없습니다: {alias}")
-        object_name = resolve_spatial_object(selector, scene_objects)
+        object_name = resolve_spatial_object(selector, scene_objects, screen_right)
         found_objects.append((idx, alias, object_name))
         reference_spans.append((idx, idx + len(alias)))
 

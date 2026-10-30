@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: pallet
+    relative_path: urdf/pallet.urdf
+  srdf:
+    relative_path: config/pallet.srdf
+  package_settings:
+    author_name: Minwoo
+    author_email: choimw39@hanyang.ac.kr
+    generated_timestamp: 1787193736
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

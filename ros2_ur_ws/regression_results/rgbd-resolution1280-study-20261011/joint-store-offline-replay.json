@@ -1,0 +1,154 @@
+{
+  "offline_replay_only": true,
+  "ttl_for_sparse_capture_replay_s": 30,
+  "no_live_freshness_claim": true,
+  "objects": {
+    "red_block": {
+      "position": [
+        -0.3195622460885466,
+        0.09976389063976536,
+        0.025165396952850506
+      ],
+      "rotation_base": [
+        [
+          0.9999999425554185,
+          -0.00018425053274177477,
+          0.0002845011440445247
+        ],
+        [
+          0.00018415759017674282,
+          0.9999999296838188,
+          0.00032667773061485333
+        ],
+        [
+          -0.00028456131458539144,
+          -0.00032662531880389803,
+          0.9999999061703754
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 0.0001842505412409749,
+      "normal_base": [
+        0.0002845011440445247,
+        0.00032667773061485333,
+        0.9999999061703754
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 49.425002577,
+      "stamp_clock": "ros_header",
+      "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+      "receipt_age_s": 0.0,
+      "exposure_age_s": 0.0,
+      "sample_count": 3,
+      "position_std_m": [
+        1.0889598592482172e-08,
+        1.2738255553330056e-08,
+        3.0200174564864287e-09
+      ],
+      "max_yaw_spread_rad": 7.625344800032963e-12,
+      "max_normal_spread_rad": 8.647810297338582e-07,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    },
+    "green_block": {
+      "position": [
+        -0.3195527860631264,
+        0.01975444349444196,
+        0.02517018766413493
+      ],
+      "rotation_base": [
+        [
+          1.948181168115125e-05,
+          -0.9999999687520561,
+          0.0002492315100864018
+        ],
+        [
+          0.9999998977702682,
+          1.9594399933022506e-05,
+          0.00045174717742512094
+        ],
+        [
+          -0.000451752046850835,
+          0.00024922268375409334,
+          0.9999998669040622
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 1.5707768449826092,
+      "normal_base": [
+        0.0002492315100864018,
+        0.00045174717742512094,
+        0.9999998669040622
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 49.425002577,
+      "stamp_clock": "ros_header",
+      "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+      "receipt_age_s": 0.0,
+      "exposure_age_s": 0.0,
+      "sample_count": 3,
+      "position_std_m": [
+        8.058167221746557e-07,
+        7.07444595028921e-07,
+        1.6795042289957317e-07
+      ],
+      "max_yaw_spread_rad": 1.6560959181788348e-07,
+      "max_normal_spread_rad": 6.121221090297879e-05,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    },
+    "blue_block": {
+      "position": [
+        -0.31954061414586055,
+        -0.060234904716883315,
+        0.025176282703126523
+      ],
+      "rotation_base": [
+        [
+          2.3781190402022153e-05,
+          -0.9999999877826297,
+          0.00015449658755739673
+        ],
+        [
+          0.9999999055151086,
+          2.3848247980782612e-05,
+          0.0004340518805042132
+        ],
+        [
+          -0.00043405555967417287,
+          0.00015448625068938883,
+          0.9999998938648792
+        ]
+      ],
+      "yaw_mod_quarter_turn_rad": 1.5707725456042085,
+      "normal_base": [
+        0.00015449658755739673,
+        0.0004340518805042132,
+        0.9999998938648792
+      ],
+      "source": "rgbd_top_plane_square_boundary",
+      "frame": "base_footprint",
+      "unit": "m",
+      "exposure_stamp": 49.425002577,
+      "stamp_clock": "ros_header",
+      "calibration_revision": "f283232f0ad76d1be1ba3c08f17a7e4a99d1fe3c4011180b21deed4d0b17ef22",
+      "receipt_age_s": 0.0,
+      "exposure_age_s": 0.0,
+      "sample_count": 3,
+      "position_std_m": [
+        1.2504041982190046e-08,
+        4.404804841959744e-09,
+        2.7694845455835727e-09
+      ],
+      "max_yaw_spread_rad": 0.0,
+      "max_normal_spread_rad": 7.554168615124749e-07,
+      "diagnostic_only": true,
+      "collision_model_approved": false,
+      "uncertainty": "not_certified"
+    }
+  }
+}

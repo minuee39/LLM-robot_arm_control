@@ -1,0 +1,4899 @@
+{
+  "summary": {
+    "monitoring": {
+      "monitor_id": "eaf5e33761394347b18ee3395b9b0b23",
+      "started_at_unix": 1791641948.2739167,
+      "ended_at_unix": 1791641957.3429124,
+      "end_reason": "supervisor_stop",
+      "supervised": true
+    },
+    "frame": "base_footprint",
+    "unit": "m",
+    "sample_count": 54,
+    "target": [
+      0.28,
+      -0.24,
+      0.025
+    ],
+    "final_position": [
+      -0.3200000596046448,
+      0.020000025629997253,
+      0.025000035762786865
+    ],
+    "final_orientation_xyzw": [
+      -4.1809212802945694e-07,
+      -2.540613479595777e-07,
+      -1.679802750231829e-07,
+      1.0
+    ],
+    "max_height": 0.025000035762786865,
+    "transfer_min_bottom_clearance": null,
+    "transfer_sample_count": 0,
+    "final_xy_error": 0.6539113738521273,
+    "final_height_error": 3.5762786863846596e-08,
+    "long_axis_vertical_cosine": 0.9999999999995213,
+    "fresh_feedback": true,
+    "telemetry": {
+      "contact_reference_method": "first_bilateral_loaded_3_samples",
+      "contact_reference_seconds": null,
+      "tcp_fresh_sample_count": 49,
+      "joint_fresh_sample_count": 54,
+      "contact_reference_available": false
+    },
+    "max_contact_relative_displacement_m": null,
+    "max_loaded_jaw_asymmetry_m": null,
+    "slip_threshold_m": 0.006,
+    "slip_confirm_samples": 3,
+    "slip_detected": false,
+    "slip_event": null,
+    "runtime_fault_thresholds": {
+      "drop_clearance_m": 0.005,
+      "tilt_deg": 20.0,
+      "confirm_samples": 3,
+      "pose_stream_timeout_seconds": 0.75
+    },
+    "runtime_fault_detected": false,
+    "runtime_fault_event": null,
+    "safety_event_published": false,
+    "safety_event": null,
+    "sim_fault_command_published": false,
+    "sim_fault_command": null,
+    "release_detected": false,
+    "release_seconds": null,
+    "post_release_recontact_detected": null,
+    "post_release_recontact_seconds": null,
+    "max_post_release_displacement_m": null,
+    "placement_pass": false
+  },
+  "samples": [
+    {
+      "seconds": 2.9528248149999854,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1081347035287763e-07,
+        -2.762162409908342e-07,
+        -1.8020860181877651e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.07284307479858398,
+        "alignment_error_seconds": 0.07284307479858398,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094129952951334e-06,
+            "effort": 3.2795841597987874e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268129825708456e-06,
+            "effort": 1.6452634810093514e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5291710951714776e-05,
+            "effort_nm": 0.043556638062000275
+          },
+          "J2": {
+            "position_rad": -0.00035005438257940114,
+            "velocity_rad_s": 1.9078233890468255e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042546255281195045,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501535001210868,
+            "effort_nm": 0.0020817145705223083
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010608079173834994,
+            "effort_nm": 2.636216231621802e-05
+          },
+          "J6": {
+            "position_rad": 4.668152905651368e-05,
+            "velocity_rad_s": 4.653152245737147e-06,
+            "effort_nm": 3.8713187677785754e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "unavailable"
+      },
+      "tcp_to_block_m": null,
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 2.9530284560005384,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1633825276221614e-07,
+        -3.0222966529436235e-07,
+        -1.7033359256402036e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.04658079147338867,
+        "alignment_error_seconds": 0.04658079147338867,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094129952951334e-06,
+            "effort": 3.2795841597987874e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268129825708456e-06,
+            "effort": 1.6452634810093514e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5291710951714776e-05,
+            "effort_nm": 0.043556638062000275
+          },
+          "J2": {
+            "position_rad": -0.00035005438257940114,
+            "velocity_rad_s": 1.9078233890468255e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042546255281195045,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501535001210868,
+            "effort_nm": 0.0020817145705223083
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010608079173834994,
+            "effort_nm": 2.636216231621802e-05
+          },
+          "J6": {
+            "position_rad": 4.668152905651368e-05,
+            "velocity_rad_s": 4.653152245737147e-06,
+            "effort_nm": 3.8713187677785754e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "unavailable"
+      },
+      "tcp_to_block_m": null,
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 2.953252686000269,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.215921762806829e-07,
+        -2.656717867921543e-07,
+        -1.6045068207404256e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.022583961486816406,
+        "alignment_error_seconds": 0.022583961486816406,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093873475445434e-06,
+            "effort": 7.415188463255618e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268202130537247e-06,
+            "effort": 1.177292041631972e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966803867835552,
+            "velocity_rad_s": -1.5291128875105642e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9178376078343717e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254374944139272,
+            "effort_nm": 0.44407039880752563
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501531508751214,
+            "effort_nm": 0.0020817089825868607
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605290299281478,
+            "effort_nm": 2.639039303176105e-05
+          },
+          "J6": {
+            "position_rad": 4.6681510866619647e-05,
+            "velocity_rad_s": 4.653573796531418e-06,
+            "effort_nm": 3.871391527354717e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "unavailable"
+      },
+      "tcp_to_block_m": null,
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 2.9534646529991733,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2725628190964926e-07,
+        -2.9258333711368323e-07,
+        -1.6600226615537395e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004811286926269531,
+        "alignment_error_seconds": 0.0004811286926269531,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120599886751734e-06,
+            "effort": 3.0824742758284174e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.058981514594052e-06,
+            "effort": 1.3891927608256083e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5282630556612276e-05,
+            "effort_nm": 0.043556615710258484
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9113963389827404e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254501545801759,
+            "effort_nm": 0.4440701901912689
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501860964111984,
+            "effort_nm": 0.002081695944070816
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.0001060794384102337,
+            "effort_nm": 2.63635884039104e-05
+          },
+          "J6": {
+            "position_rad": 4.6681576350238174e-05,
+            "velocity_rad_s": 4.664032076107105e-06,
+            "effort_nm": 3.871537046507001e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "unavailable"
+      },
+      "tcp_to_block_m": null,
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.047017525999763,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.015016088487755e-07,
+        -2.872141635634762e-07,
+        -1.5609674619554426e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004420280456542969,
+        "alignment_error_seconds": 0.0004420280456542969,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093889846350066e-06,
+            "effort": 1.2775166480238909e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.2682053137687035e-06,
+            "effort": 2.2639992103279383e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.5290561350411735e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9146471004205523e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254463128745556,
+            "effort_nm": 0.4440702795982361
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501532672904432,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605987336020917,
+            "effort_nm": 2.6361114578321576e-05
+          },
+          "J6": {
+            "position_rad": 4.668160909204744e-05,
+            "velocity_rad_s": 4.65249240733101e-06,
+            "effort_nm": 3.871391527354717e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "unavailable"
+      },
+      "tcp_to_block_m": null,
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.1689422799991007,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.381213045689947e-07,
+        -2.818124471559713e-07,
+        -1.7732925527980115e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004668235778808594,
+        "alignment_error_seconds": 0.0004668235778808594,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09394259704277e-06,
+            "effort": 8.993841227322719e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.26831126990146e-06,
+            "effort": 7.398925916390908e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.0001196680314023979,
+            "velocity_rad_s": -1.529140536149498e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.915465190904797e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544089956209064,
+            "effort_nm": 0.44407039880752563
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501534419134259,
+            "effort_nm": 0.0020817220211029053
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.0001060633294400759,
+            "effort_nm": 2.6388384867459536e-05
+          },
+          "J6": {
+            "position_rad": 4.6681561798322946e-05,
+            "velocity_rad_s": 4.652853931474965e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770737,
+          -0.25269407615055084,
+          0.2812615390066769
+        ],
+        "orientation_xyzw": [
+          0.2769481715834171,
+          0.8772228751659658,
+          -0.3723171436484099,
+          -0.12312466076155391
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253065059991,
+        0.2962638280020659,
+        0.06490230618155016
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.29056632999891,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.122421728425252e-07,
+        -2.762968165370694e-07,
+        -1.8297347992302093e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004589557647705078,
+        "alignment_error_seconds": 0.0004589557647705078,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093797077890486e-06,
+            "effort": 9.828589053739734e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268069799058139e-06,
+            "effort": 7.282352498805267e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.0001196680314023979,
+            "velocity_rad_s": -1.5290946976165287e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9134272406517994e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042545146425254643,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501535001210868,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605560237308964,
+            "effort_nm": 2.633355325087905e-05
+          },
+          "J6": {
+            "position_rad": 4.6681561798322946e-05,
+            "velocity_rad_s": 4.653112227970269e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549650543,
+          -0.25269407614484657,
+          0.28126153900634426
+        ],
+        "orientation_xyzw": [
+          0.2769481716056625,
+          0.8772228751591622,
+          -0.37231714364738683,
+          -0.123124660763085
+        ]
+      },
+      "tcp_to_block_m": [
+        0.245825308659211,
+        0.2962638301122367,
+        0.0649023040079015
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.4118997369987483,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1770962866394257e-07,
+        -3.0217967150747427e-07,
+        -1.7311086253357644e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005221366882324219,
+        "alignment_error_seconds": 0.0005221366882324219,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094146323855966e-06,
+            "effort": 2.513940167148121e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268227141641546e-06,
+            "effort": 1.6241887834667068e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5290490409824997e-05,
+            "effort_nm": 0.043556638062000275
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9120898286928423e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254471859894693,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501551299355924,
+            "effort_nm": 0.002081703394651413
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606539581203833,
+            "effort_nm": 2.6362191420048475e-05
+          },
+          "J6": {
+            "position_rad": 4.668153269449249e-05,
+            "velocity_rad_s": 4.653698852052912e-06,
+            "effort_nm": 3.87190084438771e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494133858,
+          -0.2526940761589795,
+          0.28126153901627415
+        ],
+        "orientation_xyzw": [
+          0.27694817153298285,
+          0.8772228751754707,
+          -0.37231714366248364,
+          -0.12312466076472126
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757523738,
+        0.29626382909268706,
+        0.06490230508073161
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.530240779000451,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2299225810893404e-07,
+        -2.6577455969345465e-07,
+        -1.6321028795118764e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004277229309082031,
+        "alignment_error_seconds": 0.0004277229309082031,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121556675177999e-06,
+            "effort": 1.787428089983223e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.079436505184276e-06,
+            "effort": 1.3868635733160772e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.527752829133533e-05,
+            "effort_nm": 0.04355628788471222
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.91014191841532e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544599273242056,
+            "effort_nm": 0.44407033920288086
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501842337660491,
+            "effort_nm": 0.002081422135233879
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607262811390683,
+            "effort_nm": 2.6389461709186435e-05
+          },
+          "J6": {
+            "position_rad": 4.668154360842891e-05,
+            "velocity_rad_s": 4.663585059461184e-06,
+            "effort_nm": 3.8751750253140926e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495052223,
+          -0.25269407615184925,
+          0.2812615390158588
+        ],
+        "orientation_xyzw": [
+          0.2769481715679702,
+          0.8772228751646991,
+          -0.37231714366221275,
+          -0.12312466076358727
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758206683,
+        0.2962638290750904,
+        0.06490230508784495
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.6514634380000643,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.286495709493465e-07,
+        -2.926980187112349e-07,
+        -1.6876056463388522e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004394054412841797,
+        "alignment_error_seconds": 0.0004394054412841797,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093328688119072e-06,
+            "effort": 1.977005865683168e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.249892183201155e-06,
+            "effort": 1.2567065823532175e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966805323027074,
+            "velocity_rad_s": -1.5295510820578784e-05,
+            "effort_nm": 0.04355691373348236
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.912949528559693e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254392988514155,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750156759750098,
+            "effort_nm": 0.0020818933844566345
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606636351440102,
+            "effort_nm": 2.638521254993975e-05
+          },
+          "J6": {
+            "position_rad": 4.668157271225937e-05,
+            "velocity_rad_s": 4.653752966987668e-06,
+            "effort_nm": 3.866152837872505e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138088,
+          -0.25269407614769873,
+          0.28126153900651074
+        ],
+        "orientation_xyzw": [
+          0.27694817159773094,
+          0.8772228751615566,
+          -0.37231714364834617,
+          -0.12312466076096504
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530866057478,
+        0.2962638301158774,
+        0.06490230400505637
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.77393315199879,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.0289882008437417e-07,
+        -2.87156041167691e-07,
+        -1.588810931707485e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00047516822814941406,
+        "alignment_error_seconds": 0.00047516822814941406,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120585334836505e-06,
+            "effort": 1.9812231855098617e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.058845090388786e-06,
+            "effort": 3.2931524174273363e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.528204302303493e-05,
+            "effort_nm": 0.043556615710258484
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.9137660274282098e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544459574855864,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750187027733773,
+            "effort_nm": 0.0020816680043935776
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605474381009117,
+            "effort_nm": 2.638986916281283e-05
+          },
+          "J6": {
+            "position_rad": 4.668160545406863e-05,
+            "velocity_rad_s": 4.664528660214273e-06,
+            "effort_nm": 3.871027729474008e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138088,
+          -0.25269407614769873,
+          0.28126153900651074
+        ],
+        "orientation_xyzw": [
+          0.27694817159773094,
+          0.8772228751615566,
+          -0.37231714364834617,
+          -0.12312466076096504
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530650894627,
+        0.29626382799484874,
+        0.0649023061843956
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 3.898972437998964,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3949918904218066e-07,
+        -2.8193869638926117e-07,
+        -1.8008842062045005e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005033016204833984,
+        "alignment_error_seconds": 0.0005033016204833984,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120304300973658e-06,
+            "effort": 9.08162434143378e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.058477199781919e-06,
+            "effort": 8.833977993560893e-11
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966801685048267,
+            "velocity_rad_s": -1.5282595995813608e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9143333247484406e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254465748090297,
+            "effort_nm": 0.4440702795982361
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501852815039456,
+            "effort_nm": 0.0020816978067159653
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606300929794088,
+            "effort_nm": 2.6363180950284004e-05
+          },
+          "J6": {
+            "position_rad": 4.668160909204744e-05,
+            "velocity_rad_s": 4.663520485337358e-06,
+            "effort_nm": 3.8717553252354264e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496689091,
+          -0.25269407614342054,
+          0.2812615390062614
+        ],
+        "orientation_xyzw": [
+          0.2769481716185056,
+          0.8772228751551622,
+          -0.37231714364815327,
+          -0.12312466076037688
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530651289702,
+        0.2962638279844125,
+        0.06490230618866338
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.014971644999605,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.136080349326221e-07,
+        -2.766096258710604e-07,
+        -1.8570695203834475e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005519390106201172,
+        "alignment_error_seconds": 0.0005519390106201172,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121555765683297e-06,
+            "effort": 1.8312016436539125e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.079147285869112e-06,
+            "effort": 1.3711614883504808e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966800229856744,
+            "velocity_rad_s": -1.5277304555638693e-05,
+            "effort_nm": 0.04355630278587341
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9115948362014024e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042545076576061547,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501842337660491,
+            "effort_nm": 0.0020814277231693268
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.0001060698414221406,
+            "effort_nm": 2.6362715288996696e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.663861091103172e-06,
+            "effort_nm": 3.875829861499369e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138082,
+          -0.2526940761476986,
+          0.2812615390065107
+        ],
+        "orientation_xyzw": [
+          0.2769481716073051,
+          0.8772228751585339,
+          -0.3723171436496898,
+          -0.1231246607569015
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530866704172,
+        0.2962638301105113,
+        0.06490230400505645
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.136765494000429,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1910976733561256e-07,
+        -3.025758701369341e-07,
+        -1.6032150540468137e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00046181678771972656,
+        "alignment_error_seconds": 0.00046181678771972656,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093939868558664e-06,
+            "effort": 1.6948822789686346e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.266354492050596e-06,
+            "effort": 1.3124142128617677e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966805323027074,
+            "velocity_rad_s": -1.5291438103304245e-05,
+            "effort_nm": 0.04355669021606445
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9149176750943298e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042543798917904496,
+            "effort_nm": 0.44407033920288086
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501544314436615,
+            "effort_nm": 0.002081729471683502
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605888382997364,
+            "effort_nm": 2.6389840058982372e-05
+          },
+          "J6": {
+            "position_rad": 4.668154724640772e-05,
+            "velocity_rad_s": 4.6528321036021225e-06,
+            "effort_nm": 3.8735015550628304e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549630556,
+          -0.2526940761506782,
+          0.2812615389975782
+        ],
+        "orientation_xyzw": [
+          0.2769481715813352,
+          0.8772228751727119,
+          -0.37231714363318313,
+          -0.12312466076421727
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757308055,
+        0.2962638290594922,
+        0.06490230509449385
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.255311509999956,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2451523540876224e-07,
+        -2.663279303760646e-07,
+        -1.6592456120179122e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005905628204345703,
+        "alignment_error_seconds": 0.0005905628204345703,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094100849120878e-06,
+            "effort": 1.1573866309788627e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268122095003491e-06,
+            "effort": 1.7104152760794022e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.529019937152043e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9142407836625353e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254336527083069,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501546642743051,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605283023323864,
+            "effort_nm": 2.6362278731539845e-05
+          },
+          "J6": {
+            "position_rad": 4.668154360842891e-05,
+            "velocity_rad_s": 4.653247742680833e-06,
+            "effort_nm": 3.871537046507001e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494684878,
+          -0.25269407615470135,
+          0.2812615390160249
+        ],
+        "orientation_xyzw": [
+          0.27694817154089074,
+          0.8772228751731386,
+          -0.37231714366048485,
+          -0.1231246607695942
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864631127,
+        0.2962638301499767,
+        0.06490230399532974
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.375593316999584,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3007040062548185e-07,
+        -2.931413121132209e-07,
+        -1.7148126119082008e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004756450653076172,
+        "alignment_error_seconds": 0.0004756450653076172,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093398719211109e-06,
+            "effort": 2.0035389525219216e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.250106823950773e-06,
+            "effort": 1.2414483308020863e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.529670407762751e-05,
+            "effort_nm": 0.04355689883232117
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.91556932804815e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544127791188657,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501559448428452,
+            "effort_nm": 0.0020818933844566345
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606087016640231,
+            "effort_nm": 2.6385969249531627e-05
+          },
+          "J6": {
+            "position_rad": 4.6681550884386525e-05,
+            "velocity_rad_s": 4.653411906474503e-06,
+            "effort_nm": 3.865425242111087e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770743,
+          -0.25269407615055084,
+          0.2812615390066769
+        ],
+        "orientation_xyzw": [
+          0.27694817156586493,
+          0.8772228751715073,
+          -0.37231714364594626,
+          -0.12312466076900361
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864577185,
+        0.29626383013293217,
+        0.06490230400221093
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.497622295999463,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.042484249566769e-07,
+        -2.876772100535163e-07,
+        -1.6159680171767832e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004668235778808594,
+        "alignment_error_seconds": 0.0004668235778808594,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093965334410314e-06,
+            "effort": 8.207585722175281e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268226686894195e-06,
+            "effort": 7.308909033554301e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966803867835552,
+            "velocity_rad_s": -1.5291359886759892e-05,
+            "effort_nm": 0.04355660080909729
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9179499304300407e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544413008727133,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501533254981041,
+            "effort_nm": 0.0020816847681999207
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010604898125166073,
+            "effort_nm": 2.6334833819419146e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.6532609303540085e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549665671,
+          -0.2526940761522315,
+          0.2812615389885624
+        ],
+        "orientation_xyzw": [
+          0.27694817158725515,
+          0.877222875176877,
+          -0.3723171436201155,
+          -0.12312466076074145
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864892732,
+        0.29626383011203095,
+        0.06490230400601504
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.619323580998753,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.408504992170492e-07,
+        -2.8207963964632654e-07,
+        -1.8284320901784668e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00047588348388671875,
+        "alignment_error_seconds": 0.00047588348388671875,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093888027360663e-06,
+            "effort": 2.0567927805359432e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.265937033982482e-06,
+            "effort": 1.480751734561636e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.52910561155295e-05,
+            "effort_nm": 0.04355669021606445
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.910340415633982e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254499508533627,
+            "effort_nm": 0.4440702497959137
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501544314436615,
+            "effort_nm": 0.00208171084523201
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607036529108882,
+            "effort_nm": 2.6361492928117514e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.653003088606056e-06,
+            "effort_nm": 3.873210516758263e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495938203,
+          -0.2526940761535302,
+          0.2812615389977443
+        ],
+        "orientation_xyzw": [
+          0.2769481715606385,
+          0.8772228751791366,
+          -0.37231714363235097,
+          -0.12312466076751549
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864163632,
+        0.2962638301308013,
+        0.064902304001979
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.737824742998782,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.150437860062084e-07,
+        -2.767816340565332e-07,
+        -1.7293703535870009e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004906654357910156,
+        "alignment_error_seconds": 0.0004906654357910156,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121564860630315e-06,
+            "effort": 1.786462462405325e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.0794428716471884e-06,
+            "effort": 1.3868880159861874e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.527715903648641e-05,
+            "effort_nm": 0.04355630278587341
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.912068682941026e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544654570519924,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501848158426583,
+            "effort_nm": 0.00208142027258873
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606777505017817,
+            "effort_nm": 2.6361463824287057e-05
+          },
+          "J6": {
+            "position_rad": 4.6681514504598454e-05,
+            "velocity_rad_s": 4.664182142732898e-06,
+            "effort_nm": 3.8756843423470855e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138088,
+          -0.25269407614769873,
+          0.28126153900651074
+        ],
+        "orientation_xyzw": [
+          0.27694817157858304,
+          0.8772228751676018,
+          -0.3723171436456588,
+          -0.12312466076909176
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086476413,
+        0.2962638301266091,
+        0.06490230400505616
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.860045841000101,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.205204220397718e-07,
+        -3.0259047889558133e-07,
+        -1.4757078758975695e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005431175231933594,
+        "alignment_error_seconds": 0.0005431175231933594,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120410711853765e-06,
+            "effort": 1.7702262766761123e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.06049900650396e-06,
+            "effort": 1.2872339993919013e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966800957452506,
+            "velocity_rad_s": -1.528266875538975e-05,
+            "effort_nm": 0.043556563556194305
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9121796412946424e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544250027276576,
+            "effort_nm": 0.44407039880752563
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501833606511354,
+            "effort_nm": 0.002081647515296936
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606720024952665,
+            "effort_nm": 2.6389898266643286e-05
+          },
+          "J6": {
+            "position_rad": 4.668157271225937e-05,
+            "velocity_rad_s": 4.662951596401399e-06,
+            "effort_nm": 3.8698635762557387e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495754533,
+          -0.2526940761549562,
+          0.28126153899782735
+        ],
+        "orientation_xyzw": [
+          0.2769481715590663,
+          0.8772228751795781,
+          -0.3723171436331664,
+          -0.12312466076543971
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530649230633,
+        0.2962638280102513,
+        0.06490230617989573
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 4.980981732998771,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.258422450220678e-07,
+        -2.6638338113116333e-07,
+        -1.531540334553938e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004875659942626953,
+        "alignment_error_seconds": 0.0004875659942626953,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120488018903416e-06,
+            "effort": 2.516138408736879e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.0587032092153095e-06,
+            "effort": 1.1317746739791801e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966801685048267,
+            "velocity_rad_s": -1.5283478205674328e-05,
+            "effort_nm": 0.04355660825967789
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9104309103568085e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254592058714479,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501853397116065,
+            "effort_nm": 0.002081688493490219
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010608138836687431,
+            "effort_nm": 2.63635884039104e-05
+          },
+          "J6": {
+            "position_rad": 4.668154724640772e-05,
+            "velocity_rad_s": 4.66466053694603e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770734,
+          -0.2526940761505507,
+          0.28126153900667683
+        ],
+        "orientation_xyzw": [
+          0.2769481715786301,
+          0.8772228751674775,
+          -0.3723171436477377,
+          -0.12312466076358568
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530650276566,
+        0.29626382800474893,
+        0.06490230618155052
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.099568305000503,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3138430783074e-07,
+        -2.926090019172989e-07,
+        -1.7431912624488177e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005221366882324219,
+        "alignment_error_seconds": 0.0005221366882324219,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093888936855365e-06,
+            "effort": 2.6614555004300655e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.267876531434013e-06,
+            "effort": 1.5540688735882213e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5291345334844664e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.914150288939709e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254458181094378,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750152743421495,
+            "effort_nm": 0.002081705257296562
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605647548800334,
+            "effort_nm": 2.6362307835370302e-05
+          },
+          "J6": {
+            "position_rad": 4.6681525418534875e-05,
+            "velocity_rad_s": 4.652802090276964e-06,
+            "effort_nm": 3.8713187677785754e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770732,
+          -0.25269407615055084,
+          0.2812615390066769
+        ],
+        "orientation_xyzw": [
+          0.2769481715706518,
+          0.877222875169996,
+          -0.37231714364661833,
+          -0.12312466076697172
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253075731911,
+        0.2962638290697348,
+        0.06490230509188044
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.221088239999517,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.055166016314615e-07,
+        -2.874168671951338e-07,
+        -1.4886435906191764e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0003886222839355469,
+        "alignment_error_seconds": 0.0003886222839355469,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094020813587122e-06,
+            "effort": 4.159436350903434e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.26800840816577e-06,
+            "effort": 1.665200954903412e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5290885130525567e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9169997358403634e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544450843706727,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501539075747132,
+            "effort_nm": 0.0020816903561353683
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605117859086022,
+            "effort_nm": 2.6360765332356095e-05
+          },
+          "J6": {
+            "position_rad": 4.668152905651368e-05,
+            "velocity_rad_s": 4.6532804844900966e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549593821,
+          -0.25269407615353023,
+          0.2812615389977443
+        ],
+        "orientation_xyzw": [
+          0.2769481715622341,
+          0.8772228751786328,
+          -0.3723171436325747,
+          -0.12312466076683831
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530649108542,
+        0.2962638280088784,
+        0.06490230618131841
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.341006986998764,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.4220365680303075e-07,
+        -2.820480062837305e-07,
+        -1.8561935632988025e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004258155822753906,
+        "alignment_error_seconds": 0.0004258155822753906,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121451173792593e-06,
+            "effort": 1.957088215931435e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.077357400296023e-06,
+            "effort": 1.2563316431624116e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.5278550563380122e-05,
+            "effort_nm": 0.04355635493993759
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9148496903653722e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544628377072513,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501845830120146,
+            "effort_nm": 0.00208146870136261
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605185525491834,
+            "effort_nm": 2.6334222638979554e-05
+          },
+          "J6": {
+            "position_rad": 4.6681499952683225e-05,
+            "velocity_rad_s": 4.664348125515971e-06,
+            "effort_nm": 3.875975380651653e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549540339,
+          -0.2526940761534028,
+          0.281261539006843
+        ],
+        "orientation_xyzw": [
+          0.2769481715499552,
+          0.8772228751764206,
+          -0.372317143645786,
+          -0.12312466077026994
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086417467,
+        0.2962638301410439,
+        0.0649023039993657
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.460843279999608,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.163107405474875e-07,
+        -2.766955162769591e-07,
+        -1.60182906938644e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004906654357910156,
+        "alignment_error_seconds": 0.0004906654357910156,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09389166533947e-06,
+            "effort": 7.418463621178262e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268171662464738e-06,
+            "effort": 4.734648229032246e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5290803276002407e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9162175703968387e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544168536551297,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501537911593914,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010604899580357596,
+            "effort_nm": 2.633442636579275e-05
+          },
+          "J6": {
+            "position_rad": 4.66815399704501e-05,
+            "velocity_rad_s": 4.653310043067904e-06,
+            "effort_nm": 3.8716825656592846e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496489226,
+          -0.2526940761492521,
+          0.2812615389974951
+        ],
+        "orientation_xyzw": [
+          0.27694817159726814,
+          0.8772228751677366,
+          -0.37231714363438334,
+          -0.12312466076019815
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758048204,
+        0.29626382905096504,
+        0.06490230509591646
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.583232472999953,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2192885985059547e-07,
+        -3.0286503260867903e-07,
+        -1.5030995825782156e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004620552062988281,
+        "alignment_error_seconds": 0.0004620552062988281,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093351425486617e-06,
+            "effort": 1.7915751016062131e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.247846729616867e-06,
+            "effort": 1.387680867992458e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806778218597,
+            "velocity_rad_s": -1.5294930562959053e-05,
+            "effort_nm": 0.04355696588754654
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.912307197926566e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254495433997363,
+            "effort_nm": 0.4440702795982361
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501588552258909,
+            "effort_nm": 0.00208195298910141
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607428703224286,
+            "effort_nm": 2.6361667551100254e-05
+          },
+          "J6": {
+            "position_rad": 4.668163455789909e-05,
+            "velocity_rad_s": 4.65388256998267e-06,
+            "effort_nm": 3.86833562515676e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494957324,
+          -0.25269407614830636,
+          0.28126153902475864
+        ],
+        "orientation_xyzw": [
+          0.2769481715776392,
+          0.8772228751556886,
+          -0.3723171436760226,
+          -0.12312466076427384
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253065120611,
+        0.2962638280143759,
+        0.0649023061783085
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.703316889999769,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.272441742614319e-07,
+        -2.6666123176255496e-07,
+        -1.558937441359376e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004458427429199219,
+        "alignment_error_seconds": 0.0004458427429199219,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120620805129874e-06,
+            "effort": 1.815698591478565e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.058740043750731e-06,
+            "effort": 2.501752138783786e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5282774256775156e-05,
+            "effort_nm": 0.04355660825967789
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.910631226564874e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254584200680256,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750185688957572,
+            "effort_nm": 0.00208168663084507
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010608010779833421,
+            "effort_nm": 2.6361551135778427e-05
+          },
+          "J6": {
+            "position_rad": 4.6681627281941473e-05,
+            "velocity_rad_s": 4.66376786789624e-06,
+            "effort_nm": 3.871391527354717e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494868545,
+          -0.25269407615327527,
+          0.28126153901594186
+        ],
+        "orientation_xyzw": [
+          0.2769481715759718,
+          0.877222875162118,
+          -0.37231714366437196,
+          -0.12312466075744798
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253065150179,
+        0.29626382800968876,
+        0.06490230617609201
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.825712976000432,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.327496014866483e-07,
+        -2.927403670582862e-07,
+        -1.7707833421809482e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004925727844238281,
+        "alignment_error_seconds": 0.0004925727844238281,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093908036244102e-06,
+            "effort": 1.066570387564525e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268166660243878e-06,
+            "effort": 5.158162785789955e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.529166729596909e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9164956484019058e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544162715785205,
+            "effort_nm": 0.44407033920288086
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501528598368168,
+            "effort_nm": 0.002081695944070816
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010604904673527926,
+            "effort_nm": 2.639155718497932e-05
+          },
+          "J6": {
+            "position_rad": 4.668156907428056e-05,
+            "velocity_rad_s": 4.6530603867722675e-06,
+            "effort_nm": 3.871464286930859e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496305548,
+          -0.25269407615067807,
+          0.28126153899757816
+        ],
+        "orientation_xyzw": [
+          0.27694817160686563,
+          0.8772228751646517,
+          -0.3723171436367667,
+          -0.12312466075338159
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530759032536,
+        0.2962638290451832,
+        0.06490230509449386
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 5.945090368999445,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.06884680614894e-07,
+        -2.875417237646616e-07,
+        -1.5162243016675347e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004734992980957031,
+        "alignment_error_seconds": 0.0004734992980957031,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09398443379905e-06,
+            "effort": 4.2784076281776606e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268254426482599e-06,
+            "effort": 9.626816011021333e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.529200017102994e-05,
+            "effort_nm": 0.04355660825967789
+          },
+          "J2": {
+            "position_rad": -0.00035005438257940114,
+            "velocity_rad_s": 1.911012304844917e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544721509329975,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501536165364087,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607072908896953,
+            "effort_nm": 2.636216231621802e-05
+          },
+          "J6": {
+            "position_rad": 4.6681510866619647e-05,
+            "velocity_rad_s": 4.65360562884598e-06,
+            "effort_nm": 3.870736691169441e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495570858,
+          -0.25269407615638223,
+          0.2812615389979104
+        ],
+        "orientation_xyzw": [
+          0.2769481715527071,
+          0.8772228751815307,
+          -0.3723171436333104,
+          -0.1231246607653954
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530649137166,
+        0.2962638280134128,
+        0.06490230617847279
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.06546379700012,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.435737537278328e-07,
+        -2.82173573395994e-07,
+        -1.8837805271232355e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00048470497131347656,
+        "alignment_error_seconds": 0.00048470497131347656,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120502570818644e-06,
+            "effort": 2.0569494552091783e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.060848707216792e-06,
+            "effort": 1.4572701445558778e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.5284022083505988e-05,
+            "effort_nm": 0.043556563556194305
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.912563220685115e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544558527879417,
+            "effort_nm": 0.4440702795982361
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501835352741182,
+            "effort_nm": 0.002081630751490593
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607035073917359,
+            "effort_nm": 2.6389025151729584e-05
+          },
+          "J6": {
+            "position_rad": 4.6681514504598454e-05,
+            "velocity_rad_s": 4.663813342631329e-06,
+            "effort_nm": 3.869718057103455e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494684878,
+          -0.25269407615470124,
+          0.2812615390160249
+        ],
+        "orientation_xyzw": [
+          0.27694817153610396,
+          0.8772228751746497,
+          -0.3723171436598127,
+          -0.12312466077162602
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864307786,
+        0.29626383015265945,
+        0.06490230399533001
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.187410410999291,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.177119876658253e-07,
+        -2.7697956284100655e-07,
+        -1.6292246129978594e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00045418739318847656,
+        "alignment_error_seconds": 0.00045418739318847656,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094049917417578e-06,
+            "effort": 9.858980298815823e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268339918984566e-06,
+            "effort": 4.973563783039481e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.529077417217195e-05,
+            "effort_nm": 0.043556615710258484
+          },
+          "J2": {
+            "position_rad": -0.00035005438257940114,
+            "velocity_rad_s": 1.915996563184308e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254356608726084,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501535583287477,
+            "effort_nm": 0.0020817089825868607
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605607531033456,
+            "effort_nm": 2.638940350152552e-05
+          },
+          "J6": {
+            "position_rad": 4.668156907428056e-05,
+            "velocity_rad_s": 4.653038104152074e-06,
+            "effort_nm": 3.871027729474008e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495694667,
+          -0.25269407615114137,
+          0.28126153900671114
+        ],
+        "orientation_xyzw": [
+          0.2769481715852962,
+          0.87722287516535,
+          -0.37231714364910284,
+          -0.1231246607596203
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758447443,
+        0.2962638290613604,
+        0.06490230509129138
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.307865712000421,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.23266698135194e-07,
+        -3.028483774869528e-07,
+        -1.5308627610011172e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00048470497131347656,
+        "alignment_error_seconds": 0.00048470497131347656,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120570782921277e-06,
+            "effort": 8.270872875471014e-11
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.0588232625159435e-06,
+            "effort": 1.8171637528041629e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5282465028576553e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.914275117087527e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544424650259316,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501861546188593,
+            "effort_nm": 0.0020816978067159653
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606067371554673,
+            "effort_nm": 2.636242425069213e-05
+          },
+          "J6": {
+            "position_rad": 4.668160909204744e-05,
+            "velocity_rad_s": 4.664344942284515e-06,
+            "effort_nm": 3.871537046507001e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549513451,
+          -0.2526940761512105,
+          0.2812615390158216
+        ],
+        "orientation_xyzw": [
+          0.2769481715582196,
+          0.8772228751678017,
+          -0.37231714366038005,
+          -0.12312466076895442
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530649816098,
+        0.29626382802022105,
+        0.06490230617815168
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.431384149998848,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.286621617666242e-07,
+        -2.6710657152761996e-07,
+        -1.5861303381825564e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0007898807525634766,
+        "alignment_error_seconds": 0.0007898807525634766,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120670827338472e-06,
+            "effort": 2.1049276099915915e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.061060619482305e-06,
+            "effort": 1.4618147758937994e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.5283769243978895e-05,
+            "effort_nm": 0.04355655610561371
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.9153428638674086e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042543793097138405,
+            "effort_nm": 0.44407039880752563
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501848740503192,
+            "effort_nm": 0.0020816437900066376
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605624265735969,
+            "effort_nm": 2.6390363927930593e-05
+          },
+          "J6": {
+            "position_rad": 4.66815909021534e-05,
+            "velocity_rad_s": 4.663862455345225e-06,
+            "effort_nm": 3.8691359804943204e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549612187,
+          -0.2526940761521041,
+          0.28126153899766115
+        ],
+        "orientation_xyzw": [
+          0.2769481716068892,
+          0.8772228751645894,
+          -0.3723171436378064,
+          -0.12312466075062865
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253065178876,
+        0.2962638279842532,
+        0.06490230618274082
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.550471960999857,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3427243667792936e-07,
+        -2.9372912990766054e-07,
+        -1.6420763415680995e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004687309265136719,
+        "alignment_error_seconds": 0.0004687309265136719,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.12172129371902e-06,
+            "effort": 1.793970909602649e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.0796388677554205e-06,
+            "effort": 1.3848869002686115e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966798774665222,
+            "velocity_rad_s": -1.5277366401278414e-05,
+            "effort_nm": 0.04355630278587341
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9162785065418575e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254413361195475,
+            "effort_nm": 0.4440702795982361
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501857471652329,
+            "effort_nm": 0.0020814090967178345
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605252464301884,
+            "effort_nm": 2.636061981320381e-05
+          },
+          "J6": {
+            "position_rad": 4.668155816034414e-05,
+            "velocity_rad_s": 4.664440439228201e-06,
+            "effort_nm": 3.8746657082811e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549648923,
+          -0.252694076149252,
+          0.2812615389974951
+        ],
+        "orientation_xyzw": [
+          0.276948171622799,
+          0.8772228751596763,
+          -0.37231714363796636,
+          -0.12312466074936232
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530759772686,
+        0.2962638290366557,
+        0.06490230509591688
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.671640677999676,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.083854889813665e-07,
+        -2.8846199029430863e-07,
+        -1.5428587119004078e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004937648773193359,
+        "alignment_error_seconds": 0.0004937648773193359,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121460268739611e-06,
+            "effort": 2.0008829437756503e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.0770513553288765e-06,
+            "effort": 1.2393413726385916e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.527766653453e-05,
+            "effort_nm": 0.04355638474225998
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.9089300167252077e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254531522747129,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501840591430664,
+            "effort_nm": 0.002081502228975296
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607469448586926,
+            "effort_nm": 2.636108547449112e-05
+          },
+          "J6": {
+            "position_rad": 4.6681576350238174e-05,
+            "velocity_rad_s": 4.663496838475112e-06,
+            "effort_nm": 3.8774305721744895e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138085,
+          -0.25269407614769873,
+          0.28126153900651074
+        ],
+        "orientation_xyzw": [
+          0.27694817158975277,
+          0.8772228751640752,
+          -0.3723171436472267,
+          -0.12312466076435113
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530650355736,
+        0.29626382799932016,
+        0.06490230618439538
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.789832861999457,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.449762229796761e-07,
+        -2.8271745122765424e-07,
+        -1.7555731801621732e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005090236663818359,
+        "alignment_error_seconds": 0.0005090236663818359,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094104487099685e-06,
+            "effort": 2.784942276790048e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268379936751444e-06,
+            "effort": 5.54967183319377e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.529155815660488e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.909455022541806e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254568775650114,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501535583287477,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607903823256493,
+            "effort_nm": 2.63644615188241e-05
+          },
+          "J6": {
+            "position_rad": 4.668158362619579e-05,
+            "velocity_rad_s": 4.651905328501016e-06,
+            "effort_nm": 3.8716825656592846e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496505416,
+          -0.2526940761448466,
+          0.28126153900634443
+        ],
+        "orientation_xyzw": [
+          0.2769481716120447,
+          0.877222875157147,
+          -0.3723171436482829,
+          -0.12312466076037584
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758770785,
+        0.2962638290481453,
+        0.06490230509757097
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 6.911904669999785,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1916115378626273e-07,
+        -2.7766222387981543e-07,
+        -1.5008623677204014e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.000492095947265625,
+        "alignment_error_seconds": 0.000492095947265625,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093339602055494e-06,
+            "effort": 1.815575956243265e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.247999979474116e-06,
+            "effort": 1.3737353583564982e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.5296358469640836e-05,
+            "effort_nm": 0.04355694353580475
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9113947473670123e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254514060448855,
+            "effort_nm": 0.4440702497959137
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501562940888107,
+            "effort_nm": 0.0020819474011659622
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607677540974692,
+            "effort_nm": 2.6361056370660663e-05
+          },
+          "J6": {
+            "position_rad": 4.668159817811102e-05,
+            "velocity_rad_s": 4.653014912037179e-06,
+            "effort_nm": 3.8678263081237674e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496121878,
+          -0.252694076152104,
+          0.2812615389976612
+        ],
+        "orientation_xyzw": [
+          0.276948171586146,
+          0.8772228751711384,
+          -0.3723171436348945,
+          -0.12312466075943254
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757969048,
+        0.29626382905639337,
+        0.06490230509307154
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.033841336000478,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2475326722524187e-07,
+        -3.0376151016753283e-07,
+        -1.5574640599425038e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004856586456298828,
+        "alignment_error_seconds": 0.0004856586456298828,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094119039014913e-06,
+            "effort": 1.3625558459295917e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.2684658840007614e-06,
+            "effort": 3.0661340133519843e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.0001196680314023979,
+            "velocity_rad_s": -1.5290734154405072e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.91189633369504e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254424129612744,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501549553126097,
+            "effort_nm": 0.0020817071199417114
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606756404740736,
+            "effort_nm": 2.6387424441054463e-05
+          },
+          "J6": {
+            "position_rad": 4.6681550884386525e-05,
+            "velocity_rad_s": 4.653703399526421e-06,
+            "effort_nm": 3.870736691169441e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138088,
+          -0.2526940761476988,
+          0.28126153900651063
+        ],
+        "orientation_xyzw": [
+          0.27694817159453955,
+          0.8772228751625639,
+          -0.3723171436478985,
+          -0.12312466076231951
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086584192,
+        0.2962638301176659,
+        0.06490230400505603
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.152195221000511,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.300461569073377e-07,
+        -2.674007930636435e-07,
+        -1.613485096640943e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004801750183105469,
+        "alignment_error_seconds": 0.0004801750183105469,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094195436569862e-06,
+            "effort": 1.0436560504700765e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.2682535169878975e-06,
+            "effort": 1.7760667603283764e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.5290570445358753e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9091755802946864e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042545897304080427,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750154722481966,
+            "effort_nm": 0.0020816922187805176
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010608136653900146,
+            "effort_nm": 2.6363093638792634e-05
+          },
+          "J6": {
+            "position_rad": 4.668156543630175e-05,
+            "velocity_rad_s": 4.653828909795266e-06,
+            "effort_nm": 3.8716825656592846e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495052223,
+          -0.2526940761518493,
+          0.2812615390158589
+        ],
+        "orientation_xyzw": [
+          0.2769481715552049,
+          0.8772228751687291,
+          -0.372317143660421,
+          -0.12312466076900526
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086492586,
+        0.29626383014275914,
+        0.06490230399817531
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.273907185999633,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3562434370869596e-07,
+        -2.9369354592745367e-07,
+        -1.6698383831226238e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004782676696777344,
+        "alignment_error_seconds": 0.0004782676696777344,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09398443379905e-06,
+            "effort": 2.816204380806653e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.2683294597954955e-06,
+            "effort": 1.5794663354995464e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966805323027074,
+            "velocity_rad_s": -1.5290264855138958e-05,
+            "effort_nm": 0.043556615710258484
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9152878394379513e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544197640381753,
+            "effort_nm": 0.44407033920288086
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501541986130178,
+            "effort_nm": 0.002081695944070816
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605013085296378,
+            "effort_nm": 2.6389112463220954e-05
+          },
+          "J6": {
+            "position_rad": 4.66815909021534e-05,
+            "velocity_rad_s": 4.652910774893826e-06,
+            "effort_nm": 3.870663931593299e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494868553,
+          -0.2526940761532754,
+          0.2812615390159418
+        ],
+        "orientation_xyzw": [
+          0.27694817156320645,
+          0.877222875166148,
+          -0.3723171436625805,
+          -0.12312466076286596
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758220977,
+        0.2962638290773577,
+        0.06490230508642209
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.3967341289990145,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000023767352104,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.0974575199470564e-07,
+        -2.8841964194725733e-07,
+        -1.5706210376720264e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00045990943908691406,
+        "alignment_error_seconds": 0.00045990943908691406,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120605343719944e-06,
+            "effort": 3.241578783175214e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.059097929915879e-06,
+            "effort": 1.4980402696096462e-08
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966799502260983,
+            "velocity_rad_s": -1.5282968888641335e-05,
+            "effort_nm": 0.04355660825967789
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.91385083780915e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544223833829165,
+            "effort_nm": 0.444070428609848
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501867949031293,
+            "effort_nm": 0.0020816754549741745
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606482101138681,
+            "effort_nm": 2.6392692234367132e-05
+          },
+          "J6": {
+            "position_rad": 4.668155452236533e-05,
+            "velocity_rad_s": 4.664867446990684e-06,
+            "effort_nm": 3.871464286930859e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285496138082,
+          -0.25269407614769857,
+          0.28126153900651063
+        ],
+        "orientation_xyzw": [
+          0.27694817159613533,
+          0.8772228751620604,
+          -0.37231714364812213,
+          -0.12312466076164215
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530650786846,
+        0.29626382799574275,
+        0.06490230618439571
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.5138827779992425,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.4636624352278886e-07,
+        -2.828328433679417e-07,
+        -1.7831492016284756e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005080699920654297,
+        "alignment_error_seconds": 0.0005080699920654297,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09401990409242e-06,
+            "effort": 1.6953598525049074e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.2684054026030935e-06,
+            "effort": 5.731681795850818e-11
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.0001196680314023979,
+            "velocity_rad_s": -1.5291223462554626e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9145625174132874e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042543691233731806,
+            "effort_nm": 0.44407039880752563
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501544314436615,
+            "effort_nm": 0.0020817220211029053
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606177238514647,
+            "effort_nm": 2.6390625862404704e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.653331416193396e-06,
+            "effort_nm": 3.871537046507001e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549632176,
+          -0.25269407614627265,
+          0.2812615390064274
+        ],
+        "orientation_xyzw": [
+          0.2769481716024946,
+          0.8772228751601074,
+          -0.3723171436479785,
+          -0.12312466076168638
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530758461751,
+        0.2962638290530955,
+        0.06490230509614842
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.635164616998736,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.205248274047335e-07,
+        -2.7762484933191445e-07,
+        -1.5286245513834729e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0006504058837890625,
+        "alignment_error_seconds": 0.0006504058837890625,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121420250972733e-06,
+            "effort": 1.9855077937336318e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.077129117125878e-06,
+            "effort": 1.2401851563481614e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5278397768270224e-05,
+            "effort_nm": 0.04355635493993759
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9121562218060717e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544843745417893,
+            "effort_nm": 0.4440702497959137
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501833024434745,
+            "effort_nm": 0.0020814593881368637
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606551950331777,
+            "effort_nm": 2.6359804905951023e-05
+          },
+          "J6": {
+            "position_rad": 4.6681550884386525e-05,
+            "velocity_rad_s": 4.663489562517498e-06,
+            "effort_nm": 3.8770667742937803e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494517404,
+          -0.2526940761517219,
+          0.2812615390249576
+        ],
+        "orientation_xyzw": [
+          0.27694817154132984,
+          0.8772228751670206,
+          -0.37231714367340846,
+          -0.12312466077311429
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757139898,
+        0.29626382909427623,
+        0.06490230508523134
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.756486099999165,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.262176389602246e-07,
+        -3.0436092401942005e-07,
+        -1.584478184213367e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005047321319580078,
+        "alignment_error_seconds": 0.0005047321319580078,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093919859675225e-06,
+            "effort": 2.4778135099268184e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268258519208757e-06,
+            "effort": 1.3063861104001262e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5291463569155894e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9158931081619812e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254459636285901,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501539657823741,
+            "effort_nm": 0.0020816903561353683
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605002898955718,
+            "effort_nm": 2.6334280846640468e-05
+          },
+          "J6": {
+            "position_rad": 4.668152178055607e-05,
+            "velocity_rad_s": 4.653591076930752e-06,
+            "effort_nm": 3.8713187677785754e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770737,
+          -0.25269407615055084,
+          0.28126153900667683
+        ],
+        "orientation_xyzw": [
+          0.2769481715754388,
+          0.8772228751684847,
+          -0.37231714364729,
+          -0.12312466076494008
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086522386,
+        0.2962638301275663,
+        0.06490230400221092
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.878415110999413,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.314796342441696e-07,
+        -2.678385442322906e-07,
+        -1.640687798953877e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004184246063232422,
+        "alignment_error_seconds": 0.0004184246063232422,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.094113582046703e-06,
+            "effort": 1.6635461008718266e-08
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.266471362119773e-06,
+            "effort": 1.3323757741545705e-07
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.529043038317468e-05,
+            "effort_nm": 0.04355667531490326
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9161502677889075e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254426748957485,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501558284275234,
+            "effort_nm": 0.0020817220211029053
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605228453641757,
+            "effort_nm": 2.635992132127285e-05
+          },
+          "J6": {
+            "position_rad": 4.6681550884386525e-05,
+            "velocity_rad_s": 4.654168151319027e-06,
+            "effort_nm": 3.872337401844561e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549505222,
+          -0.25269407615184936,
+          0.2812615390158589
+        ],
+        "orientation_xyzw": [
+          0.27694817154882195,
+          0.8772228751707442,
+          -0.37231714365952534,
+          -0.1231246607717142
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253086449474,
+        0.2962638301463365,
+        0.06490230399817512
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 7.996132304999264,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3701786012206867e-07,
+        -2.939746650554298e-07,
+        -1.6972276739579684e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00047707557678222656,
+        "alignment_error_seconds": 0.00047707557678222656,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.120518032228574e-06,
+            "effort": 1.7902543891779032e-09
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.05876005263417e-06,
+            "effort": 3.1911090436764766e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.528265420347452e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.911197614390403e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042545044561848044,
+            "effort_nm": 0.4440701901912689
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501857471652329,
+            "effort_nm": 0.0020816978067159653
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.0001060789727489464,
+            "effort_nm": 2.6361725758761168e-05
+          },
+          "J6": {
+            "position_rad": 4.668163455789909e-05,
+            "velocity_rad_s": 4.663446816266514e-06,
+            "effort_nm": 3.871609806083143e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495419565,
+          -0.2526940761489973,
+          0.2812615390156927
+        ],
+        "orientation_xyzw": [
+          0.2769481715679229,
+          0.8772228751648236,
+          -0.3723171436601336,
+          -0.1231246607690934
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757531387,
+        0.2962638290759218,
+        0.06490230509069006
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.117582618999222,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000021904706955,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1118443050436326e-07,
+        -2.8867671630905534e-07,
+        -1.5980764089817967e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004398822784423828,
+        "alignment_error_seconds": 0.0004398822784423828,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093949873000383e-06,
+            "effort": 6.087017556666297e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268158020044211e-06,
+            "effort": 7.219007613912254e-10
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966803867835552,
+            "velocity_rad_s": -1.5290483133867383e-05,
+            "effort_nm": 0.043556615710258484
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9146775684930617e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254473024047911,
+            "effort_nm": 0.44407016038894653
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501548388972878,
+            "effort_nm": 0.0020816996693611145
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010604792623780668,
+            "effort_nm": 2.633524127304554e-05
+          },
+          "J6": {
+            "position_rad": 4.6681601816089824e-05,
+            "velocity_rad_s": 4.653237738239113e-06,
+            "effort_nm": 3.8713187677785754e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495068424,
+          -0.2526940761474439,
+          0.28126153902470835
+        ],
+        "orientation_xyzw": [
+          0.27694817160189455,
+          0.8772228751480642,
+          -0.3723171436788003,
+          -0.1231246607556383
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530545059772,
+        0.2962638269405108,
+        0.06490230726883842
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.240497507000327,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.478981452393782e-07,
+        -2.838994532794459e-07,
+        -1.809601712920994e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005133152008056641,
+        "alignment_error_seconds": 0.0005133152008056641,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.09405628388049e-06,
+            "effort": 9.264533584740775e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.268420864013024e-06,
+            "effort": 1.15583964621635e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966802412644029,
+            "velocity_rad_s": -1.5291590898414142e-05,
+            "effort_nm": 0.04355663061141968
+          },
+          "J2": {
+            "position_rad": -0.0003500544116832316,
+            "velocity_rad_s": 1.9092269667453365e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042545906035229564,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501550717279315,
+            "effort_nm": 0.002081712707877159
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607991134747863,
+            "effort_nm": 2.6364141376689076e-05
+          },
+          "J6": {
+            "position_rad": 4.668152178055607e-05,
+            "velocity_rad_s": 4.6540617404389195e-06,
+            "effort_nm": 3.871537046507001e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495570866,
+          -0.2526940761563823,
+          0.28126153899791034
+        ],
+        "orientation_xyzw": [
+          0.2769481715574942,
+          0.8772228751800196,
+          -0.3723171436339821,
+          -0.12312466076336345
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757041932,
+        0.2962638290712441,
+        0.06490230508880324
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.362387293998836,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.220693767820194e-07,
+        -2.788533208786248e-07,
+        -1.5549017007288057e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004324913024902344,
+        "alignment_error_seconds": 0.0004324913024902344,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093290489341598e-06,
+            "effort": 1.8075490970659303e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.247889930615202e-06,
+            "effort": 1.3861447314411635e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966804595431313,
+            "velocity_rad_s": -1.5295643606805243e-05,
+            "effort_nm": 0.04355695843696594
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.915785787787172e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544148163869977,
+            "effort_nm": 0.4440702497959137
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501579821109772,
+            "effort_nm": 0.0020819567143917084
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605944407870993,
+            "effort_nm": 2.636207500472665e-05
+          },
+          "J6": {
+            "position_rad": 4.6681550884386525e-05,
+            "velocity_rad_s": 4.654500571632525e-06,
+            "effort_nm": 3.868481144309044e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494501208,
+          -0.2526940761561274,
+          0.28126153901610806
+        ],
+        "orientation_xyzw": [
+          0.27694817153293605,
+          0.8772228751755952,
+          -0.3723171436604044,
+          -0.12312466077022742
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530756848445,
+        0.2962638290935182,
+        0.06490230508357694
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.481784933999734,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.2772609276653384e-07,
+        -3.0561915309590404e-07,
+        -1.610690816278293e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004558563232421875,
+        "alignment_error_seconds": 0.0004558563232421875,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121580322040245e-06,
+            "effort": 2.006847523716715e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.077247351437109e-06,
+            "effort": 1.2408709153532982e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966801685048267,
+            "velocity_rad_s": -1.5278530554496683e-05,
+            "effort_nm": 0.04355636239051819
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9148010323988274e-06,
+            "effort_nm": 1.1357707977294922
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.0004254447703715414,
+            "effort_nm": 0.4440702497959137
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501840009354055,
+            "effort_nm": 0.002081470564007759
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010605108400341123,
+            "effort_nm": 2.6358437025919557e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.664198058890179e-06,
+            "effort_nm": 3.876339178532362e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495770737,
+          -0.25269407615055084,
+          0.2812615390066769
+        ],
+        "orientation_xyzw": [
+          0.2769481715706518,
+          0.877222875169996,
+          -0.37231714364661833,
+          -0.12312466076697172
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530757319104,
+        0.2962638290697349,
+        0.06490230509188039
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.601992481999332,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000027492642403,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.330915146510961e-07,
+        -2.693848841772706e-07,
+        -1.6665775603996735e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.00047516822814941406,
+        "alignment_error_seconds": 0.00047516822814941406,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093478754744865e-06,
+            "effort": 1.8086065267652884e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.248270099400543e-06,
+            "effort": 1.3730739283346338e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966803867835552,
+            "velocity_rad_s": -1.5296132914954796e-05,
+            "effort_nm": 0.04355694353580475
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9120157048746478e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.000425449077738449,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501585059799254,
+            "effort_nm": 0.002081936225295067
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010607677540974692,
+            "effort_nm": 2.6363064534962177e-05
+          },
+          "J6": {
+            "position_rad": 4.6681536332471296e-05,
+            "velocity_rad_s": 4.655229531635996e-06,
+            "effort_nm": 3.8675352698192e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.2087228549558707,
+          -0.2526940761519768,
+          0.28126153900675993
+        ],
+        "orientation_xyzw": [
+          0.27694817156269713,
+          0.8772228751724527,
+          -0.37231714364653784,
+          -0.12312466076760502
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530864699265,
+        0.29626383013430513,
+        0.06490230400078842
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.719517785999415,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.3867274257536337e-07,
+        -2.9532486678363057e-07,
+        -1.7233975313502015e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0004482269287109375,
+        "alignment_error_seconds": 0.0004482269287109375,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.093231372185983e-06,
+            "effort": 1.8133712842427485e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.247927674645325e-06,
+            "effort": 1.387481916026445e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966806050622836,
+            "velocity_rad_s": -1.5294561308110133e-05,
+            "effort_nm": 0.04355696588754654
+          },
+          "J2": {
+            "position_rad": -0.00035005444078706205,
+            "velocity_rad_s": 1.9127107862004777e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042543921153992414,
+            "effort_nm": 0.44407033920288086
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501592626795173,
+            "effort_nm": 0.0020819269120693207
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606724390527233,
+            "effort_nm": 2.6386784156784415e-05
+          },
+          "J6": {
+            "position_rad": 4.668163091992028e-05,
+            "velocity_rad_s": 4.654030817619059e-06,
+            "effort_nm": 3.867462510243058e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494884754,
+          -0.25269407614887,
+          0.28126153902479145
+        ],
+        "orientation_xyzw": [
+          0.2769481715763874,
+          0.8772228751560622,
+          -0.37231714367625646,
+          -0.12312466076372121
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253075883578,
+        0.2962638290754329,
+        0.06490230508807654
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.842078228999526,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1276160800407524e-07,
+        -2.903329630044027e-07,
+        -1.4685350890886184e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005173683166503906,
+        "alignment_error_seconds": 0.0005173683166503906,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.12044436315773e-06,
+            "effort": 5.571683114879988e-10
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.058694114268292e-06,
+            "effort": 1.5890222471171e-09
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966801685048267,
+            "velocity_rad_s": -1.528151005913969e-05,
+            "effort_nm": 0.04355662316083908
+          },
+          "J2": {
+            "position_rad": -0.00035005449899472296,
+            "velocity_rad_s": 1.9133144633087795e-06,
+            "effort_nm": 1.1357710361480713
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042544706957414746,
+            "effort_nm": 0.4440702199935913
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.0007501870859414339,
+            "effort_nm": 0.0020816847681999207
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.0001060561480699107,
+            "effort_nm": 2.6332330889999866e-05
+          },
+          "J6": {
+            "position_rad": 4.6681649109814316e-05,
+            "velocity_rad_s": 4.664108018914703e-06,
+            "effort_nm": 3.8716825656592846e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285494900947,
+          -0.2526940761444645,
+          0.28126153903364104
+        ],
+        "orientation_xyzw": [
+          0.27694817158797286,
+          0.8772228751464802,
+          -0.37231714368970825,
+          -0.12312466076525362
+        ]
+      },
+      "tcp_to_block_m": [
+        0.2458253075934281,
+        0.2962638290744022,
+        0.06490230508973122
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    },
+    {
+      "seconds": 8.964126943999872,
+      "position_m": [
+        -0.3200000596046448,
+        0.020000025629997253,
+        0.025000035762786865
+      ],
+      "orientation_xyzw": [
+        -4.1809212802945694e-07,
+        -2.540613479595777e-07,
+        -1.679802750231829e-07,
+        1.0
+      ],
+      "jaw_m": {
+        "J8": 0.033499885350465775,
+        "J9": 0.033498167991638184
+      },
+      "joint_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0005736351013183594,
+        "alignment_error_seconds": 0.0005736351013183594,
+        "jaws": {
+          "J8": {
+            "position": 0.033499885350465775,
+            "velocity": 8.121558494167402e-06,
+            "effort": 1.805668148335826e-07
+          },
+          "J9": {
+            "position": 0.033498167991638184,
+            "velocity": -5.079232778371079e-06,
+            "effort": 1.3702729120268486e-06
+          }
+        },
+        "arm": {
+          "J1": {
+            "position_rad": -0.00011966800957452506,
+            "velocity_rad_s": -1.5276404155883938e-05,
+            "effort_nm": 0.043556325137615204
+          },
+          "J2": {
+            "position_rad": -0.0003500544698908925,
+            "velocity_rad_s": 1.9145354599459097e-06,
+            "effort_nm": 1.1357709169387817
+          },
+          "J3": {
+            "position_rad": -1.4874682426452637,
+            "velocity_rad_s": 0.00042543973540887237,
+            "effort_nm": 0.44407036900520325
+          },
+          "J4": {
+            "position_rad": 2.486844778060913,
+            "velocity_rad_s": -0.000750184990465641,
+            "effort_nm": 0.002081438899040222
+          },
+          "J5": {
+            "position_rad": -0.48827826976776123,
+            "velocity_rad_s": -0.00010606490832287818,
+            "effort_nm": 2.6389519916847348e-05
+          },
+          "J6": {
+            "position_rad": 4.668158362619579e-05,
+            "velocity_rad_s": 4.663469553634059e-06,
+            "effort_nm": 3.875393304042518e-07
+          }
+        },
+        "contact_state": "not_loaded"
+      },
+      "tcp_measurement": {
+        "status": "fresh",
+        "age_seconds": 0.0,
+        "alignment_error_seconds": 0.0,
+        "position_m": [
+          -0.20872285495587062,
+          -0.2526940761519767,
+          0.2812615390067599
+        ],
+        "orientation_xyzw": [
+          0.2769481715978016,
+          0.8772228751613699,
+          -0.3723171436514648,
+          -0.1231246607527057
+        ]
+      },
+      "tcp_to_block_m": [
+        0.24582530759488996,
+        0.29626382905411586,
+        0.06490230509045819
+      ],
+      "relative_displacement_from_contact_m": null,
+      "relative_displacement_norm_m": null
+    }
+  ]
+}

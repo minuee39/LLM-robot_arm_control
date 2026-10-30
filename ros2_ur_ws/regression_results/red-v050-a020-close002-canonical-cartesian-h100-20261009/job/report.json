@@ -1,0 +1,109 @@
+{
+  "job_id": "palletize-1791548880",
+  "created_at": 1791548998.0881422,
+  "requested_count": 1,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "planning_or_startup",
+  "motion_scaling": {
+    "arm_velocity": 0.5,
+    "arm_acceleration": 0.2,
+    "cartesian_velocity": 0.5,
+    "cartesian_acceleration": 0.2
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 1,
+      "elapsed_seconds": 106.14557122500003,
+      "passed": false,
+      "log": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-03.log",
+      "task_state": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-03-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 917,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          -0.32,
+          0.10000001639127731,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -1.6231020083523617e-07,
+          -2.1525805493638472e-07,
+          6.204204083815057e-08,
+          1.0
+        ],
+        "max_height": 0.02500009536743164,
+        "transfer_min_bottom_clearance": null,
+        "transfer_sample_count": 0,
+        "final_xy_error": 0.6767569818312709,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998547,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 914,
+          "joint_fresh_sample_count": 914,
+          "contact_reference_available": false
+        },
+        "max_contact_relative_displacement_m": null,
+        "max_loaded_jaw_asymmetry_m": null,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": false,
+        "release_seconds": null,
+        "post_release_recontact_detected": null,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": null,
+        "placement_pass": false
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 1,
+          "log": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        },
+        {
+          "attempt": 2,
+          "returncode": 1,
+          "log": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-02.log",
+          "task_state": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-02-task.json",
+          "place_yaw": 0.0
+        },
+        {
+          "attempt": 3,
+          "returncode": 1,
+          "log": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-03.log",
+          "task_state": "ros2_ur_ws/regression_results/red-v050-a020-close002-canonical-cartesian-h100-20261009/job/01-red_block-attempt-03-task.json",
+          "place_yaw": 0.0
+        }
+      ]
+    }
+  ]
+}

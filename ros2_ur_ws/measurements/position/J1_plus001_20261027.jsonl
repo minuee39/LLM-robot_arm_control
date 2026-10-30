@@ -1,0 +1,4 @@
+{"event": "live_configuration", "joint": "J1", "limits": {"current_limit_a": null, "current_trip_a": 0.2, "velocity_rad_s": 0.1, "acceleration_rad_s2": 0.1, "travel_rad": 0.02, "goal_tolerance_rad": 0.001, "timeout_s": 4.0, "hold_s": 0.5, "period_s": 0.05, "feedback_timeout_s": 0.015, "watchdog_s": 0.25}}
+{"event": "current_limit_preserved", "observed_current_limit_a": 16.0, "measured_current_trip_a": 0.2}
+{"event": "profile_sent_write_only", "velocity_joint_rad_s": 0.1, "acceleration_joint_rad_s2": 0.1}
+{"event": "stop_confirmed"}

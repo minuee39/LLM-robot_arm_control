@@ -1,0 +1,48 @@
+{
+  "job_id": "palletize-1791555916",
+  "created_at": 1791556228.310643,
+  "requested_count": 1,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "monitoring",
+  "motion_scaling": {
+    "arm_velocity": 0.3,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.3,
+    "cartesian_acceleration": 0.05
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 300.84687937299987,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-02.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-02-task.json",
+      "motion_summary": null,
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 1,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0
+        },
+        {
+          "attempt": 2,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-02.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/stage1-externalforces-transfer-r2-20261009/job/01-red_block-attempt-02-task.json",
+          "place_yaw": 0.0
+        }
+      ],
+      "error": "motion monitor result unavailable",
+      "monitoring_failure": true
+    }
+  ]
+}

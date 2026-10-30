@@ -1,0 +1,26 @@
+{
+  "motor_id": 7,
+  "motor_model": "RS05",
+  "source": "User measured Motor app actual position and finger opening, 2026-10-27",
+  "angle_unit": "rad",
+  "opening_unit": "mm",
+  "angle_reference": "Motor app raw measured position at measurement time; do not re-zero without recalibration",
+  "samples": [
+    {"motor_angle_rad": -12.0, "opening_mm": 0.0},
+    {"motor_angle_rad": 0.0, "opening_mm": 20.0},
+    {"motor_angle_rad": 12.0, "opening_mm": 40.0}
+  ],
+  "interpolation": "piecewise_linear",
+  "extrapolation": "reject",
+  "closed_tcp_point_id": "closed_fingertips_center",
+  "closed_reference_motor_rad": -12.0,
+  "closed_reference_opening_mm": 0.0,
+  "actuation_commissioned": false,
+  "notes": [
+    "Only these three points were measured; intermediate widths are interpolated.",
+    "Bounds describe the measured range, not verified current, force or stop limits.",
+    "Free-space opening estimate is not an observation of adaptive finger contact state.",
+    "Closed reference is not a mandatory grasp target when an object is present.",
+    "Existing g_r URDF joint angle is not this raw motor angle."
+  ]
+}

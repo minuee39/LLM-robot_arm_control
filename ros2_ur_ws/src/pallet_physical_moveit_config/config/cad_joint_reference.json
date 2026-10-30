@@ -1,0 +1,57 @@
+{
+  "source": "/home/minwoo/Development/LLM/ros2_ur_ws/src/pallet/urdf/pallet_with_gripper.urdf",
+  "status": "CAD_ONLY_NOT_PHYSICALLY_MEASURED",
+  "note": "Origin distance is not link exterior length or shortest distance between rotation axes.",
+  "joints": [
+    {
+      "from": "J1",
+      "to": "J2",
+      "offset_in_parent_link_mm": [
+        13.3081654565508,
+        118.35224659498999,
+        -7.68347290876137
+      ],
+      "joint_origin_distance_mm": 119.34570498279327
+    },
+    {
+      "from": "J2",
+      "to": "J3",
+      "offset_in_parent_link_mm": [
+        -213.500000000005,
+        0.0,
+        0.0
+      ],
+      "joint_origin_distance_mm": 213.500000000005
+    },
+    {
+      "from": "J3",
+      "to": "J4",
+      "offset_in_parent_link_mm": [
+        -7.999314001188029,
+        -0.15000000002296499,
+        167.23249658193302
+      ],
+      "joint_origin_distance_mm": 167.42377202033123
+    },
+    {
+      "from": "J4",
+      "to": "J5",
+      "offset_in_parent_link_mm": [
+        0.0,
+        0.0,
+        65.76799999999999
+      ],
+      "joint_origin_distance_mm": 65.76799999999999
+    },
+    {
+      "from": "J5",
+      "to": "J6",
+      "offset_in_parent_link_mm": [
+        2.0500000000000003,
+        0.0,
+        -153.65
+      ],
+      "joint_origin_distance_mm": 153.66367495280076
+    }
+  ]
+}

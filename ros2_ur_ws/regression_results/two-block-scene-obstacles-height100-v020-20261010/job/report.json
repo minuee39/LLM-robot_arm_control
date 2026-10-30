@@ -1,0 +1,182 @@
+{
+  "job_id": "palletize-1791640911",
+  "created_at": 1791641123.6201584,
+  "requested_count": 2,
+  "completed_count": 1,
+  "passed": false,
+  "failure_class": "vision",
+  "motion_scaling": {
+    "arm_velocity": 0.2,
+    "arm_acceleration": 0.05,
+    "cartesian_velocity": 0.2,
+    "cartesian_acceleration": 0.05
+  },
+  "planning_tuning": {
+    "totg_path_tolerance_rad": 0.01,
+    "scene_obstacles": true
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 156.6228247250001,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "monitoring": {
+          "monitor_id": "1cb58adc439e42c7841f4b862cc2d478",
+          "started_at_unix": 1791640922.3038657,
+          "ended_at_unix": 1791641078.2878447,
+          "end_reason": "supervisor_stop",
+          "supervised": true
+        },
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 1305,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.2379429566860199,
+          -0.2799137532711029,
+          0.025000035762786865
+        ],
+        "final_orientation_xyzw": [
+          -8.747625912519652e-08,
+          -5.150136530573945e-07,
+          0.7071701884269714,
+          0.7070434093475342
+        ],
+        "max_height": 0.12455636262893677,
+        "transfer_min_bottom_clearance": 0.09362205983761317,
+        "transfer_sample_count": 212,
+        "final_xy_error": 0.002058850575888325,
+        "final_height_error": 3.5762786863846596e-08,
+        "long_axis_vertical_cosine": 0.9999999999994542,
+        "fresh_feedback": true,
+        "telemetry": {
+          "contact_reference_method": "first_bilateral_loaded_3_samples",
+          "contact_reference_seconds": 39.624335514999984,
+          "tcp_fresh_sample_count": 1303,
+          "joint_fresh_sample_count": 1305,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0026104273691807886,
+        "max_loaded_jaw_asymmetry_m": 0.0011171549558639526,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 101.83091710199915,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.0,
+        "placement_pass": true
+      },
+      "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-motion.json",
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-attempt-01-task.json",
+          "place_yaw": 0.0,
+          "motion_output": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/two-block-scene-obstacles-height100-v020-20261010/job/01-red_block-motion.json",
+          "motion_summary": {
+            "monitoring": {
+              "monitor_id": "1cb58adc439e42c7841f4b862cc2d478",
+              "started_at_unix": 1791640922.3038657,
+              "ended_at_unix": 1791641078.2878447,
+              "end_reason": "supervisor_stop",
+              "supervised": true
+            },
+            "frame": "base_footprint",
+            "unit": "m",
+            "sample_count": 1305,
+            "target": [
+              0.24,
+              -0.28,
+              0.025
+            ],
+            "final_position": [
+              0.2379429566860199,
+              -0.2799137532711029,
+              0.025000035762786865
+            ],
+            "final_orientation_xyzw": [
+              -8.747625912519652e-08,
+              -5.150136530573945e-07,
+              0.7071701884269714,
+              0.7070434093475342
+            ],
+            "max_height": 0.12455636262893677,
+            "transfer_min_bottom_clearance": 0.09362205983761317,
+            "transfer_sample_count": 212,
+            "final_xy_error": 0.002058850575888325,
+            "final_height_error": 3.5762786863846596e-08,
+            "long_axis_vertical_cosine": 0.9999999999994542,
+            "fresh_feedback": true,
+            "telemetry": {
+              "contact_reference_method": "first_bilateral_loaded_3_samples",
+              "contact_reference_seconds": 39.624335514999984,
+              "tcp_fresh_sample_count": 1303,
+              "joint_fresh_sample_count": 1305,
+              "contact_reference_available": true
+            },
+            "max_contact_relative_displacement_m": 0.0026104273691807886,
+            "max_loaded_jaw_asymmetry_m": 0.0011171549558639526,
+            "slip_threshold_m": 0.006,
+            "slip_confirm_samples": 3,
+            "slip_detected": false,
+            "slip_event": null,
+            "runtime_fault_thresholds": {
+              "drop_clearance_m": 0.005,
+              "tilt_deg": 20.0,
+              "confirm_samples": 3,
+              "pose_stream_timeout_seconds": 0.75
+            },
+            "runtime_fault_detected": false,
+            "runtime_fault_event": null,
+            "safety_event_published": false,
+            "safety_event": null,
+            "sim_fault_command_published": false,
+            "sim_fault_command": null,
+            "release_detected": true,
+            "release_seconds": 101.83091710199915,
+            "post_release_recontact_detected": false,
+            "post_release_recontact_seconds": null,
+            "max_post_release_displacement_m": 0.0,
+            "placement_pass": true
+          }
+        }
+      ]
+    },
+    {
+      "object_id": "green_block",
+      "target": null,
+      "passed": false,
+      "error": "fresh stable camera detection unavailable"
+    }
+  ]
+}

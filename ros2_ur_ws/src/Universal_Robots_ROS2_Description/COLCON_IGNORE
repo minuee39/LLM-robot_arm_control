@@ -1,0 +1,2 @@
+This legacy ur_description checkout is excluded from the Jazzy build. Use the
+ros-jazzy-ur-description binary package installed by the workspace setup script.

@@ -1,0 +1,13 @@
+{
+  "physical_actuation": true,
+  "scope": "six-axis +/-0.005rad MoveIt planning and execution cancellation",
+  "plan_points": 16,
+  "execute_status": 4,
+  "execute_error_code": 1,
+  "moveit_live_execution": "passed",
+  "cancel_accepted": false,
+  "cancel_status": 4,
+  "cancel_error_code": 1,
+  "failure": "moveit_msgs.action.ExecuteTrajectory_GetResult_Response(status=4, result=moveit_msgs.action.ExecuteTrajectory_Result(error_code=moveit_msgs.msg.MoveItErrorCodes(val=1, message='', source='')))",
+  "segfault": false
+}

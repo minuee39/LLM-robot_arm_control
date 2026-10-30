@@ -1,0 +1,20 @@
+<robot name="pallet">
+  <group name="pallet_arm">
+    <chain base_link="base_link" tip_link="gripper" />
+  </group>
+  <group name="gripper">
+    <joint name="g_r" />
+  </group>
+  <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="base_footprint" />
+  <end_effector name="pallet_gripper" parent_link="gripper" group="gripper" parent_group="pallet_arm" />
+  <disable_collisions link1="base_link" link2="no.1" reason="Adjacent" />
+  <disable_collisions link1="no.1" link2="no.2" reason="Adjacent" />
+  <disable_collisions link1="no.2" link2="no.3" reason="Adjacent" />
+  <disable_collisions link1="no.3" link2="no.4" reason="Adjacent" />
+  <disable_collisions link1="no.4" link2="no.5" reason="Adjacent" />
+  <disable_collisions link1="no.5" link2="gripper" reason="Adjacent" />
+  <disable_collisions link1="gripper" link2="move_gripper" reason="Adjacent" />
+  <disable_collisions link1="move_gripper" link2="gripper_r" reason="Adjacent" />
+  <disable_collisions link1="move_gripper" link2="gripper_l" reason="Adjacent" />
+  <disable_collisions link1="base_footprint" link2="base_link" reason="Adjacent" />
+</robot>

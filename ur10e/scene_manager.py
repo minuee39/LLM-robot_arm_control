@@ -14,7 +14,6 @@ class CommandMemory:
     last_target_object: str | None = None
     last_relation: str | None = None
 
-
 @dataclass
 class SceneObject:
     name: str
@@ -37,6 +36,9 @@ class SceneObject:
         )
 
 
+# 장면 관리자를초기화.
+# 클래스 내부에서 물체를 다음 구조로 저장. self._objects = {"red_block":SceneObject(...), "blue_block"...}
+# 최근 명령 기얼을 위한 self.memory=CommandMemory()도 생성. 
 class SceneManager:
     def __init__(self, objects: Mapping[str, SceneObject] | None = None) -> None:
         self._objects: dict[str, SceneObject] = {}
@@ -44,7 +46,9 @@ class SceneManager:
         if objects:
             for name, scene_object in objects.items():
                 self._objects[name] = scene_object.copy()
+                # 물체 정보가 전달되면 각 물체를 복사해 내부 저장. 
 
+    # scene_config.py에 정의된 초기 물체 위치를 이용해 SceneManager 생성
     @classmethod
     def from_defaults(cls) -> "SceneManager":
         objects = {
@@ -56,9 +60,11 @@ class SceneManager:
             for name, position in OBJECT_POSITIONS.items()
         }
         return cls(objects)
-
+    # Scene_config가 정해져있다면, manager=SceneManager.from_defaults()
+    
     @classmethod
     def from_command_scene(cls, scene_objects: Mapping[str, dict]) -> "SceneManager":
+        # 비어있는 SceneManager를 만들고 거기에 Mapping. dict 형태 -> key-value값으로 받는 코드.
         manager = cls()
         for name, info in scene_objects.items():
             manager.update_object(

@@ -1,0 +1,19 @@
+{
+  "job_id": "palletize-1791197453",
+  "created_at": 1791197543.493677,
+  "requested_count": 3,
+  "completed_count": 0,
+  "passed": false,
+  "runs": [
+    {
+      "object_id": "blue_block",
+      "target": [
+        0.34,
+        -0.32,
+        0.025
+      ],
+      "passed": false,
+      "error": "fresh stable camera detection unavailable"
+    }
+  ]
+}

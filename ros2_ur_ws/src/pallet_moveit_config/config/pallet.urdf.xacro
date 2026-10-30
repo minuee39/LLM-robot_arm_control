@@ -3,7 +3,8 @@
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
     <!-- Import pallet urdf file -->
-    <xacro:include filename="$(find pallet)/urdf/pallet.urdf" />
+    <!-- Legacy five-axis controllers/SRDF are not compatible with the new CAD model. -->
+    <xacro:include filename="$(find pallet)/urdf/pallet_gripperless.urdf" />
 
     <!-- Import control_xacro -->
     <xacro:include filename="pallet.ros2_control.xacro" />

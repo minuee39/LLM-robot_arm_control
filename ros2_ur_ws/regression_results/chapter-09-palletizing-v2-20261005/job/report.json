@@ -1,0 +1,35 @@
+{
+  "job_id": "palletize-1791196381",
+  "created_at": 1791196502.2933536,
+  "requested_count": 3,
+  "completed_count": 1,
+  "passed": false,
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.26,
+        -0.32,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 90.1490557269999,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-palletizing-v2-20261005/job/01-red_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-palletizing-v2-20261005/job/01-red_block-task.json"
+    },
+    {
+      "object_id": "green_block",
+      "target": [
+        0.3,
+        -0.32,
+        0.025
+      ],
+      "returncode": 3,
+      "elapsed_seconds": 28.612124846999905,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-palletizing-v2-20261005/job/02-green_block.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/chapter-09-palletizing-v2-20261005/job/02-green_block-task.json"
+    }
+  ]
+}

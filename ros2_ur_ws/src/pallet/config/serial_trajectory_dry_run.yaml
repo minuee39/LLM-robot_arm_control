@@ -1,0 +1,16 @@
+commissioned: false
+verified_joints: []
+serial_port: /dev/ttyUSB0
+baud: 921600
+period_s: 0.1
+watchdog_s: 0.25
+max_goal_duration_s: 600.0
+max_start_error_rad: 0.01
+max_joint_travel_rad: 6.283185307179586
+max_path_error_rad: 0.03
+goal_tolerance_rad: 0.002
+settle_timeout_s: 3.0
+velocity_rad_s: 1.0
+acceleration_rad_s2: 1.0
+current_limit_policy: preserve_existing
+current_trip_a: {}

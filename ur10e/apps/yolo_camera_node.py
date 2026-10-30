@@ -22,30 +22,37 @@ from std_msgs.msg import String
 from scene_config import BLOCK_SIZE
 from vision.calibration import validate_rigid_transform
 from vision.depth_utils import (
+    OffTableCandidateError,
     depth_value_to_millimeters,
     depth_value_to_meters,
     median_depth_in_bbox,
     median_depth_in_mask,
+    pallet_table_block_center,
     pixel_to_camera_point,
     surface_point_to_box_center,
     validated_world_position,
 )
 from vision.depth_utils import transform_point
+from vision.hsv_block_detector import HsvBlockDetector
 from vision.scene_objects import (
     EXPECTED_BLOCK_NAMES,
     StableDetectionStore,
+    pallet_scene_from_detections,
     write_vision_scene,
 )
 from vision.yolo_detector import LABEL_MODES, YoloDetector
 
 
-DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "yolo26n.pt"
-DEFAULT_LABEL_MODE = "model"
+DEFAULT_MODEL_PATH = PROJECT_DIR.parent / "runs/detect/train/weights/best.pt"
+DEFAULT_LABEL_MODE = "color"
 DEFAULT_CLASSES = ""
 DEFAULT_SCENE_STATE_FILE = Path("/tmp/ur10e_isaac_scene_objects.json")
 DEFAULT_VISION_SCENE_FILE = Path("/tmp/ur10e_vision_scene.json")
 DEFAULT_CAMERA_VISION_SCENE_FILE = Path("/tmp/ur10e_camera_vision_scene_mm.json")
-COORDINATE_MODES = ("world", "camera")
+DEFAULT_PALLET_VISION_SCENE_FILE = Path("/tmp/pallet_vision_scene.json")
+COORDINATE_MODES = ("world", "camera", "pallet")
+DETECTOR_BACKENDS = ("yolo", "color")
+PALLET_BLOCK_SIZE = (0.030, 0.030, 0.050)
 
 
 class YoloCameraNode(Node):
@@ -74,6 +81,14 @@ class YoloCameraNode(Node):
         outlier_distance: float | None = None,
         publish_period: float = 0.5,
         simulator_reference_max_error: float = 0.003,
+        pallet_block_size: tuple[float, float, float] = PALLET_BLOCK_SIZE,
+        detector_backend: str = "yolo",
+        pallet_table_z: float = 0.0,
+        pallet_block_clearance: float = 0.003,
+        pallet_table_size_xy: tuple[float, float] = (1.80, 0.75),
+        pallet_table_center_xy: tuple[float, float] = (0.0, 0.0),
+        pallet_table_edge_clearance: float = 0.0,
+        debug_image_file: str | Path | None = None,
     ) -> None:
         super().__init__("yolo_camera_node")
         if sync_queue_size <= 0:
@@ -87,13 +102,27 @@ class YoloCameraNode(Node):
         coordinate_mode = coordinate_mode.strip().lower()
         if coordinate_mode not in COORDINATE_MODES:
             raise ValueError(f"coordinate_mode must be one of: {', '.join(COORDINATE_MODES)}")
+        if detector_backend not in DETECTOR_BACKENDS:
+            raise ValueError(f"detector_backend must be one of: {', '.join(DETECTOR_BACKENDS)}")
+        if detector_backend == "color":
+            label_mode = "color"
+        if coordinate_mode == "pallet" and label_mode != "color":
+            raise ValueError("Pallet mode requires --label-mode color")
+        pallet_block_size = np.asarray(pallet_block_size, dtype=float)
+        if pallet_block_size.shape != (3,) or not np.all(np.isfinite(pallet_block_size)) or np.any(pallet_block_size <= 0):
+            raise ValueError("pallet_block_size must contain three positive finite metres values")
         self.bridge = CvBridge()
-        self.detector = YoloDetector(
-            model_path,
-            confidence_threshold=confidence_threshold,
-            label_mode=label_mode,
-            classes=classes,
-            require_segmentation=require_segmentation,
+        self.detector_backend = detector_backend
+        self.detector = (
+            HsvBlockDetector()
+            if detector_backend == "color"
+            else YoloDetector(
+                model_path,
+                confidence_threshold=confidence_threshold,
+                label_mode=label_mode,
+                classes=classes,
+                require_segmentation=require_segmentation,
+            )
         )
         self.label_mode = self.detector.label_mode
         self.selected_classes = tuple(classes or ())
@@ -108,23 +137,36 @@ class YoloCameraNode(Node):
         self.last_detection_count = 0
         self.last_valid_depth_count = 0
         self.coordinate_mode = coordinate_mode
-        self.output_frame_id = "world" if coordinate_mode == "world" else "camera_optical_frame"
-        self.output_unit = "m" if coordinate_mode == "world" else "mm"
+        self.output_frame_id = {
+            "world": "world", "camera": "camera_optical_frame", "pallet": "base_footprint"
+        }[coordinate_mode]
+        self.output_unit = "mm" if coordinate_mode == "camera" else "m"
         if max_position_std is None:
-            max_position_std = 0.02 if coordinate_mode == "world" else 20.0
+            max_position_std = 20.0 if coordinate_mode == "camera" else 0.02
         if outlier_distance is None:
-            outlier_distance = 0.05 if coordinate_mode == "world" else 50.0
+            outlier_distance = 50.0 if coordinate_mode == "camera" else 0.05
         self.scene_state_file = Path(scene_state_file).expanduser()
         self.camera_to_world = None
         self.ground_truth_positions = {}
         self.camera_transform_mtime_ns = None
         self.camera_transform_error = None
+        self.pallet_block_size = pallet_block_size.tolist()
+        if not np.isfinite(pallet_table_z) or not np.isfinite(pallet_block_clearance) or pallet_block_clearance < 0:
+            raise ValueError("Pallet table height and block clearance must be finite")
+        self.pallet_table_z = float(pallet_table_z)
+        self.pallet_block_clearance = float(pallet_block_clearance)
+        self.pallet_table_size_xy = tuple(float(value) for value in pallet_table_size_xy)
+        self.pallet_table_center_xy = tuple(float(value) for value in pallet_table_center_xy)
+        self.pallet_table_edge_clearance = float(pallet_table_edge_clearance)
+        self.debug_image_file = (
+            Path(debug_image_file).expanduser() if debug_image_file else None
+        )
         if vision_scene_file is None:
-            vision_scene_file = (
-                DEFAULT_VISION_SCENE_FILE
-                if coordinate_mode == "world"
-                else DEFAULT_CAMERA_VISION_SCENE_FILE
-            )
+            vision_scene_file = {
+                "world": DEFAULT_VISION_SCENE_FILE,
+                "camera": DEFAULT_CAMERA_VISION_SCENE_FILE,
+                "pallet": DEFAULT_PALLET_VISION_SCENE_FILE,
+            }[coordinate_mode]
         self.vision_scene_file = Path(vision_scene_file).expanduser()
         self.detection_store = StableDetectionStore(
             window_size=stability_window,
@@ -139,7 +181,7 @@ class YoloCameraNode(Node):
         self.last_sync_delta = None
         self.last_processing_ms = None
         initial_names = EXPECTED_BLOCK_NAMES if self.label_mode == "color" else ()
-        self.pose_topic_suffix = "pose" if coordinate_mode == "world" else "pose_mm"
+        self.pose_topic_suffix = "pose_mm" if coordinate_mode == "camera" else "pose"
         self.pose_publish_counts = {name: 0 for name in initial_names}
         self.pose_first_publish_time = {name: None for name in initial_names}
         self.detection_metadata = {}
@@ -173,13 +215,16 @@ class YoloCameraNode(Node):
         self.get_logger().info(
             "YOLO camera node started. Waiting for " + ", ".join(self.input_topics)
         )
-        self.get_logger().info(f"Using YOLO model: {Path(model_path).expanduser().resolve()}")
+        if self.detector_backend == "yolo":
+            self.get_logger().info(f"Using YOLO model: {Path(model_path).expanduser().resolve()}")
+        else:
+            self.get_logger().info("Using HSV color block detector without model weights")
         self.get_logger().info(
             f"Label mode: {self.label_mode}; "
             f"class filter: {', '.join(self.selected_classes) or 'all'}; "
             f"geometry: {'segmentation mask' if self.require_segmentation else 'mask when available'}"
         )
-        if self.coordinate_mode == "world":
+        if self.coordinate_mode != "camera":
             self.get_logger().info(f"Using camera transform from: {self.scene_state_file}")
         else:
             self.get_logger().info(
@@ -226,12 +271,21 @@ class YoloCameraNode(Node):
                 }
                 for name, info in stable_snapshot.items()
             }
+            if self.coordinate_mode == "pallet":
+                if self.camera_to_world is None:
+                    raise ValueError("Pallet camera transform is unavailable")
+                scene_snapshot, pallet_camera = pallet_scene_from_detections(
+                    scene_snapshot, self.camera_to_world, self.pallet_block_size
+                )
+            else:
+                pallet_camera = None
             write_vision_scene(
                 self.vision_scene_file,
                 scene_snapshot,
                 allowed_names=EXPECTED_BLOCK_NAMES if self.label_mode == "color" else None,
                 frame=self.output_frame_id,
                 unit=self.output_unit,
+                camera=pallet_camera,
             )
         except (OSError, ValueError) as error:
             self.get_logger().error(f"Vision scene write failed: {error}")
@@ -250,15 +304,23 @@ class YoloCameraNode(Node):
                 return
             state = json.loads(self.scene_state_file.read_text(encoding="utf-8"))
             camera = state.get("camera")
-            if not isinstance(camera, dict) or "optical_to_world" not in camera:
+            transform_key = (
+                "optical_to_base_footprint"
+                if self.coordinate_mode == "pallet"
+                else "optical_to_world"
+            )
+            if not isinstance(camera, dict) or transform_key not in camera:
                 self.camera_to_world = None
                 return
-            self.camera_to_world = validate_rigid_transform(camera["optical_to_world"])
-            self.ground_truth_positions = {
-                str(item["name"]): np.asarray(item["position"], dtype=float)
-                for item in state.get("objects", [])
-                if isinstance(item, dict) and "name" in item and "position" in item
-            }
+            self.camera_to_world = validate_rigid_transform(camera[transform_key])
+            self.ground_truth_positions = (
+                {
+                    str(item["name"]): np.asarray(item["position"], dtype=float)
+                    for item in state.get("objects", [])
+                    if isinstance(item, dict) and "name" in item and "position" in item
+                }
+                if self.coordinate_mode == "world" else {}
+            )
             self.camera_transform_mtime_ns = mtime_ns
             self.camera_transform_error = None
         except (OSError, ValueError, json.JSONDecodeError) as error:
@@ -300,7 +362,7 @@ class YoloCameraNode(Node):
         coordinate_status = (
             f"gt_error_m=({errors or 'unavailable'})"
             if self.coordinate_mode == "world"
-            else "coordinate_unit=mm"
+            else f"coordinate_unit={self.output_unit}"
         )
         self.get_logger().info(
             "Receiving topics: "
@@ -348,21 +410,24 @@ class YoloCameraNode(Node):
             return
 
         annotated = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-        if self.coordinate_mode == "world":
+        if self.coordinate_mode != "camera":
             self.update_camera_transform()
         self.last_detection_count = len(detections)
         self.last_valid_depth_count = 0
         intrinsics = self.camera_info.k
 
-        best_by_name = {}
-        for detection in detections:
+        # A workcell may contain large surfaces with the same hue as a block
+        # (for example the green table insert).  Evaluate every component in
+        # confidence order and retain the first candidate that also passes the
+        # calibrated depth/work-surface checks.  Collapsing by color before
+        # geometry validation would discard the real block whenever a larger
+        # false-positive component had higher confidence.
+        accepted_names = set()
+        for detection in sorted(detections, key=lambda item: item.confidence, reverse=True):
             if self.label_mode == "color" and detection.name not in EXPECTED_BLOCK_NAMES:
                 continue
-            previous = best_by_name.get(detection.name)
-            if previous is None or detection.confidence > previous.confidence:
-                best_by_name[detection.name] = detection
-
-        for detection in best_by_name.values():
+            if detection.name in accepted_names:
+                continue
             u, v = detection.center_pixel
             depth = (
                 median_depth_in_mask(self.depth_image, detection.mask)
@@ -392,26 +457,47 @@ class YoloCameraNode(Node):
                     elif self.camera_to_world is not None:
                         surface_world_position = transform_point(camera_position, self.camera_to_world)
                         if self.label_mode == "color":
-                            output_position = surface_point_to_box_center(
-                                surface_world_position,
-                                self.camera_to_world[:3, 3],
-                                BLOCK_SIZE,
-                            )
-                            output_position, used_reference, raw_error = validated_world_position(
-                                output_position,
-                                self.ground_truth_positions.get(detection.name),
-                                self.simulator_reference_max_error,
-                            )
-                            if used_reference:
-                                self.reference_fallback_counts[detection.name] += 1
-                                self.latest_ground_truth_errors[detection.name] = raw_error
+                            if self.coordinate_mode == "pallet":
+                                output_position = pallet_table_block_center(
+                                    surface_world_position,
+                                    self.camera_to_world[:3, 3],
+                                    self.pallet_block_size,
+                                    table_z=self.pallet_table_z,
+                                    clearance=self.pallet_block_clearance,
+                                    table_size_xy=self.pallet_table_size_xy,
+                                    table_center_xy=self.pallet_table_center_xy,
+                                    edge_clearance=self.pallet_table_edge_clearance,
+                                )
+                            else:
+                                output_position = surface_point_to_box_center(
+                                    surface_world_position,
+                                    self.camera_to_world[:3, 3],
+                                    BLOCK_SIZE,
+                                )
+                            if self.coordinate_mode == "world":
+                                output_position, used_reference, raw_error = validated_world_position(
+                                    output_position,
+                                    self.ground_truth_positions.get(detection.name),
+                                    self.simulator_reference_max_error,
+                                )
+                                if used_reference:
+                                    self.reference_fallback_counts[detection.name] += 1
+                                    self.latest_ground_truth_errors[detection.name] = raw_error
                         else:
                             # Generic object dimensions are unknown, so report the visible
                             # depth surface point instead of applying the block-size offset.
                             output_position = surface_world_position
                     self.last_valid_depth_count += 1
+                except OffTableCandidateError as error:
+                    self.get_logger().debug(f"Ignoring off-table color candidate: {error}")
                 except ValueError as error:
                     self.get_logger().warning(f"Invalid camera intrinsics/depth: {error}")
+
+            # In Pallet mode the annotated image is an operator-facing view of
+            # actionable detections. Do not draw candidates rejected by depth,
+            # tabletop height, or table XY footprint checks.
+            if self.coordinate_mode == "pallet" and output_position is None:
+                continue
 
             label = f"{detection.name} {detection.confidence:.2f} center=({u},{v})"
             if camera_position is None:
@@ -451,6 +537,7 @@ class YoloCameraNode(Node):
                     detection.confidence,
                     output_position,
                 )
+                accepted_names.add(detection.name)
 
             self.draw_detection(
                 annotated,
@@ -464,6 +551,14 @@ class YoloCameraNode(Node):
             annotated_msg = self.bridge.cv2_to_imgmsg(annotated, encoding="bgr8")
             annotated_msg.header = rgb_msg.header
             self.annotated_pub.publish(annotated_msg)
+            if self.debug_image_file is not None:
+                self.debug_image_file.parent.mkdir(parents=True, exist_ok=True)
+                temporary_path = self.debug_image_file.with_name(
+                    f".{self.debug_image_file.name}.tmp.png"
+                )
+                if not cv2.imwrite(str(temporary_path), annotated):
+                    raise OSError(f"Could not write {temporary_path}")
+                temporary_path.replace(self.debug_image_file)
         except Exception as error:
             self.get_logger().error(f"Annotated image publish failed: {error}")
 
@@ -539,7 +634,8 @@ def _parse_classes(value: str) -> tuple[str, ...]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Detect objects from ROS 2 RGB-D camera topics.")
-    parser.add_argument("--model", default=str(DEFAULT_MODEL_PATH), help="YOLO weights path.")
+    parser.add_argument("--model", default=str(DEFAULT_MODEL_PATH), help="YOLO weights path (YOLO detector only).")
+    parser.add_argument("--detector", choices=DETECTOR_BACKENDS, default="yolo")
     parser.add_argument("--conf", type=float, default=0.4, help="YOLO confidence threshold.")
     parser.add_argument(
         "--label-mode",
@@ -561,13 +657,30 @@ def main() -> None:
     parser.add_argument("--rgb-topic", default="/sim_camera/rgb")
     parser.add_argument("--depth-topic", default="/sim_camera/depth")
     parser.add_argument("--camera-info-topic", default="/sim_camera/camera_info")
-    parser.add_argument("--scene-state-file", default=str(DEFAULT_SCENE_STATE_FILE))
+    parser.add_argument(
+        "--scene-state-file",
+        help="Calibration JSON; Pallet mode requires camera.optical_to_base_footprint.",
+    )
     parser.add_argument("--vision-scene-file")
     parser.add_argument(
         "--coordinate-mode",
         choices=COORDINATE_MODES,
         default="world",
         help="Publish calibrated world coordinates or raw camera optical-frame coordinates.",
+    )
+    parser.add_argument(
+        "--pallet-block-size",
+        default=",".join(str(value) for value in PALLET_BLOCK_SIZE),
+        help="Pallet block x,y,z size in metres; default matches workcell.yaml.",
+    )
+    parser.add_argument("--pallet-table-z", type=float, default=0.0)
+    parser.add_argument("--pallet-block-clearance", type=float, default=0.003)
+    parser.add_argument("--pallet-table-size", default="1.80,0.75")
+    parser.add_argument("--pallet-table-center", default="0.0,0.0")
+    parser.add_argument("--pallet-table-edge-clearance", type=float, default=0.0)
+    parser.add_argument(
+        "--debug-image-file",
+        help="Continuously replace this file with the latest annotated RGB frame.",
     )
     parser.add_argument("--sync-queue-size", type=int, default=10)
     parser.add_argument("--sync-slop", type=float, default=0.05)
@@ -585,6 +698,18 @@ def main() -> None:
         help="Use Isaac scene coordinates when YOLO world error exceeds this many metres.",
     )
     args, ros_args = parser.parse_known_args()
+    if args.coordinate_mode == "pallet" and args.scene_state_file is None:
+        parser.error("Pallet mode requires --scene-state-file with optical_to_base_footprint")
+    try:
+        pallet_block_size = tuple(float(value.strip()) for value in args.pallet_block_size.split(","))
+        pallet_table_size_xy = tuple(
+            float(value.strip()) for value in args.pallet_table_size.split(","))
+        pallet_table_center_xy = tuple(
+            float(value.strip()) for value in args.pallet_table_center.split(","))
+    except ValueError as error:
+        parser.error(f"invalid Pallet geometry option: {error}")
+    if len(pallet_table_size_xy) != 2 or len(pallet_table_center_xy) != 2:
+        parser.error("--pallet-table-size and --pallet-table-center require two comma-separated values")
 
     rclpy.init(args=ros_args)
     node = YoloCameraNode(
@@ -597,7 +722,7 @@ def main() -> None:
         rgb_topic=args.rgb_topic,
         depth_topic=args.depth_topic,
         camera_info_topic=args.camera_info_topic,
-        scene_state_file=args.scene_state_file,
+        scene_state_file=args.scene_state_file or DEFAULT_SCENE_STATE_FILE,
         vision_scene_file=args.vision_scene_file,
         coordinate_mode=args.coordinate_mode,
         sync_queue_size=args.sync_queue_size,
@@ -610,6 +735,14 @@ def main() -> None:
         outlier_distance=args.outlier_distance,
         publish_period=args.publish_period,
         simulator_reference_max_error=args.simulator_reference_max_error,
+        pallet_block_size=pallet_block_size,
+        detector_backend=args.detector,
+        pallet_table_z=args.pallet_table_z,
+        pallet_block_clearance=args.pallet_block_clearance,
+        pallet_table_size_xy=pallet_table_size_xy,
+        pallet_table_center_xy=pallet_table_center_xy,
+        pallet_table_edge_clearance=args.pallet_table_edge_clearance,
+        debug_image_file=args.debug_image_file,
     )
     try:
         rclpy.spin(node)

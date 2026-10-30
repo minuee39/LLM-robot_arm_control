@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.8)
+project(pallet_gripper)
+find_package(ament_cmake REQUIRED)
+install(DIRECTORY urdf meshes launch config source tools DESTINATION share/${PROJECT_NAME})
+ament_package()

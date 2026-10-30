@@ -1,7 +1,11 @@
 import numpy as np
 import pytest
 
-from vision.calibration import optical_camera_to_world_transform, validate_rigid_transform
+from vision.calibration import (
+    optical_camera_to_world_transform,
+    optical_transform_camera_geometry,
+    validate_rigid_transform,
+)
 from vision.depth_utils import transform_point
 
 
@@ -41,3 +45,14 @@ def test_validate_rigid_transform_rejects_scaled_rotation():
 
     with pytest.raises(ValueError, match="orthonormal"):
         validate_rigid_transform(transform)
+
+
+def test_optical_transform_camera_geometry_round_trips_pallet_frame():
+    transform = optical_camera_to_world_transform(
+        eye=[0.2, -0.1, 0.8],
+        target=[-0.3, 0.2, 0.05],
+    )
+    camera = optical_transform_camera_geometry(transform)
+
+    reconstructed = optical_camera_to_world_transform(**camera)
+    assert np.allclose(reconstructed, transform)

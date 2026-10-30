@@ -1,0 +1,141 @@
+{
+  "job_id": "palletize-1791372601",
+  "created_at": 1791372694.4454405,
+  "requested_count": 2,
+  "completed_count": 0,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 1.0,
+    "arm_acceleration": 1.0,
+    "cartesian_velocity": 1.0,
+    "cartesian_acceleration": 1.0
+  },
+  "runs": [
+    {
+      "object_id": "red_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 63.255946081997536,
+      "passed": false,
+      "log": "ros2_ur_ws/regression_results/two-block-latest-20261007/job/01-red_block-attempt-01.log",
+      "task_state": "ros2_ur_ws/regression_results/two-block-latest-20261007/job/01-red_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 545,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.23796000361442565,
+          -0.2788723111152649,
+          0.02500009536743164
+        ],
+        "final_orientation_xyzw": [
+          -2.0485579454998515e-07,
+          -1.6349771669865731e-07,
+          -0.0008688394445925951,
+          0.9999997019767761
+        ],
+        "max_height": 0.07672148942947388,
+        "transfer_min_bottom_clearance": 0.03686183063083333,
+        "transfer_sample_count": 47,
+        "final_xy_error": 0.0023309370377407315,
+        "final_height_error": 9.536743163923722e-08,
+        "long_axis_vertical_cosine": 0.9999999999998626,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 543,
+          "joint_fresh_sample_count": 545,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.02314524311204504,
+        "max_loaded_jaw_asymmetry_m": 0.00827337708324194,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": true,
+        "slip_event": {
+          "seconds": 33.31698218299789,
+          "first_exceeded_seconds": 33.11165936999896,
+          "confirmed_seconds": 33.31698218299789,
+          "relative_displacement_m": 0.020025439857566607,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.33235687732696534,
+            -0.12208760529756546,
+            0.06687146425247192
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": true,
+        "runtime_fault_event": {
+          "code": "TILT_DETECTED",
+          "seconds": 37.32496375299888,
+          "first_exceeded_seconds": 37.11939771499965,
+          "confirmed_seconds": 37.32496375299888,
+          "confirm_samples": 3,
+          "block_position_m": [
+            -0.006913400888443,
+            -0.36307594180107117,
+            0.06697624921798706
+          ],
+          "long_axis_vertical_cosine": 0.9377013312004353,
+          "threshold_deg": 20.0
+        },
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-97805-21730269665035",
+          "code": "SLIP_DETECTED",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1791372665.0665665,
+          "injected": false,
+          "seconds": 33.31698218299789,
+          "first_exceeded_seconds": 33.11165936999896,
+          "confirmed_seconds": 33.31698218299789,
+          "relative_displacement_m": 0.020025439857566607,
+          "contact_state": "bilateral_loaded",
+          "block_position_m": [
+            -0.33235687732696534,
+            -0.12208760529756546,
+            0.06687146425247192
+          ],
+          "threshold_m": 0.006,
+          "confirm_samples": 3
+        },
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 42.436912747998576,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 0.009437989803939237,
+        "placement_pass": true
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "ros2_ur_ws/regression_results/two-block-latest-20261007/job/01-red_block-attempt-01.log",
+          "task_state": "ros2_ur_ws/regression_results/two-block-latest-20261007/job/01-red_block-attempt-01-task.json",
+          "place_yaw": null
+        }
+      ]
+    }
+  ]
+}

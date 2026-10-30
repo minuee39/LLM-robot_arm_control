@@ -5,7 +5,7 @@ from typing import Any
 
 import numpy as np
 
-from .color_detector import color_to_block_name, detect_color
+from .color_detector import color_to_block_name, detect_dominant_color
 
 
 LABEL_MODES = ("color", "model", "hybrid")
@@ -121,7 +121,11 @@ class YoloDetector:
             raise ValueError("rgb_image must have shape (height, width, 3)")
 
         height, width = rgb_image.shape[:2]
-        results = self.model(rgb_image, conf=self.confidence_threshold, verbose=False)
+        # Ultralytics treats numpy-array inputs as OpenCV BGR images.  Camera
+        # callbacks provide RGB, so swap channels only for YOLO inference and
+        # keep the original RGB pixels for HSV classification below.
+        model_image = rgb_image[:, :, ::-1].copy()
+        results = self.model(model_image, conf=self.confidence_threshold, verbose=False)
         detections: list[YoloDetection] = []
 
         for result in results:
@@ -176,10 +180,11 @@ class YoloDetector:
                     center_v = int(np.clip(round((y1 + y2) / 2.0), 0, height - 1))
                     color_crop = rgb_image[crop_y1:crop_y2, crop_x1:crop_x2]
 
-                color = detect_color(
+                color = detect_dominant_color(
                     color_crop,
                     color_space="RGB",
-                )
+                    dominance_margin=1.1,
+                ).color
                 if self.label_mode == "color":
                     name = color_to_block_name(color)
                 elif self.label_mode == "model":

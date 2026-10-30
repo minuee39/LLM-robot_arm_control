@@ -1,0 +1,34 @@
+{
+  "source_log": "/home/minwoo/.ros/log/python3_50884_1793107361966.log",
+  "joint": "J5",
+  "samples": [
+    {
+      "elapsed_s": 7.103000825736672e-06,
+      "desired_rad": -1.219712698707408,
+      "actual_rad": -1.2188715934753418,
+      "error_rad": -0.0008411052320662638,
+      "current_a": 0.07453408092260361,
+      "joint_velocity_from_position_rad_s": null
+    },
+    {
+      "elapsed_s": 0.5003449260002526,
+      "desired_rad": -1.2071937632923984,
+      "actual_rad": -1.2123395204544067,
+      "error_rad": 0.00514575716200838,
+      "current_a": -0.22597244381904602,
+      "joint_velocity_from_position_rad_s": 0.03326910072137946
+    },
+    {
+      "elapsed_s": 0.9006243029998586,
+      "desired_rad": -1.1791534254374259,
+      "actual_rad": -1.1914081573486328,
+      "error_rad": 0.012254731911206962,
+      "current_a": -1.257719874382019,
+      "joint_velocity_from_position_rad_s": 0.05881980381440058
+    }
+  ],
+  "desired_average_speed_rad_s": 0.07005191740118079,
+  "actual_average_speed_rad_s": 0.05229188488967426,
+  "physical_actuation": false,
+  "finding": "Increasing positive J5 position tracking lag; internal cause not isolated"
+}

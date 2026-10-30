@@ -1,0 +1,346 @@
+commissioned: false
+motor_watchdog_verified: true
+gripper_homed: false
+interface: can0
+host_id: 253
+period_s: 0.02
+feedback_timeout_s: 0.015
+gravity_root_m_s2:
+- 0
+- 0
+- -9.80665
+joints:
+  J1:
+    motor_id: 1
+    model: RS00
+    direction: -1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.0.3.32
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.2780669459998535
+      loaded_current_cutoff_measured: false
+    bidirectional_current_pulse_test:
+      current_cap_a: 0.1
+      duration_each_s: 2
+      positive_samples: 100
+      negative_samples: 100
+      max_abs_measured_current_a: 0.12578053772449493
+      verified_stopped_after: true
+      motion_direction_confirmed: false
+      note: Motion <=0.02deg; cannot validate torque sign/magnitude from these displacements
+        alone.
+  J2:
+    motor_id: 2
+    model: RS06
+    direction: -1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.6.0.12
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.28155932399999983
+      loaded_current_cutoff_measured: false
+    bidirectional_current_pulse_test:
+      current_cap_a: 0.1
+      duration_each_s: 2
+      period_s: 0.02
+      positive_samples: 100
+      negative_samples: 100
+      max_abs_measured_current_a: 0.1571401208639145
+      verified_stopped_after: true
+      motion_direction_confirmed: false
+      torque_per_amp_calibrated: false
+  J3:
+    motor_id: 3
+    model: RS00
+    direction: 1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.0.3.32
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.27853940399995736
+      loaded_current_cutoff_measured: false
+    bidirectional_current_pulse_test:
+      current_cap_a: 0.1
+      duration_each_s: 2
+      period_s: 0.02
+      positive_samples: 100
+      negative_samples: 100
+      max_abs_measured_current_a: 0.15617652237415314
+      verified_stopped_after: true
+      motion_direction_confirmed: false
+      torque_per_amp_calibrated: false
+  J4:
+    motor_id: 4
+    model: RS05
+    direction: 1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.5.0.14
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.2777349259999937
+      loaded_current_cutoff_measured: false
+    bidirectional_current_pulse_test:
+      current_cap_a: 0.03
+      duration_each_s: 1
+      period_s: 0.05
+      observations:
+        positive:
+          samples: 20
+          max_abs_measured_current_a: 0.06784673035144806
+          max_abs_travel_deg: 0.12758238416713755
+        negative:
+          samples: 20
+          max_abs_measured_current_a: 0.05502266064286232
+          max_abs_travel_deg: 0.025515879191875136
+      verified_stopped_after_extra_stop: true
+      normal_cleanup_verified: false
+      motion_direction_confirmed: false
+      torque_per_amp_calibrated: false
+      anomalies:
+      - 0.1A positive trial stopped on speed limit
+      - 0.03A at 20ms stopped on cycle overrun
+      - 50ms negative trial completed waveform but post-test Reset not verified; extra
+        STOP produced 22 Reset reports
+      next_action: Investigate stop acknowledgement robustness before repeating or
+        increasing output.
+    stop_revalidation:
+      passed: true
+      current_cap_a: 0.03
+      duration_each_s: 1.0
+      period_s: 0.05
+      positive:
+        current_cap_a: 0.03
+        period_s: 0.05
+        duration_s: 1.0
+        samples: 20
+        max_abs_command_a: 0.029559982620012304
+        max_abs_measured_a: 0.050308771431446075
+        min_travel_deg: -0.0028353822792015434
+        max_travel_deg: 0.08505463818687628
+        max_speed_rad_s: 0.015588568152383598
+        rms_current_error_a: 0.016288417151704798
+        after:
+          command_iq_a: 0.0
+          measured_iq_a: 0.0
+          status:
+            state: 0
+            fault_bits: 0
+        torque_per_amp_calibrated: false
+      negative:
+        current_cap_a: 0.03
+        period_s: 0.05
+        duration_s: 1.0
+        samples: 20
+        max_abs_command_a: 0.029560697880006044
+        max_abs_measured_a: 0.04126352071762085
+        min_travel_deg: 0.0
+        max_travel_deg: 0.03685655453503506
+        max_speed_rad_s: 0.005910869245233053
+        rms_current_error_a: 0.01570367194545952
+        after:
+          command_iq_a: 0.0
+          measured_iq_a: 0.0
+          status:
+            state: 0
+            fault_bits: 0
+        torque_per_amp_calibrated: false
+      scope: Single bidirectional low-current repeat only; historical anomaly cause
+        not proven; torque calibration remains unverified
+  J5:
+    motor_id: 5
+    model: RS05
+    direction: -1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.5.0.14
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.27854935000004843
+      loaded_current_cutoff_measured: false
+    bidirectional_current_pulse_test:
+      current_cap_a: 0.1
+      duration_each_s: 2
+      period_s: 0.05
+      positive_samples: 40
+      negative_samples: 40
+      max_abs_measured_current_a: 0.17722046375274658
+      verified_stopped_after: true
+      motion_direction_confirmed: false
+      torque_per_amp_calibrated: false
+    partial_gravity_experiment:
+      passed: true
+      date: '2026-10-23'
+      gain: 0.1
+      duration_s: 1.0
+      source: gravity_partial_20261023_01.json
+      nominal_nm_per_apk: 0.6646803743153545
+      independent_torque_calibration: false
+      full_compensation_verified: false
+  J6:
+    motor_id: 6
+    model: RS05
+    direction: -1
+    zero_rad: 0.0
+    ratio: 1.0
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: -3.141592653589793
+    upper_rad: 3.141592653589793
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.5.0.14
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.2739197969999623
+      loaded_current_cutoff_measured: false
+    positive_current_pulse_test:
+      max_command_a: 0.09903163200001473
+      max_measured_a: 0.10958998650312424
+      max_travel_deg: 0.22114615739938034
+      verified_stopped_after: true
+    negative_current_pulse_test:
+      min_command_a: -0.09896438169998874
+      min_measured_a: -0.10443954169750214
+      min_travel_deg: -0.1275828110539607
+      verified_stopped_after: true
+    reported_torque_bidirectional_test:
+      passed: true
+      current_cap_a: 0.03
+      duration_each_s: 1.0
+      period_s: 0.05
+      feedback_timeout_s: 0.025
+      active_reporting: false
+      status_torque_scale_nm: 17.0
+      source: RobStride official Python_Sample table.py RS05 scale; current-write
+        status reply
+      observations:
+        positive:
+          samples: 20
+          min_reported_torque_nm: -0.024903103732413
+          max_reported_torque_nm: 0.08041627246925409
+          max_abs_measured_iq_a: 0.039817728102207184
+          min_travel_deg: -0.008524076084175913
+          max_travel_deg: 0.011338114022221167
+          after:
+            command_iq_a: 0.0
+            measured_iq_a: 0.0
+            reported_torque_nm: 0.0015564439832758126
+            fresh_reset_fault0: true
+        negative:
+          samples: 20
+          min_reported_torque_nm: -0.08404797509689577
+          max_reported_torque_nm: 0.0207525864436775
+          max_abs_measured_iq_a: 0.038460806012153625
+          min_travel_deg: -0.01986219010639708
+          max_travel_deg: 0.0028140379380452536
+          after:
+            command_iq_a: 0.0
+            measured_iq_a: 0.0
+            reported_torque_nm: -0.001037629322183875
+            fresh_reset_fault0: true
+      independent_torque_calibration: false
+  g_r:
+    motor_positive_motion: open
+    motor_negative_motion: close
+    motor_id: 7
+    model: RS05
+    direction: null
+    zero_rad: null
+    ratio: null
+    output_nm_per_a: null
+    damping: null
+    torque_limit_nm: null
+    current_limit_a: null
+    lower_rad: null
+    upper_rad: null
+    max_speed_rad_s: null
+    requested_motor_lower_from_reference_rad: -3.141592653589793
+    requested_motor_upper_from_reference_rad: 3.141592653589793
+    firmware_version: 0.5.0.14
+    watchdog_zero_current_state_test:
+      verified: true
+      timeout_ticks: 5000
+      observed_reset_s: 0.27835304600012023
+      loaded_current_cutoff_measured: false
+arm_mapping_validation: User confirmed matching direction and approximate angle in
+  live RViz on 2026-10-22; ratio 1:1 by visual comparison, not precision metrology.
+arm_watchdog_zero_current_state_verified: true
+all_motor_watchdog_zero_current_state_verified: true
+watchdog_verification_scope: 'IDs1..7: zero-Iq Run->Reset on TX silence only; current
+  interruption under nonzero load not measured.'
+commissioning_blockers:
+- Output torque per amp and torque sign not measured under known load
+- Link masses, centers of mass and payload not physically verified
+- Per-axis continuous current, torque, speed and damping limits unset
+- Loaded watchdog output cutoff not measured
+- ID4 historical stop anomaly not reproduced in one low-current repeat; cause not
+  proven
+- Gripper linkage ratio and homing uncalibrated
+- Existing full-arm live controller is SocketCAN-only; serial six-axis control not
+  commissioned
+rs05_reported_torque_scale_correction:
+  date: '2026-10-23'
+  range_nm: 5.5
+  denominator: 65535
+  source: RS05User Manual260713 type2
+  historical_17nm_logs: Preserved; use raw_torque_u16 to recompute. Not valid physical
+    torque calibration.

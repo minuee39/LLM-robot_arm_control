@@ -1,0 +1,204 @@
+{
+  "job_id": "llm-1791285384-001",
+  "created_at": 1791285513.9693103,
+  "requested_count": 2,
+  "completed_count": 1,
+  "passed": false,
+  "failure_class": "execution_dynamics",
+  "motion_scaling": {
+    "arm_velocity": 0.7,
+    "arm_acceleration": 0.7,
+    "cartesian_velocity": 0.7,
+    "cartesian_acceleration": 0.7
+  },
+  "runs": [
+    {
+      "object_id": "green_block",
+      "target": [
+        0.24,
+        -0.28,
+        0.025
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 59.76568071600013,
+      "passed": true,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/01-green_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/01-green_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 538,
+        "target": [
+          0.24,
+          -0.28,
+          0.025
+        ],
+        "final_position": [
+          0.22884715378284454,
+          -0.27904459834098816,
+          0.02499997615814209
+        ],
+        "final_orientation_xyzw": [
+          -2.7483908482395236e-08,
+          -2.7848699346577632e-08,
+          0.7073062658309937,
+          0.7069072723388672
+        ],
+        "max_height": 0.0656747817993164,
+        "transfer_min_bottom_clearance": 0.03086775676816369,
+        "transfer_sample_count": 69,
+        "final_xy_error": 0.011193693361601495,
+        "final_height_error": 2.384185791154403e-08,
+        "long_axis_vertical_cosine": 0.9999999999999969,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 537,
+          "joint_fresh_sample_count": 538,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.006145147988891055,
+        "max_loaded_jaw_asymmetry_m": 0.0018874360248446465,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": false,
+        "runtime_fault_event": null,
+        "safety_event_published": false,
+        "safety_event": null,
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 37.32917859900044,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 2.3636548615478346e-06,
+        "placement_pass": true
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 0,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/01-green_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/01-green_block-attempt-01-task.json"
+        }
+      ]
+    },
+    {
+      "object_id": "blue_block",
+      "target": [
+        0.24,
+        -0.24,
+        0.025
+      ],
+      "returncode": 2,
+      "elapsed_seconds": 64.60469004600054,
+      "passed": false,
+      "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/02-blue_block-attempt-01.log",
+      "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/02-blue_block-attempt-01-task.json",
+      "motion_summary": {
+        "frame": "base_footprint",
+        "unit": "m",
+        "sample_count": 596,
+        "target": [
+          0.24,
+          -0.24,
+          0.025
+        ],
+        "final_position": [
+          0.23772548913955688,
+          -0.23269757628440857,
+          0.014999926090240479
+        ],
+        "final_orientation_xyzw": [
+          -0.70710688829422,
+          -6.737311196047813e-05,
+          -6.702406972181052e-05,
+          -0.7071067690849304
+        ],
+        "max_height": 0.05430757999420166,
+        "transfer_min_bottom_clearance": 0.032825914892177635,
+        "transfer_sample_count": 112,
+        "final_xy_error": 0.007648450285927581,
+        "final_height_error": 0.010000073909759523,
+        "long_axis_vertical_cosine": 3.120245413157363e-07,
+        "fresh_feedback": true,
+        "telemetry": {
+          "tcp_fresh_sample_count": 595,
+          "joint_fresh_sample_count": 596,
+          "contact_reference_available": true
+        },
+        "max_contact_relative_displacement_m": 0.0017137021370234888,
+        "max_loaded_jaw_asymmetry_m": 0.0019889818504452705,
+        "slip_threshold_m": 0.006,
+        "slip_confirm_samples": 3,
+        "slip_detected": false,
+        "slip_event": null,
+        "runtime_fault_thresholds": {
+          "drop_clearance_m": 0.005,
+          "tilt_deg": 20.0,
+          "confirm_samples": 3,
+          "pose_stream_timeout_seconds": 0.75
+        },
+        "runtime_fault_detected": true,
+        "runtime_fault_event": {
+          "code": "TILT_DETECTED",
+          "seconds": 22.044641714001045,
+          "first_exceeded_seconds": 21.832100954999987,
+          "confirmed_seconds": 22.044641714001045,
+          "confirm_samples": 3,
+          "block_position_m": [
+            -0.3226755928993225,
+            0.059238869696855545,
+            0.04820692539215088
+          ],
+          "long_axis_vertical_cosine": 0.00034013670414934083,
+          "threshold_deg": 20.0
+        },
+        "safety_event_published": true,
+        "safety_event": {
+          "event_id": "watch-pallet-block-75702-11565162458768",
+          "code": "TILT_DETECTED",
+          "severity": "critical",
+          "source": "watch_pallet_block",
+          "frame": "base_footprint",
+          "published_at_unix": 1791285472.0782623,
+          "injected": false,
+          "seconds": 22.044641714001045,
+          "first_exceeded_seconds": 21.832100954999987,
+          "confirmed_seconds": 22.044641714001045,
+          "confirm_samples": 3,
+          "block_position_m": [
+            -0.3226755928993225,
+            0.059238869696855545,
+            0.04820692539215088
+          ],
+          "long_axis_vertical_cosine": 0.00034013670414934083,
+          "threshold_deg": 20.0
+        },
+        "sim_fault_command_published": false,
+        "sim_fault_command": null,
+        "release_detected": true,
+        "release_seconds": 42.19551691200104,
+        "post_release_recontact_detected": false,
+        "post_release_recontact_seconds": null,
+        "max_post_release_displacement_m": 5.268356063861754e-07,
+        "placement_pass": false
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "returncode": 2,
+          "log": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/02-blue_block-attempt-01.log",
+          "task_state": "/home/minwoo/Development/LLM/ros2_ur_ws/regression_results/llm-gui-20261006-201411/speed-0.7/commands/job-001-speed-0.7/02-blue_block-attempt-01-task.json"
+        }
+      ]
+    }
+  ]
+}

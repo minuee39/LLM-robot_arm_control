@@ -1,0 +1,155 @@
+profiles:
+  ur10e_robotiq:
+    robot_name: ur10e_robotiq_2f140
+    moveit_config_package: ur10e_robotiq_2f140_moveit_config
+    robot_description_file: config/ur10e_robotiq_2f140.urdf.xacro
+    semantic_file: config/ur10e_robotiq_2f140.srdf
+    fixed_base_link: base_link
+    controllers:
+      - ur_manipulator_controller
+      - gripper_controller
+      - joint_state_broadcaster
+    mtc_parameters:
+      planning_frame: world
+      arm_group_name: ur_manipulator
+      hand_group_name: gripper
+      eef_name: robotiq_2f140
+      hand_frame: robotiq_grasping_frame
+      gripper_joint_name: robotiq_finger_joint
+      open_pose_name: open
+      home_pose_name: ready
+      arm_controller_name: ur_manipulator_controller
+      gripper_controller_name: gripper_controller
+      touch_links:
+        - robotiq_base_link
+        - robotiq_left_inner_finger
+        - robotiq_left_inner_finger_pad
+        - robotiq_left_inner_knuckle
+        - robotiq_left_outer_finger
+        - robotiq_left_outer_knuckle
+        - robotiq_right_inner_finger
+        - robotiq_right_inner_finger_pad
+        - robotiq_right_inner_knuckle
+        - robotiq_right_outer_finger
+        - robotiq_right_outer_knuckle
+      forearm_collision_links:
+        - forearm_link
+      gripper_close_min: 0.02
+      gripper_close_max: 0.50
+      gripper_close_step: 0.08
+      grasp_transform_roll: 0.0
+      grasp_transform_pitch: -1.5707963267948966
+      grasp_transform_yaw: 0.0
+      grasp_offset_x: 0.0
+      grasp_offset_y: 0.0
+      grasp_offset_z: 0.0
+      grasp_object_height_scale_x: 0.5
+      grasp_object_height_scale_y: 0.0
+      grasp_object_height_scale_z: 0.0
+      approach_min_distance: 0.10
+      approach_max_distance: 0.15
+      lift_min_distance: 0.10
+      lift_max_distance: 0.18
+      lower_min_distance: 0.10
+      lower_max_distance: 0.15
+      retreat_min_distance: 0.10
+      retreat_max_distance: 0.18
+
+  pallet_gripper:
+    robot_name: pallet_gripper
+    moveit_config_package: pallet_gripper_moveit_config
+    robot_description_file: config/pallet_gripper.urdf.xacro
+    semantic_file: config/pallet_gripper.srdf
+    fixed_base_link: base_footprint
+    controllers:
+      - pallet_arm_controller
+      - gripper_controller
+      - joint_state_broadcaster
+    mtc_parameters:
+      planning_frame: base_footprint
+      arm_group_name: pallet_arm
+      hand_group_name: gripper
+      eef_name: pallet_gripper
+      hand_frame: tcp
+      gripper_joint_name: J8
+      open_pose_name: open
+      home_pose_name: home
+      arm_controller_name: pallet_arm_controller
+      gripper_controller_name: gripper_controller
+      touch_links:
+        - J7
+        - J8
+        - J9
+      # ROS launch cannot infer the element type of an empty parameter array.
+      # The MTC node filters this empty-string sentinel back to an empty list.
+      forearm_collision_links:
+        - ""
+      # J8 is one-jaw travel in metres. Command the validated lower limit to
+      # maximize preload on the 30 mm block; Isaac still caps each jaw at 60 N.
+      gripper_close_min: 0.000
+      gripper_close_max: 0.000
+      gripper_close_step: 0.005
+      object_x: -0.30
+      object_y: 0.30
+      object_z: 0.025
+      object_size_x: 0.030
+      object_size_y: 0.030
+      object_size_z: 0.050
+      place_x: 0.30
+      place_y: -0.30
+      place_z: 0.025
+      # The base is centered on the tabletop. Since base_footprint lies on the
+      # tabletop, the 0.75 m table volume extends in the negative Z direction.
+      table_size_x: 1.80
+      table_size_y: 0.75
+      table_height: 0.75
+      table_center_x: 0.0
+      table_center_y: 0.0
+      table_top_z: 0.0
+      grasp_transform_roll: 3.141592653589793
+      grasp_transform_pitch: 0.0
+      grasp_transform_yaw: 0.0
+      grasp_offset_x: 0.0
+      grasp_offset_y: 0.0
+      # Lower the fingertips 15 mm below the block centre, bringing the flat
+      # pads across its mid-height while keeping the tips 10 mm above the table.
+      grasp_offset_z: -0.015
+      grasp_object_height_scale_x: 0.0
+      grasp_object_height_scale_y: 0.0
+      grasp_object_height_scale_z: 0.0
+      approach_min_distance: 0.01
+      approach_max_distance: 0.05
+      # Lift the block bottom 40 mm above the tabletop before transfer.
+      lift_min_distance: 0.04
+      lift_max_distance: 0.04
+      move_to_pick_timeout: 10.0
+      # Bound collision-prone place branches so one invalid J3-J5 branch does
+      # not consume 20+ seconds before MTC evaluates the next IK candidate.
+      move_to_place_timeout: 5.0
+      # Reject transfer paths where any attached-block bottom corner comes
+      # within 20 mm of the tabletop.
+      transfer_min_clearance: 0.02
+      transfer_clearance_check_step: 0.02
+      return_home_timeout: 5.0
+      task_timeout: 180.0
+      place_max_ik_solutions: 2.0
+      place_ik_min_solution_distance: 0.25
+      # Motion classes are tuned independently so precision moves stay smooth
+      # without unnecessarily slowing long free-space motions.
+      arm_velocity_scaling: 0.50
+      arm_acceleration_scaling: 0.50
+      cartesian_velocity_scaling: 0.25
+      cartesian_acceleration_scaling: 0.25
+      gripper_velocity_scaling: 0.50
+      gripper_acceleration_scaling: 0.50
+      # Approach the place pose 40 mm above the table, then lower to release.
+      lower_min_distance: 0.04
+      lower_max_distance: 0.04
+      retreat_min_distance: 0.04
+      retreat_max_distance: 0.04
+      # Safety recovery uses the same bounded vertical clearance motion that is
+      # already feasible for normal lift/retreat in this compact workspace.
+      recovery_retreat_distance: 0.04
+      recovery_probe_distance: 0.005
+      recovery_retreat_timeout: 5.0
+      recovery_home_timeout: 10.0

@@ -4,6 +4,7 @@ from vision.depth_utils import (
     depth_value_to_meters,
     median_depth_in_bbox,
     median_depth_in_mask,
+    pallet_table_block_center,
     pixel_to_camera_point,
     surface_point_to_box_center,
     transform_point,
@@ -110,6 +111,36 @@ def test_surface_point_to_box_center_follows_oblique_camera_ray():
     )
 
     assert np.allclose(center, expected_center)
+
+
+def test_pallet_table_block_center_uses_known_tabletop_height():
+    center = pallet_table_block_center(
+        surface_point=[-0.3, 0.3, 0.02],
+        camera_origin=[-0.55, 0.65, 0.85],
+        box_size=[0.03, 0.03, 0.05],
+    )
+
+    assert center[2] == 0.028
+
+
+def test_pallet_table_block_center_rejects_false_color_below_table():
+    with np.testing.assert_raises_regex(ValueError, "outside the Pallet tabletop"):
+        pallet_table_block_center(
+            surface_point=[-0.02, 0.42, -0.7],
+            camera_origin=[-0.55, 0.65, 0.85],
+            box_size=[0.03, 0.03, 0.05],
+        )
+
+
+def test_pallet_table_block_center_rejects_block_outside_xy_footprint():
+    with np.testing.assert_raises_regex(ValueError, "outside the Pallet table XY"):
+        pallet_table_block_center(
+            surface_point=[1.02, 0.0, 0.02],
+            camera_origin=[-0.55, 0.65, 0.85],
+            box_size=[0.03, 0.03, 0.05],
+            table_size_xy=[1.8, 0.75],
+            table_center_xy=[0.0, 0.0],
+        )
 
 
 def test_validated_world_position_uses_reference_above_grasp_tolerance():
