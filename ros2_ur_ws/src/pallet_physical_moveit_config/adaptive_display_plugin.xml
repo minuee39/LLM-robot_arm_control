@@ -1,0 +1,5 @@
+<library path="pallet_adaptive_display">
+  <class name="pallet_physical_moveit_config/AdaptiveMotionPlanning" type="pallet_physical_moveit_config::AdaptiveMotionPlanningDisplay" base_class_type="rviz_common::Display">
+    <description>MoveIt MotionPlanning with coupled adaptive gripper Joints preview.</description>
+  </class>
+</library>

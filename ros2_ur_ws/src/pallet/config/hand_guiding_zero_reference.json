@@ -1,0 +1,13 @@
+{
+  "source": "Cumulative offsets after user-approved motor reference pose rebase",
+  "relation": "q_new = q_old - offset_rad",
+  "offset_rad": {
+    "J1": 0.0,
+    "J2": 2.681,
+    "J3": -3.6126975215607007,
+    "J4": -0.56,
+    "J5": -1.7835883477326557,
+    "J6": 3.14,
+    "g_r": 0.103
+  }
+}

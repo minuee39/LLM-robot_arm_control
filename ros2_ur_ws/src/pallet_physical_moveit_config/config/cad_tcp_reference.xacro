@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- CAD model-zero distal-edge reference only. Physical opening is unknown.
+       This frame is not the active MoveIt tip and has no collision geometry. -->
+  <link name="cad_tcp_reference_unverified"/>
+  <joint name="cad_tcp_reference_unverified_joint" type="fixed">
+    <parent link="gripper"/>
+    <child link="cad_tcp_reference_unverified"/>
+    <origin xyz="-8.81048992544761e-06 0.125895816274008 2.12688419472516e-05" rpy="-1.5707963267949 1.17809724509618 0"/>
+  </joint>
+</robot>

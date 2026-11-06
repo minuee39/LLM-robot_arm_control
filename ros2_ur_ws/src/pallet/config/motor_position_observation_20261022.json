@@ -1,0 +1,13 @@
+{
+  "source": "User-reported serial read; some IDs read on retry, not a simultaneous sample",
+  "is_zero_calibration": false,
+  "motor_positions_rad": {
+    "1": -2.819073,
+    "2": 1.920544,
+    "3": -2.162491,
+    "4": 2.790707,
+    "5": -0.104756,
+    "6": 0.203576,
+    "7": -0.002969
+  }
+}

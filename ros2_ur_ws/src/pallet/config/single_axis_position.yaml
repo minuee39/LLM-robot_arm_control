@@ -1,0 +1,15 @@
+# Fill from confirmed setup/measurement. Null values deliberately block LIVE.
+pp_watchdog_verified: false
+current_limit_policy: preserve_existing
+limits:
+  current_limit_a: null
+  current_trip_a: null
+  velocity_rad_s: 0.1
+  acceleration_rad_s2: 0.1
+  travel_rad: null
+  goal_tolerance_rad: null
+  timeout_s: 4.0
+  hold_s: 0.5
+  period_s: 0.05
+  feedback_timeout_s: 0.015
+  watchdog_s: 0.25

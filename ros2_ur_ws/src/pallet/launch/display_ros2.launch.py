@@ -1,34 +1,11 @@
+"""Compatibility entry point for the mass-revised display launch."""
 from pathlib import Path
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    package_share = Path(get_package_share_directory("pallet"))
-    robot_description = (package_share / "urdf" / "pallet.urdf").read_text()
-    rviz_config = package_share / "config" / "display.rviz"
-
-    return LaunchDescription(
-        [
-            Node(
-                package="robot_state_publisher",
-                executable="robot_state_publisher",
-                parameters=[{"robot_description": robot_description}],
-                output="screen",
-            ),
-            Node(
-                package="joint_state_publisher_gui",
-                executable="joint_state_publisher_gui",
-                parameters=[{"robot_description": robot_description}],
-                output="screen",
-            ),
-            Node(
-                package="rviz2",
-                executable="rviz2",
-                arguments=["-d", str(rviz_config)],
-                output="screen",
-            ),
-        ]
-    )
+    path = Path(get_package_share_directory('pallet')) / 'launch' / 'display.launch.py'
+    return LaunchDescription([IncludeLaunchDescription(PythonLaunchDescriptionSource(str(path)))])

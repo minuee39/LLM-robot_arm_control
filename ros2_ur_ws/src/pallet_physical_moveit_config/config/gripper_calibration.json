@@ -1,0 +1,25 @@
+{
+  "motor_id": 7,
+  "motor_model": "RS05",
+  "source": "User supplied motor position, finger opening and square-nut depth, 2026-11-02; supersedes earlier opening measurements",
+  "angle_unit": "rad",
+  "opening_unit": "mm",
+  "nut_depth_unit": "mm",
+  "nut_depth_reference": "Distance downwards from the top of the screw inside the gripper",
+  "angle_reference": "Motor app raw measured position at measurement time; do not re-zero without recalibration",
+  "samples": [
+    {"motor_angle_rad": -12.0, "opening_mm": 19.0, "nut_depth_mm": 10.0},
+    {"motor_angle_rad": 0.0, "opening_mm": 38.0, "nut_depth_mm": 6.0},
+    {"motor_angle_rad": 12.0, "opening_mm": 53.0, "nut_depth_mm": 2.0}
+  ],
+  "interpolation": "piecewise_linear",
+  "extrapolation": "reject",
+  "actuation_commissioned": false,
+  "notes": [
+    "Only these three points were measured; intermediate widths and depths are interpolated.",
+    "Bounds describe the measured range, not verified current, force or stop limits.",
+    "Free-space opening estimate is not an observation of adaptive finger contact state.",
+    "The -12 rad endpoint is still open by 19 mm; no fully closed motor position or physical grasp TCP is established.",
+    "Existing g_r URDF joint angle is not this raw motor angle."
+  ]
+}

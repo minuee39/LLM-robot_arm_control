@@ -1,0 +1,26 @@
+# Existing current limit confirmed by readback; never overwrite current limit.
+motor_id: 7
+motor_model: RS05
+serial_port: /dev/ttyUSB0
+baud: 921600
+velocity_rad_s: 2.0
+acceleration_rad_s2: 5.0
+current_limit_policy: preserve_existing
+expected_current_limit_a: 0.8
+motor_lower_rad: -12.0
+motor_upper_rad: 12.0
+angle_reference: calibration_raw_motor_position
+commissioned: true
+commissioning_scope: User-reported read-only ID7 preflight; live bridge admission
+  only. Motion, loaded grasp and watchdog TX-silence behavior remain unverified.
+preflight_evidence:
+  timestamp_utc: '2026-11-03T13:21:43.372334+00:00'
+  source: User supplied pallet_position_preflight.py --motor 7 --read output
+  run_mode: 1
+  current_limit_a: 0.800000011920929
+  position_rad: -0.0010886192321777344
+  velocity_rad_s: -0.00214215274900198
+  current_a: 0.0
+  watchdog_ticks: 0
+  read_errors: {}
+  complete: true

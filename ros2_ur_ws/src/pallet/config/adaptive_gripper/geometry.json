@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "status": "MEASURED_FREE_SPACE_PREVIEW",
+  "calibration": {
+    "motor_id": 7,
+    "motor_model": "RS05",
+    "source": "User supplied motor position, finger opening and square-nut depth, 2026-11-02; supersedes earlier opening measurements",
+    "angle_unit": "rad",
+    "opening_unit": "mm",
+    "nut_depth_unit": "mm",
+    "nut_depth_reference": "Distance downwards from the top of the screw inside the gripper",
+    "angle_reference": "Motor app raw measured position at measurement time; do not re-zero without recalibration",
+    "samples": [
+      {
+        "motor_angle_rad": -12.0,
+        "opening_mm": 19.0,
+        "nut_depth_mm": 10.0
+      },
+      {
+        "motor_angle_rad": 0.0,
+        "opening_mm": 38.0,
+        "nut_depth_mm": 6.0
+      },
+      {
+        "motor_angle_rad": 12.0,
+        "opening_mm": 53.0,
+        "nut_depth_mm": 2.0
+      }
+    ],
+    "interpolation": "piecewise_linear",
+    "extrapolation": "reject",
+    "actuation_commissioned": false,
+    "notes": [
+      "Only these three points were measured; intermediate widths and depths are interpolated.",
+      "Bounds describe the measured range, not verified current, force or stop limits.",
+      "Free-space opening estimate is not an observation of adaptive finger contact state.",
+      "The -12 rad endpoint is still open by 19 mm; no fully closed motor position or physical grasp TCP is established.",
+      "Existing g_r URDF joint angle is not this raw motor angle."
+    ]
+  },
+  "screw_reference": {
+    "unit": "mm",
+    "frame": "frontal_u_v_depth",
+    "base_mesh_component_index": 12,
+    "shaft_radius_mm": 4.0,
+    "shaft_top_v_mm": 53.55001163,
+    "shaft_top_move_y_mm": 23.6290591799277,
+    "source_nut_upper_face_v_mm": 45.920946,
+    "source_nut_top_drop_mm": 7.6290656299999995,
+    "limitation": "Geometry establishes source CAD reference, not physical screw-to-nut calibration. Assumes user drop refers to nut upper face."
+  },
+  "source_yaw_rad": {
+    "gripper_r": -1.74528160479734,
+    "gripper_l": -1.39631104879178
+  },
+  "sides": {
+    "r": {
+      "parallel_pad_angle_rad": -0.0646274108486818,
+      "pins": {
+        "pad_inner": {
+          "component": 0,
+          "uv_mm": [
+            31.8382595340219,
+            78.8123692446548
+          ],
+          "move_xy_mm": [
+            -31.8382595340219,
+            48.891416794582504
+          ],
+          "radius_mm": 2.1000022522623896,
+          "max_residual_mm": 8.183144083684368e-06,
+          "ring_points": 24
+        },
+        "pad_outer": {
+          "component": 0,
+          "uv_mm": [
+            46.57215200561455,
+            77.85882764340266
+          ],
+          "move_xy_mm": [
+            -46.57215200561455,
+            47.93787519333036
+          ],
+          "radius_mm": 2.100002355226844,
+          "max_residual_mm": 8.715538460712935e-06,
+          "ring_points": 23
+        },
+        "inner_elbow": {
+          "component": 1,
+          "uv_mm": [
+            25.822150371004824,
+            62.378975675168995
+          ],
+          "move_xy_mm": [
+            -25.822150371004824,
+            32.458023225096696
+          ],
+          "radius_mm": 1.5000000486591953,
+          "max_residual_mm": 8.31540961954147e-06,
+          "ring_points": 56
+        },
+        "inner_ground": {
+          "component": 3,
+          "uv_mm": [
+            17.999987505121613,
+            40.74997394697839
+          ],
+          "move_xy_mm": [
+            -17.999987505121613,
+            10.829021496906094
+          ],
+          "radius_mm": 2.0999999478727607,
+          "max_residual_mm": 6.533314124812506e-06,
+          "ring_points": 32
+        },
+        "rocker_nut": {
+          "component": 6,
+          "uv_mm": [
+            9.222012889651552,
+            23.224592085606105
+          ],
+          "move_xy_mm": [
+            -9.222012889651552,
+            -6.696360364466194
+          ],
+          "radius_mm": 2.100000560018668,
+          "max_residual_mm": 7.393186632675963e-06,
+          "ring_points": 26
+        },
+        "rocker_outer": {
+          "component": 6,
+          "uv_mm": [
+            47.77796428987785,
+            33.87535347299539
+          ],
+          "move_xy_mm": [
+            -47.77796428987785,
+            3.9544010229230935
+          ],
+          "radius_mm": 2.000001482724361,
+          "max_residual_mm": 8.96369119218754e-06,
+          "ring_points": 26
+        },
+        "rocker_ground": {
+          "component": 6,
+          "uv_mm": [
+            28.49998755696433,
+            28.549973737677526
+          ],
+          "move_xy_mm": [
+            -28.49998755696433,
+            -1.3709787123947734
+          ],
+          "radius_mm": 3.0999993576293496,
+          "max_residual_mm": 8.627302146457794e-06,
+          "ring_points": 32
+        },
+        "nut_pivot": {
+          "component": 4,
+          "uv_mm": [
+            5.749988395356923,
+            42.92091153144189
+          ],
+          "move_xy_mm": [
+            -5.749988395356923,
+            12.999959081369589
+          ],
+          "radius_mm": 2.1000000769910883,
+          "max_residual_mm": 1.0932837149812968e-05,
+          "ring_points": 36
+        }
+      },
+      "contact_datum_xy_mm": [
+        -21.984884562168737,
+        92.6190982000742
+      ],
+      "contact_datum_method": "Innermost vertex in distal 3 mm of source CAD pad; fixed material point.",
+      "proposed_wrist": {
+        "pivot": "pad_inner",
+        "cut_offset_mm": 10.0,
+        "physical_joint_verified": false,
+        "source_triangles": 324,
+        "split_triangles": [
+          340,
+          164
+        ]
+      }
+    },
+    "l": {
+      "parallel_pad_angle_rad": 0.0587107218731224,
+      "pins": {
+        "pad_inner": {
+          "component": 0,
+          "uv_mm": [
+            -32.04962288185974,
+            78.73058697493812
+          ],
+          "move_xy_mm": [
+            32.04962288185974,
+            48.80963452486582
+          ],
+          "radius_mm": 2.1000006739137014,
+          "max_residual_mm": 7.263557006975674e-06,
+          "ring_points": 22
+        },
+        "pad_outer": {
+          "component": 0,
+          "uv_mm": [
+            -46.78890299757414,
+            77.86423584733896
+          ],
+          "move_xy_mm": [
+            46.78890299757414,
+            47.94328339726666
+          ],
+          "radius_mm": 2.0999994809788363,
+          "max_residual_mm": 5.32630023153402e-06,
+          "ring_points": 24
+        },
+        "inner_elbow": {
+          "component": 1,
+          "uv_mm": [
+            -25.711781044282112,
+            62.41857409375349
+          ],
+          "move_xy_mm": [
+            25.711781044282112,
+            32.49762164368119
+          ],
+          "radius_mm": 1.5000007491807805,
+          "max_residual_mm": 9.374019028118852e-06,
+          "ring_points": 56
+        },
+        "inner_ground": {
+          "component": 3,
+          "uv_mm": [
+            -17.99998774757188,
+            40.749973973946915
+          ],
+          "move_xy_mm": [
+            17.99998774757188,
+            10.829021523874616
+          ],
+          "radius_mm": 2.099999588459778,
+          "max_residual_mm": 7.244241807313756e-06,
+          "ring_points": 32
+        },
+        "rocker_nut": {
+          "component": 6,
+          "uv_mm": [
+            -9.22201306430105,
+            23.22459241078902
+          ],
+          "move_xy_mm": [
+            9.22201306430105,
+            -6.696360039283281
+          ],
+          "radius_mm": 2.099999200881155,
+          "max_residual_mm": 1.190583957955127e-05,
+          "ring_points": 26
+        },
+        "rocker_outer": {
+          "component": 6,
+          "uv_mm": [
+            -47.77796349572429,
+            33.87535331648016
+          ],
+          "move_xy_mm": [
+            47.77796349572429,
+            3.954400866407859
+          ],
+          "radius_mm": 2.000001184890855,
+          "max_residual_mm": 7.278199313676126e-06,
+          "ring_points": 25
+        },
+        "rocker_ground": {
+          "component": 6,
+          "uv_mm": [
+            -28.499987709122095,
+            28.549973803777224
+          ],
+          "move_xy_mm": [
+            28.499987709122095,
+            -1.3709786462950753
+          ],
+          "radius_mm": 3.0999987473986024,
+          "max_residual_mm": 1.206317844015814e-05,
+          "ring_points": 32
+        },
+        "nut_pivot": {
+          "component": 4,
+          "uv_mm": [
+            -5.749987188459985,
+            42.92091172420782
+          ],
+          "move_xy_mm": [
+            5.749987188459985,
+            12.99995927413552
+          ],
+          "radius_mm": 2.1000007814355732,
+          "max_residual_mm": 6.032425021285093e-06,
+          "ring_points": 36
+        }
+      },
+      "contact_datum_xy_mm": [
+        21.937696868610324,
+        92.47825225034332
+      ],
+      "contact_datum_method": "Innermost vertex in distal 3 mm of source CAD pad; fixed material point.",
+      "proposed_wrist": {
+        "pivot": "pad_inner",
+        "cut_offset_mm": 10.0,
+        "physical_joint_verified": false,
+        "source_triangles": 324,
+        "split_triangles": [
+          340,
+          164
+        ]
+      }
+    }
+  },
+  "source_sha256": {
+    "meshes/mass_revised/gripper_r.STL": "58e6229c137d2327ddad33e048eea26f881a93bac5085c62c0015adc201f0c8a",
+    "meshes/mass_revised/gripper_l.STL": "9b0e8bc0c6b6185b51b0fced96169cc4351613c019941aefcb688dd1a2a58e74",
+    "urdf/mass_revised_source/urdf/어셈블리1.SLDASM.urdf": "9f0ba8362b022ffd836db8840850509fba18081902e67c9d7a64d320520ee8ec"
+  },
+  "limitations": [
+    "CAD screw top to nut upper face is used; the physical nut measurement face must be confirmed.",
+    "Both nut depth and opening are calibration inputs; opening is not predicted from nut travel.",
+    "Inner links stay straight and pads stay parallel through an added virtual wrist. The source pad is monolithic; this proposed articulation is not verified on hardware. No measured springs/contact response.",
+    "Tree loop cuts are checked numerically; no closed-loop physics or hardware actuation."
+  ],
+  "reference": {
+    "source_contact_opening_mm": 43.92258143077906,
+    "cad_nut_upper_face_depth_mm": 7.6290656299999995,
+    "datum_is_physically_verified": false,
+    "nut_top_reference": "Assumes user measures screw top to nut upper face; physical face not verified"
+  }
+}

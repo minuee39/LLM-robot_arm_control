@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="pallet_adaptive">
+  <group name="pallet_arm">
+    <chain base_link="base_link" tip_link="gripper" />
+  </group>
+  <group name="gripper">
+    <joint name="gripper_motor" />
+    <joint name="g2" />
+    <joint name="r_rocker" />
+    <joint name="r_helper" />
+    <joint name="r_outer" />
+    <joint name="r_pad" />
+    <joint name="r_wrist" />
+    <joint name="r_inner_lower" />
+    <joint name="r_inner_upper" />
+    <joint name="l_rocker" />
+    <joint name="l_helper" />
+    <joint name="l_outer" />
+    <joint name="l_pad" />
+    <joint name="l_wrist" />
+    <joint name="l_inner_lower" />
+    <joint name="l_inner_upper" />
+  </group>
+  <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="base_footprint" />
+  <end_effector name="pallet_gripper" parent_link="gripper" group="gripper" parent_group="pallet_arm" />
+  <disable_collisions link1="base_link" link2="no.1" reason="Adjacent" />
+  <disable_collisions link1="no.1" link2="no.2" reason="Adjacent" />
+  <disable_collisions link1="no.2" link2="no.3" reason="Adjacent" />
+  <disable_collisions link1="no.3" link2="no.4" reason="Adjacent" />
+  <disable_collisions link1="no.4" link2="no.5" reason="Adjacent" />
+  <disable_collisions link1="no.5" link2="gripper" reason="Adjacent" />
+  <disable_collisions link1="gripper" link2="move_gripper" reason="Adjacent" />
+  <disable_collisions link1="base_footprint" link2="base_link" reason="Adjacent" />
+  <group_state name="Home" group="pallet_arm">
+    <joint name="J1" value="0" />
+    <joint name="J2" value="-2.53072741539178" />
+    <joint name="J3" value="2.56563400043166" />
+    <joint name="J4" value="0" />
+    <joint name="J5" value="-1.48352986419518" />
+    <joint name="J6" value="0" />
+  </group_state>
+  <disable_collisions link1="l_pad_link" link2="l_wrist_link" reason="Adjacent" />
+  <disable_collisions link1="l_inner_upper_link" link2="l_pad_link" reason="Adjacent" />
+  <disable_collisions link1="r_pad_link" link2="r_wrist_link" reason="Adjacent" />
+  <disable_collisions link1="r_inner_upper_link" link2="r_pad_link" reason="Adjacent" />
+  <group_state name="open" group="gripper">
+    <joint name="gripper_motor" value="11.5" />
+  </group_state>
+  <group_state name="middle" group="gripper">
+    <joint name="gripper_motor" value="0" />
+  </group_state>
+  <group_state name="closed_measured" group="gripper">
+    <joint name="gripper_motor" value="-11.5" />
+  </group_state>
+  <passive_joint name="g2" />
+  <passive_joint name="r_rocker" />
+  <passive_joint name="r_helper" />
+  <passive_joint name="r_outer" />
+  <passive_joint name="r_pad" />
+  <passive_joint name="r_wrist" />
+  <passive_joint name="r_inner_lower" />
+  <passive_joint name="r_inner_upper" />
+  <passive_joint name="l_rocker" />
+  <passive_joint name="l_helper" />
+  <passive_joint name="l_outer" />
+  <passive_joint name="l_pad" />
+  <passive_joint name="l_wrist" />
+  <passive_joint name="l_inner_lower" />
+  <passive_joint name="l_inner_upper" />
+</robot>

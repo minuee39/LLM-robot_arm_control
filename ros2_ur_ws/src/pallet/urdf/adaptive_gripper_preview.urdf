@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="adaptive_gripper_preview">
+  <link name="gripper">
+    <inertial>
+      <origin xyz="-5.2809570660339e-06 -0.0028472612426801 -0.00012798006247315" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <mass value="0.35218616" />
+      <inertia ixx="0.00017781" ixy="-5.818E-05" ixz="7.205E-05" iyy="0.00024068" iyz="3.354E-05" izz="0.00022588" />
+    </inertial>
+    <visual>
+      <origin xyz="0.16586133531753 0.15057273884674 0.076827644210076" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89412 0.89412 0.89412 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.16586133531753 0.15057273884674 0.076827644210076" rpy="-1.2295285164861e-09 -0.8073483958801 1.0329738076366e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <!--Visual kinematic reconstruction only. No measured split inertias, physical effort/velocity limits, contact law or actuator interface.-->
+  <link name="preview_view" />
+  <joint name="preview_view_joint" type="fixed">
+    <parent link="gripper" />
+    <child link="preview_view" />
+    <origin xyz="0 0 0" rpy="-1.5707963267948966 -0.39269908169872414 0" />
+  </joint>
+  <link name="adaptive_frame" />
+  <link name="move_gripper">
+    <inertial>
+      <origin xyz="-3.5613040225702e-06 0.0080027382199954 -1.5628113537447e-06" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <mass value="0.027" />
+      <inertia ixx="1.3E-06" ixy="5E-08" ixz="6E-08" iyy="1.27E-06" iyz="0" izz="1.28E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.0075071007659241 0.15057273709249 0.18263656249944" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/move_gripper.STL" />
+      </geometry>
+      <material name="adaptive_nut">
+        <color rgba="0.96 0.71 0.20 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.0075071007659241 0.15057273709249 0.18263656249944" rpy="8.3615931554405e-09 -0.80734837208628 3.5027528945423e-09" />
+      <geometry>
+        <mesh filename="package://pallet/meshes/mass_revised/move_gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="adaptive_frame_joint" type="fixed">
+    <parent link="gripper" />
+    <child link="adaptive_frame" />
+    <origin xyz="0 0.0299209524500723 0" rpy="0 1.17809724509618 0" />
+  </joint>
+  <joint name="g2" type="prismatic">
+    <parent link="gripper" />
+    <child link="move_gripper" />
+    <origin xyz="0 0.0299209524500723 0" rpy="0 1.17809724509618 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.0023709343700000006" upper="0.005629065629999999" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_rocker_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_6.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_6.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_rocker" type="revolute">
+    <parent link="adaptive_frame" />
+    <child link="r_rocker_link" />
+    <origin xyz="-0.02849998755696433 -0.001370978712394774 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_helper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_4.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_4.stl" />
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_5.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_5.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_helper" type="revolute">
+    <parent link="move_gripper" />
+    <child link="r_helper_link" />
+    <origin xyz="-0.005749988395356924 0.01299995908136959 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_outer_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_2.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_outer" type="revolute">
+    <parent link="r_rocker_link" />
+    <child link="r_outer_link" />
+    <origin xyz="-0.01927797673291352 0.005325379735317867 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_pad_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_yoke.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_yoke.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_pad" type="revolute">
+    <parent link="r_outer_link" />
+    <child link="r_pad_link" />
+    <origin xyz="0.001205812284263301 0.04398347417040727 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_wrist_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_contact_pad.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_contact_pad.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_wrist" type="revolute">
+    <parent link="r_pad_link" />
+    <child link="r_wrist_link" />
+    <origin xyz="0.01473389247159265 0.0009535416012521405 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_inner_lower_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_3.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_inner_lower" type="revolute">
+    <parent link="adaptive_frame" />
+    <child link="r_inner_lower_link" />
+    <origin xyz="-0.01799998750512161 0.01082902149690609 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="r_inner_upper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_1.stl" />
+      </geometry>
+      <material name="adaptive_r">
+        <color rgba="0.91 0.43 0.29 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/r_1.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="r_inner_upper" type="revolute">
+    <parent link="r_inner_lower_link" />
+    <child link="r_inner_upper_link" />
+    <origin xyz="-0.007822162865883209 0.0216290017281906 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_rocker_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_6.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_6.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_rocker" type="revolute">
+    <parent link="adaptive_frame" />
+    <child link="l_rocker_link" />
+    <origin xyz="0.0284999877091221 -0.001370978646295075 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_helper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_4.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_4.stl" />
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_5.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_5.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_helper" type="revolute">
+    <parent link="move_gripper" />
+    <child link="l_helper_link" />
+    <origin xyz="0.005749987188459985 0.01299995927413552 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_outer_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_2.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_outer" type="revolute">
+    <parent link="l_rocker_link" />
+    <child link="l_outer_link" />
+    <origin xyz="0.0192779757866022 0.005325379512702934 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_pad_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_yoke.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_yoke.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_pad" type="revolute">
+    <parent link="l_outer_link" />
+    <child link="l_pad_link" />
+    <origin xyz="-0.000989060498150153 0.0439888825308588 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_wrist_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_contact_pad.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_contact_pad.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_wrist" type="revolute">
+    <parent link="l_pad_link" />
+    <child link="l_wrist_link" />
+    <origin xyz="-0.0147392801157144 0.0008663511275991617 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_inner_lower_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_3.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_inner_lower" type="revolute">
+    <parent link="adaptive_frame" />
+    <child link="l_inner_lower_link" />
+    <origin xyz="0.01799998774757188 0.01082902152387462 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+  <link name="l_inner_upper_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_1.stl" />
+      </geometry>
+      <material name="adaptive_l">
+        <color rgba="0.18 0.68 0.81 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://pallet/meshes/adaptive_gripper/l_1.stl" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="l_inner_upper" type="revolute">
+    <parent link="l_inner_lower_link" />
+    <child link="l_inner_upper_link" />
+    <origin xyz="0.007711793296710234 0.02166860011980657 0" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-2.4" upper="2.4" effort="1" velocity="0.1" />
+  </joint>
+</robot>

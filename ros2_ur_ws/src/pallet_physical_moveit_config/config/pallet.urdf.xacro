@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pallet">
+  <xacro:arg name="initial_positions_file" default="initial_positions.yaml"/>
+  <xacro:include filename="$(find pallet)/urdf/pallet_with_gripper.urdf"/>
+  <xacro:include filename="cad_tcp_reference.xacro"/>
+  <!-- Planning tip is the CAD gripper mounting frame, not a calibrated grasp TCP. -->
+  <xacro:include filename="pallet.ros2_control.xacro"/>
+  <xacro:pallet_ros2_control initial_positions_file="$(arg initial_positions_file)"/>
+</robot>

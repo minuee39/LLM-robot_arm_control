@@ -1,0 +1,27 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Global Options:
+    Fixed Frame: adaptive_preview/preview_view
+  Displays:
+    - Class: rviz_default_plugins/RobotModel
+      Name: Adaptive gripper
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Durability Policy: Transient Local
+      TF Prefix: adaptive_preview
+      Visual Enabled: true
+      Collision Enabled: false
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 0.32
+      Focal Point:
+        X: 0.0
+        Y: 0.0
+        Z: 0.07
+      Pitch: 0.0001
+      Yaw: 0.0

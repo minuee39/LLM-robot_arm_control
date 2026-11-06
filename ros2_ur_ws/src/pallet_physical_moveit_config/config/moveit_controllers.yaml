@@ -1,0 +1,27 @@
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+trajectory_execution:
+  allowed_start_tolerance: 0.1
+  # Bounded serial setup/readback, 3s settling, 0.2s arrival check,
+  # 5s final hold and grouped STOP confirmation are part of execution.
+  allowed_goal_duration_margin: 15.0
+moveit_simple_controller_manager:
+  controller_names:
+  - pallet_arm_controller
+  - pallet_gripper_controller
+  pallet_arm_controller:
+    type: FollowJointTrajectory
+    joints:
+    - J1
+    - J2
+    - J3
+    - J4
+    - J5
+    - J6
+    action_ns: follow_joint_trajectory
+    default: true
+  pallet_gripper_controller:
+    type: FollowJointTrajectory
+    joints:
+    - g_r
+    action_ns: follow_joint_trajectory
+    default: true

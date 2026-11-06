@@ -1,0 +1,292 @@
+{
+  "unit": "mm",
+  "frame": "frontal_u_v_depth",
+  "u_axis_in_gripper": [
+    -0.3826834323650898,
+    0.0,
+    0.9238795325112867
+  ],
+  "v_axis_in_gripper": [
+    0,
+    1,
+    0
+  ],
+  "depth_axis_in_gripper": [
+    0.9238795325112867,
+    0.0,
+    0.3826834323650898
+  ],
+  "to_move_gripper": "x=-u,y=v-29.9209524500723,z=depth",
+  "method": "circle least squares over deduplicated STL projected vertices at pin ring; CAD mesh-derived, not hardware measurement",
+  "sides": {
+    "gripper_r": {
+      "pad_inner": {
+        "component": 0,
+        "uv_mm": [
+          31.8382595340219,
+          78.8123692446548
+        ],
+        "move_xy_mm": [
+          -31.8382595340219,
+          48.891416794582504
+        ],
+        "radius_mm": 2.1000022522623896,
+        "max_residual_mm": 8.183144083684368e-06,
+        "ring_points": 24
+      },
+      "pad_outer": {
+        "component": 0,
+        "uv_mm": [
+          46.57215200561455,
+          77.85882764340266
+        ],
+        "move_xy_mm": [
+          -46.57215200561455,
+          47.93787519333036
+        ],
+        "radius_mm": 2.100002355226844,
+        "max_residual_mm": 8.715538460712935e-06,
+        "ring_points": 23
+      },
+      "inner_elbow": {
+        "component": 1,
+        "uv_mm": [
+          25.822150371004824,
+          62.378975675168995
+        ],
+        "move_xy_mm": [
+          -25.822150371004824,
+          32.458023225096696
+        ],
+        "radius_mm": 1.5000000486591953,
+        "max_residual_mm": 8.31540961954147e-06,
+        "ring_points": 56
+      },
+      "inner_ground": {
+        "component": 3,
+        "uv_mm": [
+          17.999987505121613,
+          40.74997394697839
+        ],
+        "move_xy_mm": [
+          -17.999987505121613,
+          10.829021496906094
+        ],
+        "radius_mm": 2.0999999478727607,
+        "max_residual_mm": 6.533314124812506e-06,
+        "ring_points": 32
+      },
+      "rocker_nut": {
+        "component": 6,
+        "uv_mm": [
+          9.222012889651552,
+          23.224592085606105
+        ],
+        "move_xy_mm": [
+          -9.222012889651552,
+          -6.696360364466194
+        ],
+        "radius_mm": 2.100000560018668,
+        "max_residual_mm": 7.393186632675963e-06,
+        "ring_points": 26
+      },
+      "rocker_outer": {
+        "component": 6,
+        "uv_mm": [
+          47.77796428987785,
+          33.87535347299539
+        ],
+        "move_xy_mm": [
+          -47.77796428987785,
+          3.9544010229230935
+        ],
+        "radius_mm": 2.000001482724361,
+        "max_residual_mm": 8.96369119218754e-06,
+        "ring_points": 26
+      },
+      "rocker_ground": {
+        "component": 6,
+        "uv_mm": [
+          28.49998755696433,
+          28.549973737677526
+        ],
+        "move_xy_mm": [
+          -28.49998755696433,
+          -1.3709787123947734
+        ],
+        "radius_mm": 3.0999993576293496,
+        "max_residual_mm": 8.627302146457794e-06,
+        "ring_points": 32
+      },
+      "nut_pivot": {
+        "component": 4,
+        "uv_mm": [
+          5.749988395356923,
+          42.92091153144189
+        ],
+        "move_xy_mm": [
+          -5.749988395356923,
+          12.999959081369589
+        ],
+        "radius_mm": 2.1000000769910883,
+        "max_residual_mm": 1.0932837149812968e-05,
+        "ring_points": 36
+      }
+    },
+    "gripper_l": {
+      "pad_inner": {
+        "component": 0,
+        "uv_mm": [
+          -32.04962288185974,
+          78.73058697493812
+        ],
+        "move_xy_mm": [
+          32.04962288185974,
+          48.80963452486582
+        ],
+        "radius_mm": 2.1000006739137014,
+        "max_residual_mm": 7.263557006975674e-06,
+        "ring_points": 22
+      },
+      "pad_outer": {
+        "component": 0,
+        "uv_mm": [
+          -46.78890299757414,
+          77.86423584733896
+        ],
+        "move_xy_mm": [
+          46.78890299757414,
+          47.94328339726666
+        ],
+        "radius_mm": 2.0999994809788363,
+        "max_residual_mm": 5.32630023153402e-06,
+        "ring_points": 24
+      },
+      "inner_elbow": {
+        "component": 1,
+        "uv_mm": [
+          -25.711781044282112,
+          62.41857409375349
+        ],
+        "move_xy_mm": [
+          25.711781044282112,
+          32.49762164368119
+        ],
+        "radius_mm": 1.5000007491807805,
+        "max_residual_mm": 9.374019028118852e-06,
+        "ring_points": 56
+      },
+      "inner_ground": {
+        "component": 3,
+        "uv_mm": [
+          -17.99998774757188,
+          40.749973973946915
+        ],
+        "move_xy_mm": [
+          17.99998774757188,
+          10.829021523874616
+        ],
+        "radius_mm": 2.099999588459778,
+        "max_residual_mm": 7.244241807313756e-06,
+        "ring_points": 32
+      },
+      "rocker_nut": {
+        "component": 6,
+        "uv_mm": [
+          -9.22201306430105,
+          23.22459241078902
+        ],
+        "move_xy_mm": [
+          9.22201306430105,
+          -6.696360039283281
+        ],
+        "radius_mm": 2.099999200881155,
+        "max_residual_mm": 1.190583957955127e-05,
+        "ring_points": 26
+      },
+      "rocker_outer": {
+        "component": 6,
+        "uv_mm": [
+          -47.77796349572429,
+          33.87535331648016
+        ],
+        "move_xy_mm": [
+          47.77796349572429,
+          3.954400866407859
+        ],
+        "radius_mm": 2.000001184890855,
+        "max_residual_mm": 7.278199313676126e-06,
+        "ring_points": 25
+      },
+      "rocker_ground": {
+        "component": 6,
+        "uv_mm": [
+          -28.499987709122095,
+          28.549973803777224
+        ],
+        "move_xy_mm": [
+          28.499987709122095,
+          -1.3709786462950753
+        ],
+        "radius_mm": 3.0999987473986024,
+        "max_residual_mm": 1.206317844015814e-05,
+        "ring_points": 32
+      },
+      "nut_pivot": {
+        "component": 4,
+        "uv_mm": [
+          -5.749987188459985,
+          42.92091172420782
+        ],
+        "move_xy_mm": [
+          5.749987188459985,
+          12.99995927413552
+        ],
+        "radius_mm": 2.1000007814355732,
+        "max_residual_mm": 6.032425021285093e-06,
+        "ring_points": 36
+      }
+    }
+  },
+  "base_pin_confirmation": {
+    "unit": "mm",
+    "frame": "frontal_u_v_depth",
+    "inner_ground": [
+      [
+        -18.00000011,
+        40.75001277
+      ],
+      [
+        17.99999902,
+        40.75001288
+      ]
+    ],
+    "rocker_ground": [
+      [
+        -28.50000012,
+        28.55001325
+      ],
+      [
+        28.49999906,
+        28.55001325
+      ]
+    ],
+    "pin_radius_mm": 1.5,
+    "depth_endpoints_mm": [
+      -19.2,
+      19.2
+    ],
+    "comment": "Circular vertices on base component0; source finger pivot mismatch below 0.00005mm"
+  },
+  "screw_reference": {
+    "unit": "mm",
+    "frame": "frontal_u_v_depth",
+    "base_mesh_component_index": 12,
+    "shaft_radius_mm": 4.0,
+    "shaft_top_v_mm": 53.55001163,
+    "shaft_top_move_y_mm": 23.6290591799277,
+    "source_nut_upper_face_v_mm": 45.920946,
+    "source_nut_top_drop_mm": 7.6290656299999995,
+    "limitation": "Geometry establishes source CAD reference, not physical screw-to-nut calibration. Assumes user drop refers to nut upper face."
+  }
+}
