@@ -12,10 +12,10 @@ rclpy.init();n=Node('adaptive_integration_test');states=[]
 n.create_subscription(JointState,'/joint_states',lambda m:states.append(dict(zip(m.name,m.position))),10)
 from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
-config=yaml.safe_load((Path(get_package_share_directory('pallet'))/'config/serial_trajectory_dry_run.yaml').read_text());config['final_hold_s']=0.;config['hold_after_success']=False
+config=yaml.safe_load((Path(get_package_share_directory('pallet'))/'config/serial_trajectory_dry_run.yaml').read_text());config['final_hold_s']=1.;config['hold_after_success']=False
 open('/tmp/adaptive-test.yaml','w').write(yaml.safe_dump(config))
 log=open('/tmp/adaptive-moveit-test.log','w')
-p=subprocess.Popen(['ros2','launch','pallet_physical_moveit_config','adaptive_serial_bridge.launch.py','use_rviz:=false','config_file:=/tmp/adaptive-test.yaml'],stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+p=subprocess.Popen(['ros2','launch','pallet_physical_moveit_config','adaptive_serial_bridge.launch.py','use_rviz:=false','dry_run:=true','config_file:=/tmp/adaptive-test.yaml'],stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
 def spin(t):
  end=time.monotonic()+t
  while time.monotonic()<end:rclpy.spin_once(n,timeout_sec=.05)
